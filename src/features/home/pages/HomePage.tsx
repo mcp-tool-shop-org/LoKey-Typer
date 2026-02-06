@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import { loadAllPacks } from '@content'
-import { checkGoalCompletion, generateDailyGoal, getPackRule, getPackUnlockStatus, intentLabel, loadCompetitiveAsync, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type CompetitiveState, type GoalsState, type JournalEntry, type SkillTreeState, type StatsAggregate, type StreakData, type UserProfile } from '@lib'
+import { checkGoalCompletion, generateDailyGoal, getPackRule, getPackUnlockStatus, intentLabel, loadCompetitiveAsync, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, loadUnlocksAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type CompetitiveState, type GoalsState, type JournalEntry, type SkillTreeState, type StatsAggregate, type StreakData, type UnlockStore, type UserProfile } from '@lib'
 import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
@@ -84,12 +84,13 @@ export function HomePage() {
   const [stats, setStats] = useState<StatsAggregate | null>(null)
   const [competitive, setCompetitive] = useState<CompetitiveState | null>(null)
   const [streak, setStreak] = useState<StreakData | null>(null)
+  const [unlocks, setUnlocks] = useState<UnlockStore | null>(null)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [p, s, str, journal, g, tree, comp] = await Promise.all([
+        const [p, s, str, journal, g, tree, comp, u] = await Promise.all([
           loadProfileAsync(),
           loadStatsAsync(),
           loadStreakAsync(),
@@ -97,12 +98,14 @@ export function HomePage() {
           loadGoalsAsync(),
           loadSkillTreeAsync(),
           loadCompetitiveAsync(),
+          loadUnlocksAsync(),
         ])
         if (cancelled) return
         setProfile(p)
         setStats(s)
         setStreak(str)
         setCompetitive(comp)
+        setUnlocks(u)
         setCoachMsg(generateHomeCoachMessage(s, str, p))
         setRecentJournal(journal.slice(-3).reverse())
         setGoals(g)
@@ -219,6 +222,18 @@ export function HomePage() {
           </Link>
         ) : null
       })() : null}
+
+      {unlocks && (unlocks.achievements.length > 0 || unlocks.titles.length > 0) ? (
+        <Link
+          to="/milestones"
+          className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
+        >
+          <div className="text-xs font-medium text-zinc-400">Milestones & Titles</div>
+          <div className="mt-1 text-sm text-zinc-200">
+            {unlocks.achievements.length} milestone{unlocks.achievements.length !== 1 ? 's' : ''}{unlocks.titles.length > 0 ? ` · ${unlocks.titles.length} title${unlocks.titles.length !== 1 ? 's' : ''}` : ''} earned
+          </div>
+        </Link>
+      ) : null}
 
       {stats && stats.totalSessions >= 3 ? (
         <div className="grid gap-3 sm:grid-cols-2">

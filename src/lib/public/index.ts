@@ -186,3 +186,19 @@ export {
   type TroubleArea,
   type ImprovedArea,
 } from '../insightsEngine'
+
+export {
+  ALL_MILESTONES,
+  evaluateMilestones,
+  type MilestoneId,
+  type MilestoneCategory,
+  type MilestoneDefinition,
+  type EarnedMilestone,
+} from '../milestonesEngine'
+
+export {
+  ALL_TITLES,
+  evaluateTitles,
+  type TitleId,
+  type TitleDefinition,
+} from '../titlesEngine'

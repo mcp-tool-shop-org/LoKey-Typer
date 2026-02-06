@@ -20,6 +20,8 @@ import {
   loadSkillTreeAsync,
   loadStatsAsync,
   loadStreakAsync,
+  loadUnlocksAsync,
+  loadSkillModelAsync,
   maybeUpdatePersonalBest,
   pushRecent,
   saveCompetitiveAsync,
@@ -29,6 +31,7 @@ import {
   saveSkillTreeAsync,
   saveStatsAsync,
   saveStreakAsync,
+  saveUnlocksAsync,
   type Preferences,
   type SprintDurationMs,
   typewriterAudio,
@@ -40,6 +43,8 @@ import {
 import { updateCompetitiveAfterRun } from '@lib-internal/competitiveEngine'
 import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
 import { generateCoachMessage, type CoachMessage } from '@lib-internal/coach'
+import { evaluateMilestones } from '@lib-internal/milestonesEngine'
+import { evaluateTitles } from '@lib-internal/titlesEngine'
 import { TypingOverlay } from './TypingOverlay'
 import { CoachBanner } from './CoachBanner'
 import { SessionReflection } from './SessionReflection'
@@ -124,6 +129,8 @@ export function TypingSession(props: {
 
   const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
   const [runValidity, setRunValidity] = useState<RunValidity | null>(null)
+  const [newUnlocks, setNewUnlocks] = useState<{ label: string }[]>([])
+  const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
@@ -297,6 +304,56 @@ export function TypingSession(props: {
         }
       })()
     }
+
+    // Milestone + title detection (fire-and-forget).
+    ;(async () => {
+      try {
+        const [stats, streak, competitive, skillTree, unlocks, skill] = await Promise.all([
+          loadStatsAsync(),
+          loadStreakAsync(),
+          loadCompetitiveAsync(),
+          loadSkillTreeAsync(),
+          loadUnlocksAsync(),
+          loadSkillModelAsync(),
+        ])
+
+        const newMilestones = evaluateMilestones({
+          stats,
+          streak,
+          competitive,
+          skillTree,
+          alreadyEarned: unlocks.achievements,
+        })
+        const newTitles = evaluateTitles({
+          stats,
+          streak,
+          skill,
+          skillTree,
+          alreadyEarned: unlocks.titles,
+        })
+
+        if (newMilestones.length > 0 || newTitles.length > 0) {
+          const updatedUnlocks = {
+            ...unlocks,
+            achievements: [...unlocks.achievements, ...newMilestones.map((m) => m.id)],
+            titles: [...unlocks.titles, ...newTitles.map((t) => t.id)],
+          }
+          await saveUnlocksAsync(updatedUnlocks)
+
+          const labels = [
+            ...newMilestones.map((m) => ({ label: m.label })),
+            ...newTitles.map((t) => ({ label: t.label })),
+          ]
+          setNewUnlocks(labels)
+
+          // Auto-dismiss after 4s
+          if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current)
+          unlockTimerRef.current = setTimeout(() => setNewUnlocks([]), 4000)
+        }
+      } catch {
+        // silent
+      }
+    })()
 
     if (props.prefs.bellOnCompletion) {
       typewriterAudio.play('return_bell', {
@@ -605,6 +662,21 @@ export function TypingSession(props: {
           )}
         </div>
       </div>
+
+      {isComplete && newUnlocks.length > 0 ? (
+        <div className="rounded-lg border border-zinc-700 bg-zinc-900/60 px-4 py-3">
+          <div className="text-xs font-medium text-zinc-300">
+            {newUnlocks.length === 1 ? 'New unlock' : 'New unlocks'}
+          </div>
+          <div className="mt-1 flex flex-wrap gap-2">
+            {newUnlocks.map((u) => (
+              <span key={u.label} className="rounded-full border border-zinc-600 bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-zinc-200">
+                {u.label}
+              </span>
+            ))}
+          </div>
+        </div>
+      ) : null}
 
       {isComplete ? (
         <SessionReflection sessionTimestamp={endedAtMs ? Math.floor(endedAtMs / 1000) : Math.floor(Date.now() / 1000)} />

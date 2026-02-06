@@ -6,10 +6,36 @@ We didn’t.
 
 ## An environment, not a playlist
 
-LoKey Typer doesn’t play songs or loops.
+LoKey Typer doesn't play songs or loops.
 It creates a quiet, evolving acoustic environment designed to stay out of the way while you type.
 
-There’s no rhythm to follow, no beat to lock onto, and no track to repeat.
+There's no rhythm to follow, no beat to lock onto, and no track to repeat.
+
+## Six distinct soundscapes, one goal
+
+Each session draws from one of six ambient profiles — or picks one at random:
+
+- **Gentle Rain** — dense, warm rain heard from shelter
+- **Warm Focus** — singing bowl-like tones with slow, meditative beating
+- **Nature Air** — birdsong, wind, and a distant stream
+- **Deep Hum** — a low drone with subtle focus-enhancing undertones
+- **Cafe Murmur** — indistinct conversation, soft clinks, warm room tone
+- **Soft Focus** — the original neutral ambient texture
+
+Every profile is procedurally synthesized — no loops, no samples, no borrowed recordings.
+
+## Grounded in acoustic research
+
+Our synthesis draws on published findings about which sounds reduce stress and support sustained attention:
+
+- Negative spectral slopes (-3 to -6 dB per octave) shared by rain, wind, and streams
+- Slow amplitude variation at parasympathetic breathing rates (0.05–0.3 Hz)
+- Descending pitch contours (calming) rather than ascending (alerting)
+- No sharp energy in the 2–4 kHz "alerting" band
+- Gradual onsets on every sound event (no startle response)
+- Aperiodic modulation using irrational frequency ratios — mathematically impossible to loop
+
+We don't claim these sounds boost productivity or hack your brain. We do claim they're designed using what acoustic science knows about calming environments.
 
 ## Designed for focus, not stimulation
 

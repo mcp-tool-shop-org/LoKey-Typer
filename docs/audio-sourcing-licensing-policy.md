@@ -64,7 +64,18 @@ Avoid search terms like:
   - `npm run qa:ambient:assets`
   - `npm run qa:sound-design`
 
+## Procedurally generated stems
+
+Most ambient stems are **procedurally synthesized** using `scripts/audio/generateStems.mjs`. These stems:
+
+- Use no external audio samples — they are synthesized from DSP primitives (oscillators, noise generators, filters, reverb)
+- Have no licensing concerns — they are original generated works
+- Can be regenerated at any time with `node scripts/audio/generateStems.mjs`
+- Are deterministic (seeded RNG) — the same stem IDs always produce the same audio
+
+The CC0-only policy applies to any *externally sourced* stems that might be added in the future. The procedurally generated stems in the current library are original works.
+
 ## Notes
 
-- CC0 means you can use/modify/distribute, including commercially, without permission. Don’t imply the original creator endorses LoKey Typer.
+- CC0 means you can use/modify/distribute, including commercially, without permission. Don't imply the original creator endorses LoKey Typer.
 - If we ever want to accept CC-BY in the future, we should add an explicit attribution system first. Until then: **CC0 only**.

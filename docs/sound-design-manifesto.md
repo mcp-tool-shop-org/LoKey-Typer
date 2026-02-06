@@ -57,13 +57,13 @@ When required:
 
 ## 3. Psychoacoustic Principles
 
-### 3.1 No rhythmic entrainment
+### 3.1 No rhythmic entrainment — aperiodic modulation
 
 The ambient system must not introduce rhythm, tempo, or periodic structure.
 
 **Rationale**
 
-Rhythmic audio entrains attention and motor timing, which interferes with reading and typing.
+Rhythmic audio entrains attention and motor timing, which interferes with reading and typing. Additionally, simple periodic modulation (sine LFOs) within looping stems creates audible repetition artifacts.
 
 **Rules**
 
@@ -71,17 +71,34 @@ Rhythmic audio entrains attention and motor timing, which interferes with readin
 - No repeating transient patterns
 - No periodic modulation in the ~0.5–4 Hz range
 - No tempo-synchronized changes
-- All modulation must be aperiodic (noise-driven, random walk, or equivalent)
+- All modulation must be aperiodic
 
-### 3.2 Spectral neutrality
+**Implementation: irrational rate ratios**
 
-The soundscape must avoid frequency ranges known to increase fatigue or alerting.
+All amplitude modulation uses 5 summed sinusoids at frequencies related by irrational constants (golden ratio phi=1.618, sqrt(2)=1.414, sqrt(3)=1.732, sqrt(5)=2.236, sqrt(7)=2.646). Since no rational multiple of these frequencies equals another, the combined waveform has no finite period — it never repeats. Each stem variant receives unique random phase offsets.
 
-**Targets**
+### 3.2 Spectral design — negative spectral slopes
 
-- Energy concentrated primarily between 150 Hz and 1.5 kHz
+The soundscape uses spectral slopes matching naturally calming sounds.
+
+**Science basis**
+
+Research shows negative spectral slopes (-3 to -6 dB/oct) are perceived as calming. All natural calming sounds share this property: rain (-3 dB/oct, pink), wind (-3 dB/oct), streams (-4 to -6 dB/oct), ocean (-6 dB/oct, brown).
+
+**Targets per profile**
+
+- **rain_gentle**: Pink noise spectrum, broadband 1–5 kHz peak
+- **focus_warm**: Energy below 500 Hz, inharmonic bowl partials
+- **nature_air**: Mixed spectrum — brown noise base, pink wind, 2–6 kHz chirps
+- **deep_hum**: Brown noise (-6 dB/oct), energy below 200 Hz, 40 Hz gamma component
+- **cafe_murmur**: Brown noise through 50–500 Hz formant bands
+
+**Shared rules**
+
+- No sharp peaks in the 2–4 kHz "alerting" band
 - Gentle roll-off above 4 kHz
 - No sustained narrowband tones
+- All transients have >50 ms attack time
 
 ### 3.3 Loudness stability
 
@@ -176,9 +193,25 @@ LoKey Typer does not claim to:
 - improve intelligence
 - optimize brainwaves
 - increase productivity through neuroscience
-- induce specific mental states
+- induce specific mental states through audio entrainment
 
-The goal is support, not optimization.
+The synthesis is *informed by* acoustic research (spectral slopes, parasympathetic rates, calming sound categories), but we do not claim therapeutic or cognitive enhancement outcomes. The goal is comfort and focus support, not optimization.
+
+## 9. Ambient Profile Library
+
+All stems are procedurally synthesized using DSP primitives. No external samples.
+
+| Profile | Layers | Stems | Science Basis |
+|---------|--------|-------|---------------|
+| focus_soft | 4 | 17 | Original neutral texture |
+| focus_warm | 4 | 15 | Singing bowl inharmonic partials, 2–6 Hz beating |
+| nature_air | 4 | 14 | Birdsong cortisol reduction, water -6dB/oct, wind 1/f |
+| rain_gentle | 4 | 14 | Pink rain spectrum, vagal sub-bass, shelter safety signal |
+| deep_hum | 3 | 11 | 40 Hz gamma entrainment, theta beating, brown noise |
+| cafe_murmur | 4 | 14 | ASMR formant murmur, fire-like stochastic transients |
+| competitive_clean | 3 | 10 | Neutral, low-distraction |
+
+The `random` default setting picks a different profile each page load.
 
 ## Acceptance Tests (Enforceable, Numeric)
 
@@ -223,15 +256,15 @@ You can use the following verbatim.
 
 ### Short description
 
-LoKey Typer uses an evolving ambient soundscape designed to support focus without distraction. The audio environment changes gradually over time, avoids rhythm and repetition, and preserves clear keystroke feedback — making it comfortable for long typing sessions.
+LoKey Typer uses six distinct ambient soundscapes — rain, singing bowls, birdsong, drones, cafe murmur, and soft textures — each synthesized using acoustic research on calming sounds. No loops, no samples, no repetition.
 
 ### Medium description
 
-Unlike playlists or music loops, LoKey Typer’s ambience is engineered as a non-rhythmic environment. It evolves subtly over time, avoids attention-grabbing patterns, and is mixed to never mask typing feedback. Accessibility settings are enforced automatically, and sound is always optional.
+Unlike playlists or music loops, LoKey Typer's ambience is procedurally synthesized using acoustic properties shown to reduce stress: negative spectral slopes matching rain and wind, parasympathetic-rate modulation, and mathematically aperiodic textures that never repeat. Six profiles offer variety while a random default keeps each session fresh. Accessibility settings are enforced automatically, and sound is always optional.
 
-### “Why our ambience is different”
+### "Why our ambience is different"
 
-LoKey Typer doesn’t play songs. It renders a quiet, evolving acoustic environment — designed to stay out of the way while you type.
+LoKey Typer doesn't play songs or samples. It synthesizes a quiet, evolving acoustic environment grounded in what acoustic science knows about calming sounds — designed to stay out of the way while you type.
 
 ### What we explicitly don’t claim
 

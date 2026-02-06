@@ -26,6 +26,7 @@ import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngi
 import { generateCoachMessage, type CoachMessage } from '@lib-internal/coach'
 import { TypingOverlay } from './TypingOverlay'
 import { CoachBanner } from './CoachBanner'
+import { SessionReflection } from './SessionReflection'
 import { ambientPlugin } from '../../plugins/ambientPlugin'
 
 function fnv1a32Hex(input: string) {
@@ -520,6 +521,10 @@ export function TypingSession(props: {
           )}
         </div>
       </div>
+
+      {isComplete ? (
+        <SessionReflection sessionTimestamp={endedAtMs ? Math.floor(endedAtMs / 1000) : Math.floor(Date.now() / 1000)} />
+      ) : null}
 
       {props.mode === 'competitive' ? (
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">

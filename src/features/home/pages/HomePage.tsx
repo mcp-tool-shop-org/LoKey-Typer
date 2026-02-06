@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { loadProfileAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type UserProfile } from '@lib'
+import { loadJournalAsync, loadProfileAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type JournalEntry, type UserProfile } from '@lib'
 import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
@@ -55,6 +55,17 @@ function ModeCard({ mode, description, highlight }: { mode: Mode; description: s
   )
 }
 
+function formatRelativeTime(unixSeconds: number): string {
+  const diff = Math.floor(Date.now() / 1000) - unixSeconds
+  if (diff < 60) return 'just now'
+  if (diff < 3600) return `${Math.floor(diff / 60)}m ago`
+  if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`
+  const days = Math.floor(diff / 86400)
+  if (days === 1) return 'yesterday'
+  if (days < 7) return `${days}d ago`
+  return `${Math.floor(days / 7)}w ago`
+}
+
 function goalToMode(goal: UserProfile['goal']): Mode | null {
   if (goal === 'calm' || goal === 'speed') return 'focus'
   if (goal === 'work_writing') return 'real_life'
@@ -66,15 +77,22 @@ export function HomePage() {
   const preferred = preferredQuickstartMode()
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
+  const [recentJournal, setRecentJournal] = useState<JournalEntry[]>([])
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [p, stats, streak] = await Promise.all([loadProfileAsync(), loadStatsAsync(), loadStreakAsync()])
+        const [p, stats, streak, journal] = await Promise.all([
+          loadProfileAsync(),
+          loadStatsAsync(),
+          loadStreakAsync(),
+          loadJournalAsync(),
+        ])
         if (cancelled) return
         setProfile(p)
         setCoachMsg(generateHomeCoachMessage(stats, streak, p))
+        setRecentJournal(journal.slice(-3).reverse())
       } catch {
         // silent
       }
@@ -115,6 +133,27 @@ export function HomePage() {
         <ModeCard mode="real_life" description="Emails, texts, support replies, and journaling." highlight={highlightMode === 'real_life'} />
         <ModeCard mode="competitive" description="Timed sprints, PBs, and a simple local leaderboard." highlight={highlightMode === 'competitive'} />
       </section>
+
+      {recentJournal.length > 0 ? (
+        <section className="space-y-3">
+          <div className="text-xs font-medium text-zinc-400">Recent reflections</div>
+          {recentJournal.map((entry, i) => (
+            <div key={entry.id ?? i} className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+              {entry.note ? <div className="text-sm text-zinc-300">{entry.note}</div> : null}
+              <div className="mt-1 flex flex-wrap items-center gap-2">
+                {entry.tags.map((tag) => (
+                  <span key={tag} className="rounded-full border border-zinc-700 px-2 py-0.5 text-[11px] text-zinc-400">
+                    {tag}
+                  </span>
+                ))}
+                <span className="text-[11px] text-zinc-500">
+                  {formatRelativeTime(entry.timestamp)}
+                </span>
+              </div>
+            </div>
+          ))}
+        </section>
+      ) : null}
     </div>
   )
 }

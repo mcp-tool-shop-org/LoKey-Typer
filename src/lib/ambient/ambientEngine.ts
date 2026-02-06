@@ -143,6 +143,8 @@ export class AmbientEngineV2 {
 
   private rand = mulberry32(xmur3('ambient')())
 
+  private seedNonce: number | null = null
+
   async userGestureUnlock() {
     await resumeAudioContext()
   }
@@ -231,6 +233,36 @@ export class AmbientEngineV2 {
     }
   }
 
+  private getSeedNonce() {
+    if (this.seedNonce != null) return this.seedNonce
+    try {
+      if (typeof localStorage === 'undefined') {
+        this.seedNonce = 0
+        return this.seedNonce
+      }
+
+      const raw = localStorage.getItem('lkt_ambient_seed_nonce_v1')
+      const parsed = raw == null ? 0 : Number.parseInt(raw, 10)
+      this.seedNonce = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
+      return this.seedNonce
+    } catch {
+      this.seedNonce = 0
+      return this.seedNonce
+    }
+  }
+
+  private bumpSeedNonce() {
+    const cur = this.getSeedNonce()
+    const next = (cur + 1) % 1_000_000_000
+    this.seedNonce = next
+    try {
+      if (typeof localStorage === 'undefined') return
+      localStorage.setItem('lkt_ambient_seed_nonce_v1', String(next))
+    } catch {
+      // ignore
+    }
+  }
+
   private logDebug(msg: string, extra?: unknown) {
     if (!this.shouldLogDebug()) return
     console.log(`[ambient] ${msg}`, extra ?? '')
@@ -301,7 +333,6 @@ export class AmbientEngineV2 {
 
       if (picked) {
         stemsByLayer[layer] = picked
-        this.history.noteLayerUse(layer, picked.id, 5)
       }
     }
 
@@ -317,18 +348,44 @@ export class AmbientEngineV2 {
     if (!this.history || this.activeMode !== params.mode) this.history = new AmbientHistory(params.mode)
 
     // Choose initial stems.
-    const stemsByLayer = this.pickInitialSoundscape({ mode: params.mode, profile: params.profile })
-    const activeIds: SoundscapeLayers = {}
-    for (const [layer, stem] of Object.entries(stemsByLayer) as Array<[AmbientLayerName, AmbientStem]>) {
-      activeIds[layer] = stem.id
+    // We try a few times to avoid repeating the most recent soundscape across app starts,
+    // but we always allow a fallback if the library is small.
+    const maxAttempts = 8
+    let stemsByLayer: Partial<Record<AmbientLayerName, AmbientStem>> = {}
+    let activeIds: SoundscapeLayers = {}
+    let repeatedLast = false
+
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const candidate = this.pickInitialSoundscape({ mode: params.mode, profile: params.profile })
+      const candidateIds: SoundscapeLayers = {}
+      for (const [layer, stem] of Object.entries(candidate) as Array<[AmbientLayerName, AmbientStem]>) {
+        candidateIds[layer] = stem.id
+      }
+
+      stemsByLayer = candidate
+      activeIds = candidateIds
+
+      if (!this.history.wasSoundscapeUsedRecently(params.profile, candidateIds, 1)) {
+        repeatedLast = false
+        break
+      }
+
+      repeatedLast = true
+      // Nudge RNG forward to explore a different region.
+      this.rand()
+      this.rand()
+      this.rand()
     }
 
-    // Cross-session no-repeat: if we accidentally picked a recent full soundscape, we’ll let macro evolution swap quickly.
-    if (this.history.wasSoundscapeUsedWithinMs(params.profile, activeIds, 30 * 60_000)) {
-      this.logDebug('Picked recently-used soundscape; will evolve soon', activeIds)
+    for (const [layer, stem] of Object.entries(stemsByLayer) as Array<[AmbientLayerName, AmbientStem]>) {
+      this.history.noteLayerUse(layer, stem.id, 5)
+    }
+
+    this.history.noteSoundscape(params.profile, activeIds)
+
+    if (repeatedLast) {
+      this.logDebug('Repeated last soundscape; will evolve soon if possible', activeIds)
       this.nextEvolutionAtMs = Date.now() + 15_000
-    } else {
-      this.history.noteSoundscape(params.profile, activeIds)
     }
 
     await this.mixer.preload(Object.values(stemsByLayer).filter(Boolean) as AmbientStem[])
@@ -452,8 +509,14 @@ export class AmbientEngineV2 {
       this.evolutionDebounceUntilMs = null
     }
 
-    // Seed RNG per session+profile+mode day bucket for stable "feel" within a day.
-    const seed = `${this.activeMode}|${this.activeProfile}|${new Date().toISOString().slice(0, 10)}`
+    const startingNow = shouldPlay && !wasPlaying
+    if (startingNow || modeChanged || profileChanged) {
+      this.bumpSeedNonce()
+    }
+
+    // Seed RNG per session+profile+mode day bucket + a per-start nonce.
+    // This keeps ambience stable within a single play session, but different across app launches.
+    const seed = `${this.activeMode}|${this.activeProfile}|${new Date().toISOString().slice(0, 10)}|${this.getSeedNonce()}`
     this.rand = mulberry32(xmur3(seed)())
 
     void (async () => {

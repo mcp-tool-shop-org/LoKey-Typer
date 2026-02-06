@@ -8,8 +8,11 @@ import {
   buildFeedback,
   computeLiveMetrics,
   getPersonalBest,
+  applyXp,
+  computeXpFromRun,
   loadGoalsAsync,
   loadSkillModel,
+  loadSkillTreeAsync,
   loadStatsAsync,
   loadStreakAsync,
   maybeUpdatePersonalBest,
@@ -17,6 +20,7 @@ import {
   saveGoalsAsync,
   saveLastMode,
   saveSkillModel,
+  saveSkillTreeAsync,
   saveStatsAsync,
   saveStreakAsync,
   type Preferences,
@@ -237,6 +241,18 @@ export function TypingSession(props: {
     } catch {
       // ignore
     }
+
+    // Update skill tree XP (fire-and-forget).
+    ;(async () => {
+      try {
+        const xpGains = computeXpFromRun(run, props.exercise, targetText)
+        const prevTree = await loadSkillTreeAsync()
+        const nextTree = applyXp(prevTree, xpGains)
+        await saveSkillTreeAsync(nextTree)
+      } catch {
+        // silent
+      }
+    })()
 
     // PB update (competitive only, but harmless)
     maybeUpdatePersonalBest({

@@ -124,3 +124,10 @@ export {
   type DailyGoal,
   type DayCompletion,
 } from '../goalsEngine'
+
+export {
+  computeXpFromRun,
+  applyXp,
+  xpForLevel,
+  type XpGains,
+} from '../skillTree'

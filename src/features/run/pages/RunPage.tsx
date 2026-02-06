@@ -6,6 +6,8 @@ import {
   incrementRestartCount,
   isTemplateExercise,
   loadCompetitiveAsync,
+  loadSkillModel,
+  loadStatsAsync,
   modeToPath,
   renderTemplateExercise,
   resetRestartCount,
@@ -13,6 +15,7 @@ import {
   type RuleSet,
   type SprintDurationMs,
 } from '@lib'
+import { selectScenarioVariant, variantLabel, type ScenarioSelection } from '@lib-internal/scenarioEngine'
 import { usePreferences } from '@app'
 import { TypingSession } from '@features/typing'
 
@@ -29,11 +32,32 @@ export function RunPage({ mode }: { mode: Mode }) {
   const { prefs } = usePreferences()
 
   const [ruleSet, setRuleSet] = useState<RuleSet>('standard')
+  const [scenario, setScenario] = useState<ScenarioSelection | null>(null)
 
   // Reset restart counter on mount (new exercise = new session)
   useEffect(() => {
     if (mode === 'competitive') resetRestartCount()
   }, [mode, params.exerciseId])
+
+  // Load scenario variant for real_life mode
+  useEffect(() => {
+    if (mode !== 'real_life') return
+    const ex = exerciseId ? findExercise(exerciseId) : null
+    if (!ex) return
+    let cancelled = false
+    ;(async () => {
+      try {
+        const skill = loadSkillModel()
+        const stats = await loadStatsAsync()
+        if (cancelled) return
+        const sel = selectScenarioVariant({ exercise: ex, skill, stats })
+        setScenario(sel)
+      } catch {
+        // silent — fall back to URL variant
+      }
+    })()
+    return () => { cancelled = true }
+  }, [mode, exerciseId])
 
   // Load active rule set from competitive state (competitive mode only)
   useEffect(() => {
@@ -58,7 +82,9 @@ export function RunPage({ mode }: { mode: Mode }) {
   const exerciseId = params.exerciseId ?? ''
   const exercise = findExercise(exerciseId)
 
-  const variant = (search.get('variant') === 'long' ? 'long' : 'short') as 'short' | 'long'
+  const urlVariant = (search.get('variant') === 'long' ? 'long' : 'short') as 'short' | 'long'
+  // Real-life mode uses scenario engine to pick variant; others use URL param
+  const variant = mode === 'real_life' && scenario ? scenario.textVariant : urlVariant
   const ghost = mode === 'competitive' && prefs.competitiveGhostEnabled && search.get('ghost') !== '0'
 
   const sprintDurationMs = useMemo(() => {
@@ -132,6 +158,13 @@ export function RunPage({ mode }: { mode: Mode }) {
               ))}
             </div>
           </div>
+        </div>
+      ) : null}
+
+      {mode === 'real_life' && scenario && scenario.variant !== 'standard' ? (
+        <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm">
+          <span className="font-medium text-zinc-300">{variantLabel(scenario.variant)}</span>
+          <span className="ml-2 text-zinc-400">{scenario.rationale}</span>
         </div>
       ) : null}
 

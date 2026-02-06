@@ -172,3 +172,10 @@ export {
   resolvePlanExercise,
   type SessionPlan,
 } from '../rotationEngine'
+
+export {
+  selectScenarioVariant,
+  variantLabel,
+  type ScenarioVariant,
+  type ScenarioSelection,
+} from '../scenarioEngine'

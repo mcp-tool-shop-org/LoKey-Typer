@@ -119,10 +119,12 @@ export class AmbientMixer {
 
   private baseGainDbForLayer(layer: AmbientLayerName) {
     // Relative mix targets; actual master volume is applied on top.
-    if (layer === 'mid_texture' || layer === 'mid_presence') return -14
-    if (layer === 'low_bed') return -18
-    if (layer === 'air') return -24
-    return -26 // room
+    // Slightly hotter defaults so ambient is audible on typical laptop speakers.
+    // Safety caps are still enforced at the engine level.
+    if (layer === 'mid_texture' || layer === 'mid_presence') return -11
+    if (layer === 'low_bed') return -15
+    if (layer === 'air') return -21
+    return -23 // room
   }
 
   private dbToGain(db: number) {

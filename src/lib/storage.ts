@@ -66,6 +66,9 @@ const KEY_LAST_MODE = 'lkt_last_mode_v1'
 const KEY_USER_ID = 'lkt_user_id_v1'
 const KEY_SKILL = 'lkt_skill_v1'
 
+// Preference migrations (one-time toggles)
+const KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1 = 'lkt_migrate_ambient_always_on_v1'
+
 const LEGACY_KEYS: Record<string, string> = {
   [KEY_PREFS]: 'tt_prefs_v1',
   [KEY_PREFS_LKG]: 'tt_prefs_v1_lkg',
@@ -111,7 +114,7 @@ const DEFAULT_PREFS: Preferences = {
   bellOnCompletion: true,
   ambientEnabled: true,
   ambientProfile: 'focus_soft',
-  ambientVolume: 0.35,
+  ambientVolume: 0.4,
   ambientPauseOnTyping: false,
   fontScale: 1,
   screenReaderMode: false,
@@ -326,7 +329,29 @@ export function saveSkillModel(model: UserSkillModel) {
 export function loadPreferences(): Preferences {
   ensureStorageKeysMigrated()
   const parsed = safeParse<Partial<Preferences>>(localStorage.getItem(KEY_PREFS))
-  const sanitized = sanitizePreferences(parsed)
+
+  let sanitized = sanitizePreferences(parsed)
+
+  // Phase 4: Ambient is part of the "place". Older installs may have ambientEnabled=false
+  // persisted from earlier defaults. Migrate once to turn it on (unless locked off).
+  try {
+    const didMigrate = localStorage.getItem(KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1) === '1'
+    if (!didMigrate) {
+      localStorage.setItem(KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1, '1')
+
+      const canEnableAmbient = sanitized.soundEnabled && !sanitized.screenReaderMode
+      if (canEnableAmbient && !sanitized.ambientEnabled) {
+        sanitized = sanitizePreferences({
+          ...sanitized,
+          ambientEnabled: true,
+          ambientProfile: sanitized.ambientProfile === 'off' ? 'focus_soft' : sanitized.ambientProfile,
+          ambientVolume: Math.max(sanitized.ambientVolume, DEFAULT_PREFS.ambientVolume),
+        })
+      }
+    }
+  } catch {
+    // ignore
+  }
 
   // If we had to correct anything (or storage was missing), persist sanitized + keep LKG.
   // This prevents repeated "bad" states from lingering.

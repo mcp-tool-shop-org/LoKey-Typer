@@ -23,7 +23,9 @@ import {
   updateSkillModelFromRun,
 } from '@lib'
 import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
+import { generateCoachMessage, type CoachMessage } from '@lib-internal/coach'
 import { TypingOverlay } from './TypingOverlay'
+import { CoachBanner } from './CoachBanner'
 import { ambientPlugin } from '../../plugins/ambientPlugin'
 
 function fnv1a32Hex(input: string) {
@@ -102,8 +104,25 @@ export function TypingSession(props: {
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
   const [inputFocused, setInputFocused] = useState(false)
 
+  const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
+
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
+
+  // Load coach message on mount (before typing starts).
+  useEffect(() => {
+    let cancelled = false
+    ;(async () => {
+      try {
+        const [stats, streak] = await Promise.all([loadStatsAsync(), loadStreakAsync()])
+        if (cancelled) return
+        setCoachMsg(generateCoachMessage(stats, streak, null))
+      } catch {
+        // silent
+      }
+    })()
+    return () => { cancelled = true }
+  }, [])
 
   const timeLimitMs = props.sprintDurationMs
 
@@ -361,6 +380,8 @@ export function TypingSession(props: {
           <Stat label="Backspaces" value={`${backspaces}`} />
         </div>
       )}
+
+      {startedAtMs == null && !isComplete ? <CoachBanner message={coachMsg} /> : null}
 
       <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
         <TypingOverlay

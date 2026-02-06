@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { loadProfileAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type UserProfile } from '@lib'
+import { loadProfileAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type UserProfile } from '@lib'
+import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
   const navigate = useNavigate()
@@ -64,9 +65,21 @@ function goalToMode(goal: UserProfile['goal']): Mode | null {
 export function HomePage() {
   const preferred = preferredQuickstartMode()
   const [profile, setProfile] = useState<UserProfile | null>(null)
+  const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
 
   useEffect(() => {
-    loadProfileAsync().then(setProfile).catch(() => {})
+    let cancelled = false
+    ;(async () => {
+      try {
+        const [p, stats, streak] = await Promise.all([loadProfileAsync(), loadStatsAsync(), loadStreakAsync()])
+        if (cancelled) return
+        setProfile(p)
+        setCoachMsg(generateHomeCoachMessage(stats, streak, p))
+      } catch {
+        // silent
+      }
+    })()
+    return () => { cancelled = true }
   }, [])
 
   const userName = profile?.name?.trim() || ''
@@ -90,6 +103,12 @@ export function HomePage() {
           </div>
         </div>
       </section>
+
+      {coachMsg ? (
+        <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-400">
+          {coachMsg.text}
+        </div>
+      ) : null}
 
       <section className="grid gap-4 md:grid-cols-3">
         <ModeCard mode="focus" description="Calm practice. Minimal HUD by default." highlight={highlightMode === 'focus'} />

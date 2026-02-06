@@ -134,8 +134,11 @@ export function TypingSession(props: {
 
   // Phase 3: Ambient soundtrack system (mode-aware, accessible, fail-safe).
   useEffect(() => {
-    const sessionActive = startedAtMs != null && !isComplete
-    const sessionPaused = !inputFocused
+    // Ambient should feel stable during a session:
+    // - don't stop just because the textarea loses focus
+    // - start as soon as the run page is open
+    const sessionActive = !isComplete
+    const sessionPaused = false
     ambientEngine.update({
       mode: props.mode,
       prefs: props.prefs,

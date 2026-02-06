@@ -144,6 +144,21 @@ export class AmbientEngineV2 {
   private rand = mulberry32(xmur3('ambient')())
 
   private seedNonce: number | null = null
+  private forceFreshStart = false
+
+  constructor() {
+    // If the browser restores the page from the back/forward cache, JS state can
+    // resume exactly where it left off. That can feel like a “reload” that
+    // doesn't change the ambience. Force a fresh soundscape on restore.
+    try {
+      window.addEventListener('pageshow', (e) => {
+        const persisted = Boolean((e as unknown as { persisted?: boolean })?.persisted)
+        if (persisted) this.forceFreshStart = true
+      })
+    } catch {
+      // ignore
+    }
+  }
 
   async userGestureUnlock() {
     await resumeAudioContext()
@@ -520,7 +535,9 @@ export class AmbientEngineV2 {
     }
 
     // When switching mode/profile mid-session, rebuild the soundscape.
-    if (modeChanged || profileChanged) {
+    const needsRebuild = modeChanged || profileChanged || this.forceFreshStart
+    if (needsRebuild) {
+      this.forceFreshStart = false
       this.mixer.stopAll(1.0)
       this.history = new AmbientHistory(this.activeMode)
       this.nextEvolutionAtMs = null
@@ -529,7 +546,7 @@ export class AmbientEngineV2 {
     }
 
     const startingNow = shouldPlay && !wasPlaying
-    if (startingNow || modeChanged || profileChanged) {
+    if (startingNow || modeChanged || profileChanged || needsRebuild) {
       this.bumpSeedNonce()
     }
 

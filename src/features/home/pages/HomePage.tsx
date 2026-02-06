@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { checkGoalCompletion, generateDailyGoal, intentLabel, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type GoalsState, type JournalEntry, type SkillTreeState, type UserProfile } from '@lib'
+import { loadAllPacks } from '@content'
+import { checkGoalCompletion, generateDailyGoal, getPackRule, getPackUnlockStatus, intentLabel, loadCompetitiveAsync, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type CompetitiveState, type GoalsState, type JournalEntry, type SkillTreeState, type StatsAggregate, type UserProfile } from '@lib'
 import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
@@ -80,22 +81,27 @@ export function HomePage() {
   const [recentJournal, setRecentJournal] = useState<JournalEntry[]>([])
   const [goals, setGoals] = useState<GoalsState | null>(null)
   const [skillTree, setSkillTree] = useState<SkillTreeState | null>(null)
+  const [stats, setStats] = useState<StatsAggregate | null>(null)
+  const [competitive, setCompetitive] = useState<CompetitiveState | null>(null)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [p, stats, streak, journal, g, tree] = await Promise.all([
+        const [p, s, streak, journal, g, tree, comp] = await Promise.all([
           loadProfileAsync(),
           loadStatsAsync(),
           loadStreakAsync(),
           loadJournalAsync(),
           loadGoalsAsync(),
           loadSkillTreeAsync(),
+          loadCompetitiveAsync(),
         ])
         if (cancelled) return
         setProfile(p)
-        setCoachMsg(generateHomeCoachMessage(stats, streak, p))
+        setStats(s)
+        setCompetitive(comp)
+        setCoachMsg(generateHomeCoachMessage(s, streak, p))
         setRecentJournal(journal.slice(-3).reverse())
         setGoals(g)
         setSkillTree(tree)
@@ -169,6 +175,27 @@ export function HomePage() {
           </div>
         </Link>
       ) : null}
+
+      {stats ? (() => {
+        const packs = loadAllPacks()
+        const packNames = [...new Set(packs.map((p) => p.pack))]
+        const unlocked = packNames.filter((name) => {
+          const rule = getPackRule(name)
+          const status = getPackUnlockStatus(rule, stats, skillTree, competitive)
+          return status.unlocked
+        }).length
+        return unlocked < packNames.length ? (
+          <Link
+            to="/focus/exercises"
+            className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
+          >
+            <div className="text-xs font-medium text-zinc-400">Content Packs</div>
+            <div className="mt-1 text-sm text-zinc-200">
+              {unlocked}/{packNames.length} packs unlocked
+            </div>
+          </Link>
+        ) : null
+      })() : null}
 
       <section className="grid gap-4 md:grid-cols-3">
         <ModeCard mode="focus" description="Calm practice. Minimal HUD by default." highlight={highlightMode === 'focus'} />

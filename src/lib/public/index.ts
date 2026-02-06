@@ -150,3 +150,11 @@ export {
   RESTART_SESSION_KEY,
   type RunValidity,
 } from '../ratingEngine'
+
+export {
+  getPackRule,
+  getPackUnlockStatus,
+  evaluatePackUnlock,
+  type PackUnlockRule,
+  type PackUnlockStatus,
+} from '../progressionEngine'

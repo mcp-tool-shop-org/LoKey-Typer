@@ -29,7 +29,7 @@ function ModeCard({ mode, description }: { mode: Mode; description: string }) {
           }}
           className="rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 hover:bg-white"
         >
-          Start
+          Next session
         </button>
         <Link
           to={`/${path}/exercises`}

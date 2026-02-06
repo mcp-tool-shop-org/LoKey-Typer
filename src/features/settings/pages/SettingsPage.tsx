@@ -21,6 +21,15 @@ export function SettingsPage({ mode }: { mode: Mode }) {
   const ambientLockedOff = isAmbientLockedOff(prefs)
   const ambientEnabledEffective = getEffectiveAmbientEnabled(prefs)
 
+  const ambientDescription = (() => {
+    const p = prefs.ambientProfile
+    if (p === 'focus_soft') return 'Quiet, steady background for long focus.'
+    if (p === 'focus_warm') return 'Softer bed with warmth and minimal presence.'
+    if (p === 'competitive_clean') return 'Clearer presence for fast, precise sessions.'
+    if (p === 'nature_air') return 'Airy texture with gentle movement, no beat.'
+    return 'No ambient sound.'
+  })()
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.ctrlKey && e.altKey && (e.key === 'r' || e.key === 'R')) {
@@ -105,7 +114,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
               ) : null}
 
               <label className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400">Profile</span>
+                <span className="text-xs text-zinc-400">Soundscape</span>
                 <select
                   value={prefs.ambientProfile}
                   disabled={!ambientEnabledEffective}
@@ -124,6 +133,8 @@ export function SettingsPage({ mode }: { mode: Mode }) {
                   <option value="off">Off</option>
                 </select>
               </label>
+
+              <div className="text-xs text-zinc-400">{ambientDescription}</div>
 
               <label className="flex items-center gap-2">
                 <span className="text-xs text-zinc-400">Volume</span>

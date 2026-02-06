@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import { loadAllPacks } from '@content'
-import { checkGoalCompletion, generateDailyGoal, getPackRule, getPackUnlockStatus, intentLabel, loadCompetitiveAsync, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type CompetitiveState, type GoalsState, type JournalEntry, type SkillTreeState, type StatsAggregate, type UserProfile } from '@lib'
+import { checkGoalCompletion, generateDailyGoal, getPackRule, getPackUnlockStatus, intentLabel, loadCompetitiveAsync, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadSkillTreeAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type CompetitiveState, type GoalsState, type JournalEntry, type SkillTreeState, type StatsAggregate, type StreakData, type UserProfile } from '@lib'
 import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
@@ -83,12 +83,13 @@ export function HomePage() {
   const [skillTree, setSkillTree] = useState<SkillTreeState | null>(null)
   const [stats, setStats] = useState<StatsAggregate | null>(null)
   const [competitive, setCompetitive] = useState<CompetitiveState | null>(null)
+  const [streak, setStreak] = useState<StreakData | null>(null)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [p, s, streak, journal, g, tree, comp] = await Promise.all([
+        const [p, s, str, journal, g, tree, comp] = await Promise.all([
           loadProfileAsync(),
           loadStatsAsync(),
           loadStreakAsync(),
@@ -100,8 +101,9 @@ export function HomePage() {
         if (cancelled) return
         setProfile(p)
         setStats(s)
+        setStreak(str)
         setCompetitive(comp)
-        setCoachMsg(generateHomeCoachMessage(s, streak, p))
+        setCoachMsg(generateHomeCoachMessage(s, str, p))
         setRecentJournal(journal.slice(-3).reverse())
         setGoals(g)
         setSkillTree(tree)
@@ -137,6 +139,27 @@ export function HomePage() {
       {coachMsg ? (
         <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm text-zinc-400">
           {coachMsg.text}
+        </div>
+      ) : null}
+
+      {streak && (streak.totalDaysPracticed ?? 0) > 0 ? (
+        <div className="flex items-center gap-4 rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3">
+          <div className="text-sm text-zinc-200">
+            {streak.totalDaysPracticed ?? 0} day{(streak.totalDaysPracticed ?? 0) !== 1 ? 's' : ''} practiced
+          </div>
+          {(streak.comebackWins ?? 0) > 0 ? (
+            <div className="text-xs text-zinc-400">
+              · {streak.comebackWins} comeback{(streak.comebackWins ?? 0) !== 1 ? 's' : ''}
+            </div>
+          ) : null}
+          <div className="ml-auto flex gap-1">
+            {(streak.rolling7 ?? []).map((v, i) => (
+              <span
+                key={i}
+                className={`inline-block h-2 w-2 rounded-full ${v ? 'bg-zinc-400' : 'bg-zinc-700'}`}
+              />
+            ))}
+          </div>
         </div>
       ) : null}
 

@@ -24,6 +24,10 @@ export type StreakData = {
   lastPracticeDate: string // YYYY-MM-DD
   rolling7: number[] // last 7 days: 1=practiced, 0=not (index 0=today)
   bestWeek: number
+  // Phase 3 humane streak additions (backward-compatible)
+  totalDaysPracticed?: number
+  comebackWins?: number
+  rollingBestWeek?: number
 }
 
 export type StatsAggregate = {
@@ -112,6 +116,9 @@ export function defaultStreak(): StreakData {
     lastPracticeDate: '',
     rolling7: [0, 0, 0, 0, 0, 0, 0],
     bestWeek: 0,
+    totalDaysPracticed: 0,
+    comebackWins: 0,
+    rollingBestWeek: 0,
   }
 }
 

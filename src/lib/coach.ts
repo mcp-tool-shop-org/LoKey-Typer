@@ -61,6 +61,15 @@ export function generateCoachMessage(
 
   // 6. First session of day
   if (streak && streak.rolling7[0] === 0) {
+    // 6a. Comeback celebration (returning after 3+ day gap)
+    if (streak.lastPracticeDate) {
+      const today = new Date()
+      const last = new Date(streak.lastPracticeDate + 'T00:00:00')
+      const gap = Math.round((today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24))
+      if (gap >= 3) {
+        return { text: 'Welcome back. Picking up where you left off.', type: 'celebrate' }
+      }
+    }
     return { text: 'Welcome back. One session is enough.', type: 'encourage' }
   }
 
@@ -86,6 +95,15 @@ export function generateHomeCoachMessage(
   }
 
   if (streak && streak.rolling7[0] === 0) {
+    // Comeback celebration for home page
+    if (streak.lastPracticeDate) {
+      const today = new Date()
+      const last = new Date(streak.lastPracticeDate + 'T00:00:00')
+      const gap = Math.round((today.getTime() - last.getTime()) / (1000 * 60 * 60 * 24))
+      if (gap >= 3) {
+        return { text: 'Welcome back. Breaks are part of the process.', type: 'celebrate' }
+      }
+    }
     const name = profile?.name?.trim()
     return {
       text: name ? `Hey ${name}. Ready for today's session?` : 'Ready for today?',

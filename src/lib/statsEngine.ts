@@ -115,12 +115,20 @@ export function updateStreakFromRun(prev: StreakData | null): StreakData {
   const weekCount = trimmed7.reduce((a, b) => a + b, 0)
   const bestWeek = Math.max(streak.bestWeek, weekCount)
 
+  // Phase 3: humane streak tracking
+  const totalDaysPracticed = (streak.totalDaysPracticed ?? 0) + 1
+  const comebackWins = (streak.comebackWins ?? 0) + (gap >= 3 ? 1 : 0)
+  const rollingBestWeek = Math.max(streak.rollingBestWeek ?? 0, weekCount)
+
   return {
     currentStreak: current,
     bestStreak: best,
     lastPracticeDate: today,
     rolling7: trimmed7,
     bestWeek,
+    totalDaysPracticed,
+    comebackWins,
+    rollingBestWeek,
   }
 }
 

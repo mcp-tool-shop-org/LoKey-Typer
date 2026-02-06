@@ -41,6 +41,7 @@ See `modular.md` for the repository modularity contracts (public APIs, import bo
 - `docs/sound-design.md` — ambient sound design + audit framework (Phase 3.4)
 - `docs/sound-design-manifesto.md` — formal sound design manifesto + numeric acceptance tests + science-safe marketing copy
 - `docs/audio-review-checklist.md` — required manual audio review checklist for new stems
+- `docs/audio-sourcing-licensing-policy.md` — CC0-only sourcing + licensing rules + search terms
 - `docs/sound-philosophy.md` — short public-facing sound philosophy (marketing-safe)
 - `docs/accessibility-commitment.md` — short accessibility commitment (public-facing)
 - `docs/how-personalization-works.md` — plain-language explanation (≤300 words)

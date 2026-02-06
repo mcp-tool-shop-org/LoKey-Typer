@@ -26,3 +26,4 @@ See also:
 
 - `docs/sound-design-manifesto.md` (formal policy + numeric acceptance tests)
 - `docs/sound-design.md` (audit framework and rationale)
+- `docs/audio-sourcing-licensing-policy.md` (CC0-only sourcing + search terms)

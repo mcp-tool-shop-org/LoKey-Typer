@@ -179,3 +179,10 @@ export {
   type ScenarioVariant,
   type ScenarioSelection,
 } from '../scenarioEngine'
+
+export {
+  computeInsights,
+  type InsightsSummary,
+  type TroubleArea,
+  type ImprovedArea,
+} from '../insightsEngine'

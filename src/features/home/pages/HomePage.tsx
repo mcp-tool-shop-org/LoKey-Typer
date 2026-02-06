@@ -221,13 +221,24 @@ export function HomePage() {
       })() : null}
 
       {stats && stats.totalSessions >= 3 ? (
-        <Link
-          to="/plan"
-          className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
-        >
-          <div className="text-xs font-medium text-zinc-400">Session Planner</div>
-          <div className="mt-1 text-sm text-zinc-200">Plan your next sessions with reasons</div>
-        </Link>
+        <div className="grid gap-3 sm:grid-cols-2">
+          <Link
+            to="/plan"
+            className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
+          >
+            <div className="text-xs font-medium text-zinc-400">Session Planner</div>
+            <div className="mt-1 text-sm text-zinc-200">Plan your next sessions with reasons</div>
+          </Link>
+          {stats.totalSessions >= 5 ? (
+            <Link
+              to="/insights"
+              className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
+            >
+              <div className="text-xs font-medium text-zinc-400">Insights</div>
+              <div className="mt-1 text-sm text-zinc-200">View your progress trends</div>
+            </Link>
+          ) : null}
+        </div>
       ) : null}
 
       <section className="grid gap-4 md:grid-cols-3">

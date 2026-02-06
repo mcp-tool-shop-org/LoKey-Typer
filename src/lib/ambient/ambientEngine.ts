@@ -344,6 +344,10 @@ export class AmbientEngineV2 {
       const candidatesRaw = this.stemsFor({ mode: params.mode, profile: params.profile, layer })
       if (!this.history) continue
 
+       if (candidatesRaw.length === 0) {
+         this.logDebug('No candidates for layer', { mode: params.mode, profile: params.profile, layer })
+       }
+
       const avoidId = params.avoidLayerIds?.[layer]
       const candidates =
         avoidId && candidatesRaw.length > 1 ? candidatesRaw.filter((c) => c.id !== avoidId) : candidatesRaw
@@ -356,6 +360,13 @@ export class AmbientEngineV2 {
 
       if (picked) {
         stemsByLayer[layer] = picked
+      } else if (candidatesRaw.length > 0) {
+        this.logDebug('Could not pick stem for layer (all recently used?)', {
+          mode: params.mode,
+          profile: params.profile,
+          layer,
+          candidates: candidatesRaw.length,
+        })
       }
     }
 

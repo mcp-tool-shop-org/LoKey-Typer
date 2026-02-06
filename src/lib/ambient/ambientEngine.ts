@@ -6,7 +6,12 @@ import { fetchAmbientManifest, type AmbientStem } from '../ambientManifest'
 import { AmbientHistory, type AmbientLayerName, type SoundscapeLayers } from './ambientHistory'
 import { AmbientMixer } from './ambientMixer'
 
-export type AmbientProfile = 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air'
+export type AmbientProfile = 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air' | 'rain_gentle' | 'deep_hum' | 'cafe_murmur' | 'random'
+
+const FOCUS_PROFILES: AmbientProfile[] = ['focus_soft', 'focus_warm', 'nature_air', 'rain_gentle', 'deep_hum', 'cafe_murmur']
+
+/** Pick a random focus profile (seeded per page load for consistency within a session). */
+const sessionRandomProfile: AmbientProfile = FOCUS_PROFILES[Math.floor(Math.random() * FOCUS_PROFILES.length)]
 
 type EngineParams = {
   mode: Mode
@@ -76,21 +81,25 @@ function mulberry32(seed: number) {
 
 function deriveEffectiveProfile(mode: Mode, selected: AmbientProfile): AmbientProfile {
   if (selected === 'off') return 'off'
-  if (selected === 'nature_air') return 'nature_air'
+
+  // Resolve 'random' to a session-stable random profile.
+  const resolved = selected === 'random' ? sessionRandomProfile : selected
+
+  if (resolved === 'nature_air') return 'nature_air'
 
   if (mode === 'competitive') return 'competitive_clean'
-  if (selected === 'competitive_clean') return 'focus_soft'
-  return selected
+  if (resolved === 'competitive_clean') return 'focus_soft'
+  return resolved
 }
 
 function computeEffectiveVolume(prefs: Preferences) {
   const base = clamp(Number(prefs.ambientVolume), 0, 1)
 
   // Safety cap.
-  const maxVolume = 0.5
+  const maxVolume = 0.65
 
   // Keep ambience below typing SFX when enabled.
-  const typingCap = prefs.soundEnabled ? clamp(prefs.volume, 0, 1) * 0.7 : maxVolume
+  const typingCap = prefs.soundEnabled ? clamp(prefs.volume, 0, 1) * 0.85 : maxVolume
 
   return clamp(base, 0, Math.min(maxVolume, typingCap))
 }

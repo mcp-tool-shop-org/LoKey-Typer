@@ -8,7 +8,7 @@ export type Preferences = {
   volume: number // 0..1
   bellOnCompletion: boolean
   ambientEnabled: boolean
-  ambientProfile: 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air'
+  ambientProfile: 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air' | 'rain_gentle' | 'deep_hum' | 'cafe_murmur' | 'random'
   ambientVolume: number // 0..1
   ambientPauseOnTyping: boolean
   fontScale: 0.9 | 1 | 1.1
@@ -113,8 +113,8 @@ const DEFAULT_PREFS: Preferences = {
   volume: 0.5,
   bellOnCompletion: true,
   ambientEnabled: true,
-  ambientProfile: 'focus_soft',
-  ambientVolume: 0.4,
+  ambientProfile: 'random',
+  ambientVolume: 0.6,
   ambientPauseOnTyping: false,
   fontScale: 1,
   screenReaderMode: false,
@@ -153,7 +153,7 @@ export function sanitizePreferences(input: Partial<Preferences> | null | undefin
   if (!Number.isFinite(merged.ambientVolume)) merged.ambientVolume = DEFAULT_PREFS.ambientVolume
 
   const ap = merged.ambientProfile
-  if (ap !== 'off' && ap !== 'focus_soft' && ap !== 'focus_warm' && ap !== 'competitive_clean' && ap !== 'nature_air') {
+  if (ap !== 'off' && ap !== 'focus_soft' && ap !== 'focus_warm' && ap !== 'competitive_clean' && ap !== 'nature_air' && ap !== 'rain_gentle' && ap !== 'deep_hum' && ap !== 'cafe_murmur' && ap !== 'random') {
     merged.ambientProfile = DEFAULT_PREFS.ambientProfile
   }
 
@@ -344,7 +344,7 @@ export function loadPreferences(): Preferences {
         sanitized = sanitizePreferences({
           ...sanitized,
           ambientEnabled: true,
-          ambientProfile: sanitized.ambientProfile === 'off' ? 'focus_soft' : sanitized.ambientProfile,
+          ambientProfile: sanitized.ambientProfile === 'off' ? 'random' : sanitized.ambientProfile,
           ambientVolume: Math.max(sanitized.ambientVolume, DEFAULT_PREFS.ambientVolume),
         })
       }

@@ -136,10 +136,10 @@ export class AmbientMixer {
     // Relative mix targets; actual master volume is applied on top.
     // Slightly hotter defaults so ambient is audible on typical laptop speakers.
     // Safety caps are still enforced at the engine level.
-    if (layer === 'mid_texture' || layer === 'mid_presence') return -11
-    if (layer === 'low_bed') return -15
-    if (layer === 'air') return -21
-    return -23 // room
+    if (layer === 'mid_texture' || layer === 'mid_presence') return -8
+    if (layer === 'low_bed') return -12
+    if (layer === 'air') return -18
+    return -20 // room
   }
 
   private dbToGain(db: number) {

@@ -1,7 +1,6 @@
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import type { Exercise, Mode } from '@content'
 import {
-  ambientEngine,
   appendRun,
   bestAccuracyForExercise,
   bestWpmForExercise,
@@ -19,6 +18,7 @@ import {
   updateSkillModelFromRun,
 } from '@lib'
 import { TypingOverlay } from './TypingOverlay'
+import { ambientPlugin } from '../../plugins/ambientPlugin'
 
 function fnv1a32Hex(input: string) {
   let h = 0x811c9dc5
@@ -134,30 +134,16 @@ export function TypingSession(props: {
 
   // Phase 3: Ambient soundtrack system (mode-aware, accessible, fail-safe).
   useEffect(() => {
-    // Ambient should feel stable during a session:
-    // - don't stop just because the textarea loses focus
-    // - start as soon as the run page is open
-    const sessionActive = !isComplete
-    const sessionPaused = false
+    // The app keeps ambient running globally. While a run is active we just
+    // provide the engine with mode + remaining time so it can make safe evolution decisions.
     ambientEngine.update({
       mode: props.mode,
       prefs: props.prefs,
-      sessionActive,
-      sessionPaused,
-      exerciseRemainingMs: remainingMs,
+      sessionActive: true,
+      sessionPaused: false,
+      exerciseRemainingMs: isComplete ? null : remainingMs,
     })
-
-    return () => {
-      // On unmount, ensure we fade down quickly.
-      ambientEngine.update({
-        mode: props.mode,
-        prefs: props.prefs,
-        sessionActive: false,
-        sessionPaused: true,
-        exerciseRemainingMs: null,
-      })
-    }
-  }, [inputFocused, isComplete, props.mode, props.prefs, startedAtMs, remainingMs])
+  }, [isComplete, props.mode, props.prefs, remainingMs])
 
   useEffect(() => {
     if (!isComplete || endedAtMs == null) return
@@ -385,12 +371,7 @@ export function TypingSession(props: {
           aria-describedby={helpTextId}
           onFocus={() => {
             setInputFocused(true)
-            typewriterAudio.ensureReady().then(() => typewriterAudio.resume())
-            ambientEngine.ensureReady()
-            ambientEngine.userGestureUnlock().catch(() => {
-              // ignore
-            })
-          }}
+            typewriterAudio.ensureReady().then(() => typewriterAudio.resume())          }}
           onBlur={() => {
             setInputFocused(false)
           }}
@@ -404,7 +385,7 @@ export function TypingSession(props: {
             // ignore modifiers
             if (e.ctrlKey || e.metaKey || e.altKey) return
 
-            ambientEngine.noteTypingActivity()
+            ambientPlugin.noteTypingActivity()
 
             const modeGain = props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85
 
@@ -458,7 +439,7 @@ export function TypingSession(props: {
             const next = e.target.value
             setTyped(next)
 
-            if (next.length !== typed.length) ambientEngine.noteTypingActivity()
+            if (next.length !== typed.length) ambientPlugin.noteTypingActivity()
 
             if (startedAtMs == null && next.length > 0) setStartedAtMs(Date.now())
 

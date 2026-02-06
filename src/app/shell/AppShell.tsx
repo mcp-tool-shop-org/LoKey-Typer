@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { ambientEngine, typewriterAudio } from '@lib'
+import { typewriterAudio } from '@lib'
+import { ambientPlugin } from '../../plugins/ambientPlugin'
 import { usePreferences } from '@app'
 
 function NavItem({ to, label }: { to: string; label: string }) {
@@ -52,10 +53,7 @@ export function AppShell() {
           // ignore
         })
 
-      ambientEngine.ensureReady()
-      ambientEngine.userGestureUnlock().catch(() => {
-        // ignore
-      })
+      ambientPlugin.init(true)
 
       setAudioUnlocked(true)
       try {
@@ -77,34 +75,13 @@ export function AppShell() {
   }, [])
 
   useEffect(() => {
-    const path = location.pathname
-    const isRunRoute = path.includes('/run/')
-
-    // Typing sessions own ambient control while a run is active.
-    if (isRunRoute) return
-
-    // Preload/arm immediately on app open so first gesture fades in instantly.
-    ambientEngine.ensureReady().catch(() => {
-      // ignore
-    })
-
-    ambientEngine.update({
+    // Keep ambient running globally and persistently; update parameters on navigation.
+    ambientPlugin.update({
       mode: shellMode,
       prefs,
-      sessionActive: true,
       sessionPaused: false,
       exerciseRemainingMs: null,
     })
-
-    return () => {
-      ambientEngine.update({
-        mode: shellMode,
-        prefs,
-        sessionActive: false,
-        sessionPaused: true,
-        exerciseRemainingMs: null,
-      })
-    }
   }, [location.pathname, prefs, shellMode])
 
   const showUnlockHint = !audioUnlocked && prefs.soundEnabled && prefs.ambientEnabled
@@ -143,6 +120,9 @@ export function AppShell() {
                   } catch {
                     // ignore
                   }
+                  // Attempt to unlock audio immediately on button click.
+                  typewriterAudio.ensureReady().then(() => typewriterAudio.resume()).catch(() => {})
+                  ambientPlugin.init(true)
                 }}
                 className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs font-semibold text-zinc-200 hover:bg-zinc-900"
               >

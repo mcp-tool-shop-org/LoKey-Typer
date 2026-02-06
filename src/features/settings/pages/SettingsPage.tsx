@@ -23,10 +23,14 @@ export function SettingsPage({ mode }: { mode: Mode }) {
 
   const ambientDescription = (() => {
     const p = prefs.ambientProfile
+    if (p === 'random') return 'A different soundscape every time you reload.'
     if (p === 'focus_soft') return 'Quiet, steady background for long focus.'
     if (p === 'focus_warm') return 'Softer bed with warmth and minimal presence.'
     if (p === 'competitive_clean') return 'Clearer presence for fast, precise sessions.'
     if (p === 'nature_air') return 'Airy texture with gentle movement, no beat.'
+    if (p === 'rain_gentle') return 'Soft rainfall with distant rumble and drizzle shimmer.'
+    if (p === 'deep_hum') return 'Deep sub-bass drone for intense concentration.'
+    if (p === 'cafe_murmur') return 'Warm café ambience with soft chatter and clinks.'
     return 'No ambient sound.'
   })()
 
@@ -126,10 +130,14 @@ export function SettingsPage({ mode }: { mode: Mode }) {
                   }
                   className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
                 >
+                  <option value="random">Random (changes each reload)</option>
                   <option value="focus_soft">Soft Focus</option>
                   <option value="focus_warm">Warm Silence</option>
                   <option value="competitive_clean">Clean Drive</option>
                   <option value="nature_air">Nature Air</option>
+                  <option value="rain_gentle">Gentle Rain</option>
+                  <option value="deep_hum">Deep Hum</option>
+                  <option value="cafe_murmur">Café Murmur</option>
                   <option value="off">Off</option>
                 </select>
               </label>

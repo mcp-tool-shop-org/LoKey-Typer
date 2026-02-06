@@ -8,10 +8,10 @@
       "layer": "low_bed",
       "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l01_v1.wav",
       "length_sec": 10,
-      "lufs_i": -32.0,
+      "lufs_i": -32,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -23,10 +23,10 @@
       "layer": "low_bed",
       "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l02_v1.wav",
       "length_sec": 10,
-      "lufs_i": -32.0,
+      "lufs_i": -32,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -38,10 +38,10 @@
       "layer": "low_bed",
       "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l03_v1.wav",
       "length_sec": 10,
-      "lufs_i": -32.0,
+      "lufs_i": -32,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -53,10 +53,10 @@
       "layer": "low_bed",
       "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l04_v1.wav",
       "length_sec": 10,
-      "lufs_i": -32.0,
+      "lufs_i": -32,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.003
       },
       "tags": []
@@ -70,8 +70,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.015
       },
       "tags": []
@@ -85,8 +85,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.012
       },
       "tags": []
@@ -100,8 +100,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.014
       },
       "tags": []
@@ -115,8 +115,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.016
       },
       "tags": []
@@ -130,8 +130,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.015
       },
       "tags": []
@@ -145,8 +145,8 @@
       "length_sec": 10,
       "lufs_i": -32.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.015
       },
       "tags": []
@@ -158,7 +158,7 @@
       "layer": "air",
       "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a01_v1.wav",
       "length_sec": 10,
-      "lufs_i": -33.0,
+      "lufs_i": -33,
       "features": {
         "brightness": 0.999,
         "density": 0.999,
@@ -173,7 +173,7 @@
       "layer": "air",
       "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a02_v1.wav",
       "length_sec": 10,
-      "lufs_i": -33.0,
+      "lufs_i": -33,
       "features": {
         "brightness": 0.995,
         "density": 0.999,
@@ -188,7 +188,7 @@
       "layer": "air",
       "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a03_v1.wav",
       "length_sec": 10,
-      "lufs_i": -33.0,
+      "lufs_i": -33,
       "features": {
         "brightness": 0.996,
         "density": 0.999,
@@ -203,7 +203,7 @@
       "layer": "air",
       "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a04_v1.wav",
       "length_sec": 10,
-      "lufs_i": -33.0,
+      "lufs_i": -33,
       "features": {
         "brightness": 0.998,
         "density": 0.999,
@@ -218,10 +218,10 @@
       "layer": "room",
       "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r01_v1.wav",
       "length_sec": 10,
-      "lufs_i": -34.0,
+      "lufs_i": -34,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -233,10 +233,10 @@
       "layer": "room",
       "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r02_v1.wav",
       "length_sec": 10,
-      "lufs_i": -34.0,
+      "lufs_i": -34,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -248,10 +248,10 @@
       "layer": "room",
       "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r03_v1.wav",
       "length_sec": 10,
-      "lufs_i": -34.0,
+      "lufs_i": -34,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -265,8 +265,8 @@
       "length_sec": 10,
       "lufs_i": -31.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.005
       },
       "tags": []
@@ -280,8 +280,8 @@
       "length_sec": 10,
       "lufs_i": -31.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.005
       },
       "tags": []
@@ -295,8 +295,8 @@
       "length_sec": 10,
       "lufs_i": -31.5,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.004
       },
       "tags": []
@@ -308,10 +308,10 @@
       "layer": "mid_presence",
       "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p01_v1.wav",
       "length_sec": 10,
-      "lufs_i": -31.0,
+      "lufs_i": -31,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.029
       },
       "tags": []
@@ -323,10 +323,10 @@
       "layer": "mid_presence",
       "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p02_v1.wav",
       "length_sec": 10,
-      "lufs_i": -31.0,
+      "lufs_i": -31,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.027
       },
       "tags": []
@@ -338,10 +338,10 @@
       "layer": "mid_presence",
       "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p03_v1.wav",
       "length_sec": 10,
-      "lufs_i": -31.0,
+      "lufs_i": -31,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.029
       },
       "tags": []
@@ -353,10 +353,10 @@
       "layer": "mid_presence",
       "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p04_v1.wav",
       "length_sec": 10,
-      "lufs_i": -31.0,
+      "lufs_i": -31,
       "features": {
-        "brightness": 0.0,
-        "density": 1.0,
+        "brightness": 0,
+        "density": 1,
         "movement": 0.024
       },
       "tags": []
@@ -370,8 +370,8 @@
       "length_sec": 10,
       "lufs_i": -31.8,
       "features": {
-        "brightness": 1.0,
-        "density": 1.0,
+        "brightness": 1,
+        "density": 1,
         "movement": 0.091
       },
       "tags": []
@@ -385,8 +385,8 @@
       "length_sec": 10,
       "lufs_i": -31.8,
       "features": {
-        "brightness": 1.0,
-        "density": 1.0,
+        "brightness": 1,
+        "density": 1,
         "movement": 0.088
       },
       "tags": []
@@ -400,9 +400,1029 @@
       "length_sec": 10,
       "lufs_i": -31.8,
       "features": {
-        "brightness": 1.0,
+        "brightness": 1,
         "density": 0.999,
         "movement": 0.096
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_low_bed_l01",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_warm/low_bed/focus_warm_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.85323726455681,
+      "features": {
+        "brightness": -0.0013975243817549198,
+        "density": 1,
+        "movement": 0.006209810416214168
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_low_bed_l02",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_warm/low_bed/focus_warm_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.784338092198595,
+      "features": {
+        "brightness": -0.0024488288059365004,
+        "density": 0.9997648553643376,
+        "movement": 0.00669491985719651
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_low_bed_l03",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_warm/low_bed/focus_warm_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.21543891984038,
+      "features": {
+        "brightness": 0.0014998667698819192,
+        "density": 1,
+        "movement": 0.0071800292981788515
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_low_bed_l04",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_warm/low_bed/focus_warm_low_bed_l04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.146539747482166,
+      "features": {
+        "brightness": 0.0004485623457003385,
+        "density": 0.9997675266880542,
+        "movement": 0.007665138739161193
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_mid_texture_m01",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_warm/mid_texture/focus_warm_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.302993932156824,
+      "features": {
+        "brightness": 0.001431106496602297,
+        "density": 0.9994886387209408,
+        "movement": 0.01967821985669434
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_mid_texture_m02",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_warm/mid_texture/focus_warm_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.45127881166991,
+      "features": {
+        "brightness": -0.002459608679637313,
+        "density": 1,
+        "movement": 0.01692086964286864
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_mid_texture_m03",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_warm/mid_texture/focus_warm_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.59956369118299,
+      "features": {
+        "brightness": -0.0013503238558769226,
+        "density": 0.9993456545318476,
+        "movement": 0.018163519429042933
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_mid_texture_m04",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_warm/mid_texture/focus_warm_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.74784857069608,
+      "features": {
+        "brightness": -0.00024103903211653233,
+        "density": 1,
+        "movement": 0.01940616921521723
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_mid_texture_m05",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_warm/mid_texture/focus_warm_mid_texture_m05_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.39613345020916,
+      "features": {
+        "brightness": 0.000868245791643858,
+        "density": 0.9992026703427546,
+        "movement": 0.016648819001391528
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_air_a01",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_warm/air/focus_warm_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.6610573848011,
+      "features": {
+        "brightness": 0.9507459794008173,
+        "density": 0.9980169941154309,
+        "movement": 0.056204247001558544
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_air_a02",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_warm/air/focus_warm_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.70675839402247,
+      "features": {
+        "brightness": 0.951022237308789,
+        "density": 0.9992947007794865,
+        "movement": 0.05357422124966979
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_air_a03",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_warm/air/focus_warm_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.25245940324385,
+      "features": {
+        "brightness": 0.9512984952167607,
+        "density": 0.998572407443542,
+        "movement": 0.05494419549778104
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_room_r01",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_warm/room/focus_warm_room_r01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.43087406945415,
+      "features": {
+        "brightness": -0.00042424179962836207,
+        "density": 1,
+        "movement": 0.0029303555404767397
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_room_r02",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_warm/room/focus_warm_room_r02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.70890084491111,
+      "features": {
+        "brightness": -0.0006084168457891792,
+        "density": 1,
+        "movement": 0.004209370805881917
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_warm_room_r03",
+      "mode": "focus",
+      "profile": "focus_warm",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_warm/room/focus_warm_room_r03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.48692762036808,
+      "features": {
+        "brightness": -0.0007925918919499963,
+        "density": 1,
+        "movement": 0.005488386071287096
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_low_bed_l01",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/nature_air/low_bed/nature_air_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.736128667602316,
+      "features": {
+        "brightness": 0.00047593242139555515,
+        "density": 0.9990376253202558,
+        "movement": 0.007516669317148626
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_low_bed_l02",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/nature_air/low_bed/nature_air_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.28182967682369,
+      "features": {
+        "brightness": 0.000752190329367295,
+        "density": 1,
+        "movement": 0.008886643565259873
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_low_bed_l03",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/nature_air/low_bed/nature_air_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.327530686045066,
+      "features": {
+        "brightness": 0.0010284482373390347,
+        "density": 0.9995930386483669,
+        "movement": 0.006256617813371122
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_mid_texture_m01",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/nature_air/mid_texture/nature_air_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.80789638508577,
+      "features": {
+        "brightness": -0.0011235090321861207,
+        "density": 0.9989234161046333,
+        "movement": 0.024327401582151652
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_mid_texture_m02",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/nature_air/mid_texture/nature_air_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.19888281135354,
+      "features": {
+        "brightness": 0.0020646573207341134,
+        "density": 0.9979628539257683,
+        "movement": 0.024805850803852083
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_mid_texture_m03",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/nature_air/mid_texture/nature_air_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.787861644406803,
+      "features": {
+        "brightness": 0.002143777527380735,
+        "density": 0.9989876413126476,
+        "movement": 0.02525614142045379
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_mid_texture_m04",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/nature_air/mid_texture/nature_air_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.2134734072024,
+      "features": {
+        "brightness": -0.0020508958888240158,
+        "density": 0.997480398027692,
+        "movement": 0.02499835991114378
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_mid_texture_m05",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/nature_air/mid_texture/nature_air_mid_texture_m05_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.90575381007511,
+      "features": {
+        "brightness": -0.0024268128885887564,
+        "density": 0.9981827846658416,
+        "movement": 0.025236091900616885
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_air_a01",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "air",
+      "path": "/audio/ambient/focus/nature_air/air/nature_air_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.084187853732146,
+      "features": {
+        "brightness": 0.996308004855644,
+        "density": 0.9981850722492672,
+        "movement": 0.08171569503098726
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_air_a02",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "air",
+      "path": "/audio/ambient/focus/nature_air/air/nature_air_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.12988886295352,
+      "features": {
+        "brightness": 0.9965842627636157,
+        "density": 0.9994627789133228,
+        "movement": 0.0790856692790985
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_air_a03",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "air",
+      "path": "/audio/ambient/focus/nature_air/air/nature_air_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.175589872174896,
+      "features": {
+        "brightness": 0.9968605206715875,
+        "density": 0.9987404855773784,
+        "movement": 0.08045564352720976
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_air_a04",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "air",
+      "path": "/audio/ambient/focus/nature_air/air/nature_air_air_a04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.22129088139627,
+      "features": {
+        "brightness": 0.9971367785795592,
+        "density": 0.998018192241434,
+        "movement": 0.081825617775321
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_room_r01",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "room",
+      "path": "/audio/ambient/focus/nature_air/room/nature_air_room_r01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.85276714840438,
+      "features": {
+        "brightness": -0.0011966381780803203,
+        "density": 1,
+        "movement": 0.004493077339604497
+      },
+      "tags": []
+    },
+    {
+      "id": "nature_air_room_r02",
+      "mode": "focus",
+      "profile": "nature_air",
+      "layer": "room",
+      "path": "/audio/ambient/focus/nature_air/room/nature_air_room_r02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.89846815762576,
+      "features": {
+        "brightness": -0.0009203802701085806,
+        "density": 1,
+        "movement": 0.005863051587715745
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_low_bed_l01",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/rain_gentle/low_bed/rain_gentle_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.0049399943091,
+      "features": {
+        "brightness": -0.0012599336414132268,
+        "density": 1,
+        "movement": 0.004510326419956983
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_low_bed_l02",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/rain_gentle/low_bed/rain_gentle_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.05064100353047,
+      "features": {
+        "brightness": -0.000983675733441487,
+        "density": 0.9993320532692597,
+        "movement": 0.005880300668068231
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_low_bed_l03",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/rain_gentle/low_bed/rain_gentle_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.09634201275185,
+      "features": {
+        "brightness": -0.0007074178254697473,
+        "density": 1,
+        "movement": 0.0032502749161794782
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_mid_texture_m01",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/rain_gentle/mid_texture/rain_gentle_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.385711120208725,
+      "features": {
+        "brightness": -0.0018433144211303443,
+        "density": 0.9982974031511694,
+        "movement": 0.0359046724466607
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_mid_texture_m02",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/rain_gentle/mid_texture/rain_gentle_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.346389482496306,
+      "features": {
+        "brightness": 0.0016468182217795402,
+        "density": 0.9995123789813369,
+        "movement": 0.03519209166895598
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_mid_texture_m03",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/rain_gentle/mid_texture/rain_gentle_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.307067844783887,
+      "features": {
+        "brightness": 0.00013695086468942463,
+        "density": 0.9987273548115044,
+        "movement": 0.03447951089125127
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_mid_texture_m04",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/rain_gentle/mid_texture/rain_gentle_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.26774620707147,
+      "features": {
+        "brightness": -0.001372916492400691,
+        "density": 0.999942330641672,
+        "movement": 0.033766930113546555
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_mid_texture_m05",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/rain_gentle/mid_texture/rain_gentle_mid_texture_m05_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.72842456935905,
+      "features": {
+        "brightness": 0.0021172161505091935,
+        "density": 0.9991573064718395,
+        "movement": 0.03305434933584184
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_air_a01",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "air",
+      "path": "/audio/ambient/focus/rain_gentle/air/rain_gentle_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.85299918043893,
+      "features": {
+        "brightness": 0.9985721387928351,
+        "density": 0.9992017935342156,
+        "movement": 0.07670935213379562
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_air_a02",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "air",
+      "path": "/audio/ambient/focus/rain_gentle/air/rain_gentle_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.8987001896603,
+      "features": {
+        "brightness": 0.9988483967008069,
+        "density": 0.9984795001982711,
+        "movement": 0.07407932638190687
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_air_a03",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "air",
+      "path": "/audio/ambient/focus/rain_gentle/air/rain_gentle_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.94440119888168,
+      "features": {
+        "brightness": 0.9991246546087786,
+        "density": 0.9997572068623267,
+        "movement": 0.07544930063001812
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_room_r01",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "room",
+      "path": "/audio/ambient/focus/rain_gentle/room/rain_gentle_room_r01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.073375983163714,
+      "features": {
+        "brightness": -0.0004034159530419856,
+        "density": 1,
+        "movement": 0.00605917947832495
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_room_r02",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "room",
+      "path": "/audio/ambient/focus/rain_gentle/room/rain_gentle_room_r02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.85140275862068,
+      "features": {
+        "brightness": -0.0005875909992028028,
+        "density": 1,
+        "movement": 0.007338194743730128
+      },
+      "tags": []
+    },
+    {
+      "id": "rain_gentle_room_r03",
+      "mode": "focus",
+      "profile": "rain_gentle",
+      "layer": "room",
+      "path": "/audio/ambient/focus/rain_gentle/room/rain_gentle_room_r03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.129429534077644,
+      "features": {
+        "brightness": -0.00077176604536362,
+        "density": 1,
+        "movement": 0.008617210009135306
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_low_bed_l01",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/deep_hum/low_bed/deep_hum_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.198542798520066,
+      "features": {
+        "brightness": 0.00166327373823151,
+        "density": 1,
+        "movement": 0.004743944868445396
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_low_bed_l02",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/deep_hum/low_bed/deep_hum_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.12964362616185,
+      "features": {
+        "brightness": 0.0006119693140499294,
+        "density": 0.9997611235291697,
+        "movement": 0.005229054309427738
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_low_bed_l03",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/deep_hum/low_bed/deep_hum_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.060744453803636,
+      "features": {
+        "brightness": -0.00043933511013165115,
+        "density": 1,
+        "movement": 0.00571416375041008
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_low_bed_l04",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/deep_hum/low_bed/deep_hum_low_bed_l04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -30.99184528144542,
+      "features": {
+        "brightness": -0.0014906395343132317,
+        "density": 0.9997637948528864,
+        "movement": 0.0021992731913924217
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_mid_texture_m01",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/deep_hum/mid_texture/deep_hum_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.744979993789457,
+      "features": {
+        "brightness": -0.002061284091323614,
+        "density": 1,
+        "movement": 0.01281176090426743
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_mid_texture_m02",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/deep_hum/mid_texture/deep_hum_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.517954269773327,
+      "features": {
+        "brightness": -0.002128604603931308,
+        "density": 1,
+        "movement": 0.011022138500586153
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_mid_texture_m03",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/deep_hum/mid_texture/deep_hum_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.290928545757197,
+      "features": {
+        "brightness": -0.0021959251165390016,
+        "density": 0.9995702931131236,
+        "movement": 0.013232516096904874
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_mid_texture_m04",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/deep_hum/mid_texture/deep_hum_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.563902821741067,
+      "features": {
+        "brightness": -0.0022632456291466953,
+        "density": 1,
+        "movement": 0.011442893693223596
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_air_a01",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "air",
+      "path": "/audio/ambient/focus/deep_hum/air/deep_hum_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.04673922434449,
+      "features": {
+        "brightness": 0.9981063197094482,
+        "density": 0.9981978836143389,
+        "movement": 0.039390586921013895
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_air_a02",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "air",
+      "path": "/audio/ambient/focus/deep_hum/air/deep_hum_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.09244023356587,
+      "features": {
+        "brightness": 0.9983825776174199,
+        "density": 0.9994755902783945,
+        "movement": 0.04076056116912514
+      },
+      "tags": []
+    },
+    {
+      "id": "deep_hum_air_a03",
+      "mode": "focus",
+      "profile": "deep_hum",
+      "layer": "air",
+      "path": "/audio/ambient/focus/deep_hum/air/deep_hum_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.13814124278724,
+      "features": {
+        "brightness": 0.9986588355253916,
+        "density": 0.9987532969424501,
+        "movement": 0.03813053541723639
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_low_bed_l01",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/cafe_murmur/low_bed/cafe_murmur_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.927954447222874,
+      "features": {
+        "brightness": 0.002417703327955678,
+        "density": 0.9995249221157283,
+        "movement": 0.005913637052290142
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_low_bed_l02",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/cafe_murmur/low_bed/cafe_murmur_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.97365545644425,
+      "features": {
+        "brightness": -0.0023060387640725824,
+        "density": 1,
+        "movement": 0.00728361130040139
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_low_bed_l03",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/cafe_murmur/low_bed/cafe_murmur_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.01935646566562,
+      "features": {
+        "brightness": -0.0020297808561008423,
+        "density": 1,
+        "movement": 0.008653585548512638
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_mid_texture_m01",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/cafe_murmur/mid_texture/cafe_murmur_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.381770108942874,
+      "features": {
+        "brightness": 0.002274458494503051,
+        "density": 0.9976823610221036,
+        "movement": 0.040904905807226895
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_mid_texture_m02",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/cafe_murmur/mid_texture/cafe_murmur_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.47140133182984,
+      "features": {
+        "brightness": -0.0018383007543161512,
+        "density": 0.997446904709097,
+        "movement": 0.03906609125249088
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_mid_texture_m03",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/cafe_murmur/mid_texture/cafe_murmur_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.30881435109768,
+      "features": {
+        "brightness": -0.000897268804255873,
+        "density": 0.9979295743429102,
+        "movement": 0.038410537093877796
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_mid_texture_m04",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/cafe_murmur/mid_texture/cafe_murmur_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.255817153840326,
+      "features": {
+        "brightness": 0.0007003791816532612,
+        "density": 0.9979350725035183,
+        "movement": 0.038062109531834726
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_mid_texture_m05",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/cafe_murmur/mid_texture/cafe_murmur_mid_texture_m05_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.393440630403347,
+      "features": {
+        "brightness": -0.0014728814526461065,
+        "density": 0.9972721496415324,
+        "movement": 0.038708415497094396
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_air_a01",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "air",
+      "path": "/audio/ambient/focus/cafe_murmur/air/cafe_murmur_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.96483508008532,
+      "features": {
+        "brightness": 0.9960635496538598,
+        "density": 0.9994671723451465,
+        "movement": 0.06603988196980208
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_air_a02",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "air",
+      "path": "/audio/ambient/focus/cafe_murmur/air/cafe_murmur_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.075992059079,
+      "features": {
+        "brightness": 0.9953589551583863,
+        "density": 0.9994061411810108,
+        "movement": 0.066242915738374
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_air_a03",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "air",
+      "path": "/audio/ambient/focus/cafe_murmur/air/cafe_murmur_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.86661987332627,
+      "features": {
+        "brightness": 0.9977338557390031,
+        "density": 0.9999617215646431,
+        "movement": 0.06511904695350677
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_room_r01",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "room",
+      "path": "/audio/ambient/focus/cafe_murmur/room/cafe_murmur_room_r01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.79973099741619,
+      "features": {
+        "brightness": -0.0012044019857421517,
+        "density": 0.9995860089636408,
+        "movement": 0.006084680227562785
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_room_r02",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "room",
+      "path": "/audio/ambient/focus/cafe_murmur/room/cafe_murmur_room_r02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.230540000717156,
+      "features": {
+        "brightness": 0.00023340262938290835,
+        "density": 1,
+        "movement": 0.00589420678280294
+      },
+      "tags": []
+    },
+    {
+      "id": "cafe_murmur_room_r03",
+      "mode": "focus",
+      "profile": "cafe_murmur",
+      "layer": "room",
+      "path": "/audio/ambient/focus/cafe_murmur/room/cafe_murmur_room_r03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.16134900401812,
+      "features": {
+        "brightness": 0.0016712072445079684,
+        "density": 1,
+        "movement": 0.005703733338043093
       },
       "tags": []
     }

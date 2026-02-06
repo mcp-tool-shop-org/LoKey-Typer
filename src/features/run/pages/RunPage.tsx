@@ -3,10 +3,12 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { findExercise, type Mode } from '@content'
 import {
   getOrCreateUserId,
+  incrementRestartCount,
   isTemplateExercise,
   loadCompetitiveAsync,
   modeToPath,
   renderTemplateExercise,
+  resetRestartCount,
   topCompetitiveRuns,
   type RuleSet,
   type SprintDurationMs,
@@ -27,6 +29,11 @@ export function RunPage({ mode }: { mode: Mode }) {
   const { prefs } = usePreferences()
 
   const [ruleSet, setRuleSet] = useState<RuleSet>('standard')
+
+  // Reset restart counter on mount (new exercise = new session)
+  useEffect(() => {
+    if (mode === 'competitive') resetRestartCount()
+  }, [mode, params.exerciseId])
 
   // Load active rule set from competitive state (competitive mode only)
   useEffect(() => {
@@ -138,7 +145,10 @@ export function RunPage({ mode }: { mode: Mode }) {
         showCompetitiveHud={showCompetitiveHud}
         ghostEnabled={ghost}
         onExit={() => navigate(`/${modeToPath(mode)}`)}
-        onRestart={() => navigate(0)}
+        onRestart={() => {
+          if (mode === 'competitive') incrementRestartCount()
+          navigate(0)
+        }}
       />
     </div>
   )

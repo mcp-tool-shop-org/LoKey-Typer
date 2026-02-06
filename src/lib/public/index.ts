@@ -138,3 +138,15 @@ export {
   updateCompetitiveAfterRun,
   type RunValidation,
 } from '../competitiveEngine'
+
+export {
+  assessRunValidity,
+  computeRatingDelta,
+  applyRatingDelta,
+  validityLabel,
+  getRestartCount,
+  incrementRestartCount,
+  resetRestartCount,
+  RESTART_SESSION_KEY,
+  type RunValidity,
+} from '../ratingEngine'

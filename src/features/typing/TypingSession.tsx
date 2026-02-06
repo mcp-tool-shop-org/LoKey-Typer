@@ -3,13 +3,18 @@ import type { Exercise, Mode } from '@content'
 import {
   appendRun,
   appendRunAsync,
+  applyRatingDelta,
+  applyXp,
+  assessRunValidity,
   bestAccuracyForExercise,
   bestWpmForExercise,
   buildFeedback,
   computeLiveMetrics,
-  getPersonalBest,
-  applyXp,
+  computeRatingDelta,
   computeXpFromRun,
+  getPersonalBest,
+  getRestartCount,
+  loadCompetitiveAsync,
   loadGoalsAsync,
   loadSkillModel,
   loadSkillTreeAsync,
@@ -17,6 +22,7 @@ import {
   loadStreakAsync,
   maybeUpdatePersonalBest,
   pushRecent,
+  saveCompetitiveAsync,
   saveGoalsAsync,
   saveLastMode,
   saveSkillModel,
@@ -28,7 +34,10 @@ import {
   typewriterAudio,
   updateGoalsAfterRun,
   updateSkillModelFromRun,
+  validityLabel,
+  type RunValidity,
 } from '@lib'
+import { updateCompetitiveAfterRun } from '@lib-internal/competitiveEngine'
 import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
 import { generateCoachMessage, type CoachMessage } from '@lib-internal/coach'
 import { TypingOverlay } from './TypingOverlay'
@@ -114,6 +123,7 @@ export function TypingSession(props: {
   const [inputFocused, setInputFocused] = useState(false)
 
   const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
+  const [runValidity, setRunValidity] = useState<RunValidity | null>(null)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
@@ -255,14 +265,38 @@ export function TypingSession(props: {
       }
     })()
 
-    // PB update (competitive only, but harmless)
-    maybeUpdatePersonalBest({
-      exerciseId: props.exercise.id,
-      sprintDurationMs: timeLimitMs as SprintDurationMs | undefined,
-      wpm: run.wpm,
-      accuracy: run.accuracy,
-      timestamp,
-    })
+    // Rating + validity assessment (competitive mode)
+    const ruleSet = props.ruleSet ?? 'standard'
+    const validity = props.mode === 'competitive'
+      ? assessRunValidity(run, getRestartCount(), ruleSet)
+      : ('valid' as RunValidity)
+    setRunValidity(validity)
+
+    // PB update — only for valid runs in competitive mode
+    if (validity === 'valid') {
+      maybeUpdatePersonalBest({
+        exerciseId: props.exercise.id,
+        sprintDurationMs: timeLimitMs as SprintDurationMs | undefined,
+        wpm: run.wpm,
+        accuracy: run.accuracy,
+        timestamp,
+      })
+    }
+
+    // Rating update (competitive mode, fire-and-forget)
+    if (props.mode === 'competitive') {
+      ;(async () => {
+        try {
+          const prevComp = await loadCompetitiveAsync()
+          const delta = computeRatingDelta(prevComp.rating, run, validity)
+          const newRating = applyRatingDelta(prevComp.rating, delta)
+          const nextComp = updateCompetitiveAfterRun(prevComp, newRating, delta)
+          await saveCompetitiveAsync(nextComp)
+        } catch {
+          // silent
+        }
+      })()
+    }
 
     if (props.prefs.bellOnCompletion) {
       typewriterAudio.play('return_bell', {
@@ -540,6 +574,14 @@ export function TypingSession(props: {
             <div className="space-y-2">
               <div className="font-medium text-zinc-200">{feedback.primary}</div>
               {feedback.secondary ? <div className="text-zinc-300">{feedback.secondary}</div> : null}
+              {props.mode === 'competitive' && runValidity ? (
+                <div className={[
+                  'text-xs font-medium',
+                  runValidity === 'valid' ? 'text-green-400' : 'text-zinc-500',
+                ].join(' ')}>
+                  {validityLabel(runValidity)}
+                </div>
+              ) : null}
               {props.mode === 'competitive' && pb ? (
                 <div>
                   PB: <span className="text-zinc-200">{Math.round(pb.wpm)} WPM</span> at{' '}

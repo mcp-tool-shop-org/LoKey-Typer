@@ -2,21 +2,27 @@ import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import type { Exercise, Mode } from '@content'
 import {
   appendRun,
+  appendRunAsync,
   bestAccuracyForExercise,
   bestWpmForExercise,
   buildFeedback,
   computeLiveMetrics,
   getPersonalBest,
   loadSkillModel,
+  loadStatsAsync,
+  loadStreakAsync,
   maybeUpdatePersonalBest,
   pushRecent,
   saveLastMode,
   saveSkillModel,
+  saveStatsAsync,
+  saveStreakAsync,
   type Preferences,
   type SprintDurationMs,
   typewriterAudio,
   updateSkillModelFromRun,
 } from '@lib'
+import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
 import { TypingOverlay } from './TypingOverlay'
 import { ambientPlugin } from '../../plugins/ambientPlugin'
 
@@ -167,8 +173,21 @@ export function TypingSession(props: {
     }
 
     appendRun(run)
+    appendRunAsync(run).catch(() => {})
     pushRecent(props.mode, props.exercise.id)
     saveLastMode(props.mode)
+
+    // Update aggregate stats + streak (fire-and-forget).
+    ;(async () => {
+      try {
+        const [prevStats, prevStreak] = await Promise.all([loadStatsAsync(), loadStreakAsync()])
+        const nextStats = updateStatsFromRun(prevStats, run)
+        const nextStreak = updateStreakFromRun(prevStreak)
+        await Promise.all([saveStatsAsync(nextStats), saveStreakAsync(nextStreak)])
+      } catch {
+        // silent
+      }
+    })()
 
     // Phase 3: update local skill model (adaptive selection foundation).
     try {

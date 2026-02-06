@@ -8,7 +8,7 @@ export type Preferences = {
   volume: number // 0..1
   bellOnCompletion: boolean
   ambientEnabled: boolean
-  ambientProfile: 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air' | 'rain_gentle' | 'deep_hum' | 'cafe_murmur' | 'random'
+  ambientProfile: 'off' | 'random' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air'
   ambientVolume: number // 0..1
   ambientPauseOnTyping: boolean
   fontScale: 0.9 | 1 | 1.1
@@ -66,9 +66,6 @@ const KEY_LAST_MODE = 'lkt_last_mode_v1'
 const KEY_USER_ID = 'lkt_user_id_v1'
 const KEY_SKILL = 'lkt_skill_v1'
 
-// Preference migrations (one-time toggles)
-const KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1 = 'lkt_migrate_ambient_always_on_v1'
-
 const LEGACY_KEYS: Record<string, string> = {
   [KEY_PREFS]: 'tt_prefs_v1',
   [KEY_PREFS_LKG]: 'tt_prefs_v1_lkg',
@@ -114,7 +111,7 @@ const DEFAULT_PREFS: Preferences = {
   bellOnCompletion: true,
   ambientEnabled: true,
   ambientProfile: 'random',
-  ambientVolume: 0.6,
+  ambientVolume: 0.35,
   ambientPauseOnTyping: false,
   fontScale: 1,
   screenReaderMode: false,
@@ -153,7 +150,7 @@ export function sanitizePreferences(input: Partial<Preferences> | null | undefin
   if (!Number.isFinite(merged.ambientVolume)) merged.ambientVolume = DEFAULT_PREFS.ambientVolume
 
   const ap = merged.ambientProfile
-  if (ap !== 'off' && ap !== 'focus_soft' && ap !== 'focus_warm' && ap !== 'competitive_clean' && ap !== 'nature_air' && ap !== 'rain_gentle' && ap !== 'deep_hum' && ap !== 'cafe_murmur' && ap !== 'random') {
+  if (ap !== 'off' && ap !== 'random' && ap !== 'focus_soft' && ap !== 'focus_warm' && ap !== 'competitive_clean' && ap !== 'nature_air') {
     merged.ambientProfile = DEFAULT_PREFS.ambientProfile
   }
 
@@ -329,29 +326,7 @@ export function saveSkillModel(model: UserSkillModel) {
 export function loadPreferences(): Preferences {
   ensureStorageKeysMigrated()
   const parsed = safeParse<Partial<Preferences>>(localStorage.getItem(KEY_PREFS))
-
-  let sanitized = sanitizePreferences(parsed)
-
-  // Phase 4: Ambient is part of the "place". Older installs may have ambientEnabled=false
-  // persisted from earlier defaults. Migrate once to turn it on (unless locked off).
-  try {
-    const didMigrate = localStorage.getItem(KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1) === '1'
-    if (!didMigrate) {
-      localStorage.setItem(KEY_MIGRATE_AMBIENT_ALWAYS_ON_V1, '1')
-
-      const canEnableAmbient = sanitized.soundEnabled && !sanitized.screenReaderMode
-      if (canEnableAmbient && !sanitized.ambientEnabled) {
-        sanitized = sanitizePreferences({
-          ...sanitized,
-          ambientEnabled: true,
-          ambientProfile: sanitized.ambientProfile === 'off' ? 'random' : sanitized.ambientProfile,
-          ambientVolume: Math.max(sanitized.ambientVolume, DEFAULT_PREFS.ambientVolume),
-        })
-      }
-    }
-  } catch {
-    // ignore
-  }
+  const sanitized = sanitizePreferences(parsed)
 
   // If we had to correct anything (or storage was missing), persist sanitized + keep LKG.
   // This prevents repeated "bad" states from lingering.

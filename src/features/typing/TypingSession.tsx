@@ -1,54 +1,25 @@
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import type { Exercise, Mode } from '@content'
+import { Icon, type IconName } from '@app/components/Icon'
 import {
+  ambientEngine,
   appendRun,
-  appendRunAsync,
-  applyRatingDelta,
-  applyXp,
-  assessRunValidity,
   bestAccuracyForExercise,
   bestWpmForExercise,
   buildFeedback,
   computeLiveMetrics,
-  computeRatingDelta,
-  computeXpFromRun,
   getPersonalBest,
-  getRestartCount,
-  loadCompetitiveAsync,
-  loadGoalsAsync,
   loadSkillModel,
-  loadSkillTreeAsync,
-  loadStatsAsync,
-  loadStreakAsync,
-  loadUnlocksAsync,
-  loadSkillModelAsync,
   maybeUpdatePersonalBest,
   pushRecent,
-  saveCompetitiveAsync,
-  saveGoalsAsync,
   saveLastMode,
   saveSkillModel,
-  saveSkillTreeAsync,
-  saveStatsAsync,
-  saveStreakAsync,
-  saveUnlocksAsync,
   type Preferences,
   type SprintDurationMs,
   typewriterAudio,
-  updateGoalsAfterRun,
   updateSkillModelFromRun,
-  validityLabel,
-  type RunValidity,
 } from '@lib'
-import { updateCompetitiveAfterRun } from '@lib-internal/competitiveEngine'
-import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
-import { generateCoachMessage, type CoachMessage } from '@lib-internal/coach'
-import { evaluateMilestones } from '@lib-internal/milestonesEngine'
-import { evaluateTitles } from '@lib-internal/titlesEngine'
 import { TypingOverlay } from './TypingOverlay'
-import { CoachBanner } from './CoachBanner'
-import { SessionReflection } from './SessionReflection'
-import { ambientPlugin } from '../../plugins/ambientPlugin'
 
 function fnv1a32Hex(input: string) {
   let h = 0x811c9dc5
@@ -98,10 +69,13 @@ function formatMs(ms: number) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-      <div className="text-[11px] font-medium text-zinc-400">{label}</div>
+      <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+        {icon ? <Icon name={icon} size={13} className="shrink-0 text-zinc-500" /> : null}
+        {label}
+      </div>
       <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{value}</div>
     </div>
   )
@@ -112,7 +86,6 @@ export function TypingSession(props: {
   exercise: Exercise
   targetText: string
   prefs: Preferences
-  ruleSet?: import('@lib').RuleSet
   sprintDurationMs?: SprintDurationMs
   showCompetitiveHud: boolean
   ghostEnabled?: boolean
@@ -127,28 +100,8 @@ export function TypingSession(props: {
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
   const [inputFocused, setInputFocused] = useState(false)
 
-  const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
-  const [runValidity, setRunValidity] = useState<RunValidity | null>(null)
-  const [newUnlocks, setNewUnlocks] = useState<{ label: string }[]>([])
-  const unlockTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
-
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
-
-  // Load coach message on mount (before typing starts).
-  useEffect(() => {
-    let cancelled = false
-    ;(async () => {
-      try {
-        const [stats, streak] = await Promise.all([loadStatsAsync(), loadStreakAsync()])
-        if (cancelled) return
-        setCoachMsg(generateCoachMessage(stats, streak, null))
-      } catch {
-        // silent
-      }
-    })()
-    return () => { cancelled = true }
-  }, [])
 
   const timeLimitMs = props.sprintDurationMs
 
@@ -185,16 +138,27 @@ export function TypingSession(props: {
 
   // Phase 3: Ambient soundtrack system (mode-aware, accessible, fail-safe).
   useEffect(() => {
-    // The app keeps ambient running globally. While a run is active we just
-    // provide the engine with mode + remaining time so it can make safe evolution decisions.
+    const sessionActive = startedAtMs != null && !isComplete
+    const sessionPaused = !inputFocused
     ambientEngine.update({
       mode: props.mode,
       prefs: props.prefs,
-      sessionActive: true,
-      sessionPaused: false,
-      exerciseRemainingMs: isComplete ? null : remainingMs,
+      sessionActive,
+      sessionPaused,
+      exerciseRemainingMs: remainingMs,
     })
-  }, [isComplete, props.mode, props.prefs, remainingMs])
+
+    return () => {
+      // On unmount, ensure we fade down quickly.
+      ambientEngine.update({
+        mode: props.mode,
+        prefs: props.prefs,
+        sessionActive: false,
+        sessionPaused: true,
+        exerciseRemainingMs: null,
+      })
+    }
+  }, [inputFocused, isComplete, props.mode, props.prefs, startedAtMs, remainingMs])
 
   useEffect(() => {
     if (!isComplete || endedAtMs == null) return
@@ -218,32 +182,8 @@ export function TypingSession(props: {
     }
 
     appendRun(run)
-    appendRunAsync(run).catch(() => {})
     pushRecent(props.mode, props.exercise.id)
     saveLastMode(props.mode)
-
-    // Update aggregate stats + streak (fire-and-forget).
-    ;(async () => {
-      try {
-        const [prevStats, prevStreak] = await Promise.all([loadStatsAsync(), loadStreakAsync()])
-        const nextStats = updateStatsFromRun(prevStats, run)
-        const nextStreak = updateStreakFromRun(prevStreak)
-        await Promise.all([saveStatsAsync(nextStats), saveStreakAsync(nextStreak)])
-      } catch {
-        // silent
-      }
-    })()
-
-    // Update daily goals (fire-and-forget).
-    ;(async () => {
-      try {
-        const prevGoals = await loadGoalsAsync()
-        const nextGoals = updateGoalsAfterRun(prevGoals, run)
-        await saveGoalsAsync(nextGoals)
-      } catch {
-        // silent
-      }
-    })()
 
     // Phase 3: update local skill model (adaptive selection foundation).
     try {
@@ -260,100 +200,14 @@ export function TypingSession(props: {
       // ignore
     }
 
-    // Update skill tree XP (fire-and-forget).
-    ;(async () => {
-      try {
-        const xpGains = computeXpFromRun(run, props.exercise, targetText)
-        const prevTree = await loadSkillTreeAsync()
-        const nextTree = applyXp(prevTree, xpGains)
-        await saveSkillTreeAsync(nextTree)
-      } catch {
-        // silent
-      }
-    })()
-
-    // Rating + validity assessment (competitive mode)
-    const ruleSet = props.ruleSet ?? 'standard'
-    const validity = props.mode === 'competitive'
-      ? assessRunValidity(run, getRestartCount(), ruleSet)
-      : ('valid' as RunValidity)
-    setRunValidity(validity)
-
-    // PB update — only for valid runs in competitive mode
-    if (validity === 'valid') {
-      maybeUpdatePersonalBest({
-        exerciseId: props.exercise.id,
-        sprintDurationMs: timeLimitMs as SprintDurationMs | undefined,
-        wpm: run.wpm,
-        accuracy: run.accuracy,
-        timestamp,
-      })
-    }
-
-    // Rating update (competitive mode, fire-and-forget)
-    if (props.mode === 'competitive') {
-      ;(async () => {
-        try {
-          const prevComp = await loadCompetitiveAsync()
-          const delta = computeRatingDelta(prevComp.rating, run, validity)
-          const newRating = applyRatingDelta(prevComp.rating, delta)
-          const nextComp = updateCompetitiveAfterRun(prevComp, newRating, delta)
-          await saveCompetitiveAsync(nextComp)
-        } catch {
-          // silent
-        }
-      })()
-    }
-
-    // Milestone + title detection (fire-and-forget).
-    ;(async () => {
-      try {
-        const [stats, streak, competitive, skillTree, unlocks, skill] = await Promise.all([
-          loadStatsAsync(),
-          loadStreakAsync(),
-          loadCompetitiveAsync(),
-          loadSkillTreeAsync(),
-          loadUnlocksAsync(),
-          loadSkillModelAsync(),
-        ])
-
-        const newMilestones = evaluateMilestones({
-          stats,
-          streak,
-          competitive,
-          skillTree,
-          alreadyEarned: unlocks.achievements,
-        })
-        const newTitles = evaluateTitles({
-          stats,
-          streak,
-          skill,
-          skillTree,
-          alreadyEarned: unlocks.titles,
-        })
-
-        if (newMilestones.length > 0 || newTitles.length > 0) {
-          const updatedUnlocks = {
-            ...unlocks,
-            achievements: [...unlocks.achievements, ...newMilestones.map((m) => m.id)],
-            titles: [...unlocks.titles, ...newTitles.map((t) => t.id)],
-          }
-          await saveUnlocksAsync(updatedUnlocks)
-
-          const labels = [
-            ...newMilestones.map((m) => ({ label: m.label })),
-            ...newTitles.map((t) => ({ label: t.label })),
-          ]
-          setNewUnlocks(labels)
-
-          // Auto-dismiss after 4s
-          if (unlockTimerRef.current) clearTimeout(unlockTimerRef.current)
-          unlockTimerRef.current = setTimeout(() => setNewUnlocks([]), 4000)
-        }
-      } catch {
-        // silent
-      }
-    })()
+    // PB update (competitive only, but harmless)
+    maybeUpdatePersonalBest({
+      exerciseId: props.exercise.id,
+      sprintDurationMs: timeLimitMs as SprintDurationMs | undefined,
+      wpm: run.wpm,
+      accuracy: run.accuracy,
+      timestamp,
+    })
 
     if (props.prefs.bellOnCompletion) {
       typewriterAudio.play('return_bell', {
@@ -468,15 +322,17 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={props.onRestart}
-            className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="refresh" size={14} className="shrink-0" />
             Restart
           </button>
           <button
             type="button"
             onClick={props.onExit}
-            className="rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="x-close" size={14} className="shrink-0" />
             Exit
           </button>
         </div>
@@ -484,27 +340,25 @@ export function TypingSession(props: {
 
       {props.showCompetitiveHud ? (
         <div className="grid gap-3 sm:grid-cols-4">
-          <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} />
-          <Stat label="WPM" value={`${Math.round(live.wpm)}`} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
-          <Stat label="Errors" value={`${live.errors}`} />
+          <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} icon="timer" />
+          <Stat label="WPM" value={`${Math.round(live.wpm)}`} icon="stat-speed" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
+          <Stat label="Errors" value={`${live.errors}`} icon="zap" />
         </div>
       ) : minimalHud ? (
         <div className="grid gap-3 sm:grid-cols-3">
-          <Stat label="Time" value={formatMs(elapsedMs)} />
-          <Stat label="Progress" value={`${typed.length}/${targetText.length}`} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
+          <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
+          <Stat label="Progress" value={`${typed.length}/${targetText.length}`} icon="bar-chart" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
         </div>
       ) : (
         <div className="grid gap-3 sm:grid-cols-4">
-          <Stat label="Time" value={formatMs(elapsedMs)} />
-          <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
-          <Stat label="Backspaces" value={`${backspaces}`} />
+          <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
+          <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} icon="stat-speed" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
+          <Stat label="Backspaces" value={`${backspaces}`} icon="backspace" />
         </div>
       )}
-
-      {startedAtMs == null && !isComplete ? <CoachBanner message={coachMsg} /> : null}
 
       <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
         <TypingOverlay
@@ -521,8 +375,9 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="cursor" size={12} className="shrink-0" />
             Focus
           </button>
         </div>
@@ -534,7 +389,12 @@ export function TypingSession(props: {
           aria-describedby={helpTextId}
           onFocus={() => {
             setInputFocused(true)
-            typewriterAudio.ensureReady().then(() => typewriterAudio.resume())          }}
+            typewriterAudio.ensureReady().then(() => typewriterAudio.resume())
+            ambientEngine.ensureReady()
+            ambientEngine.userGestureUnlock().catch(() => {
+              // ignore
+            })
+          }}
           onBlur={() => {
             setInputFocused(false)
           }}
@@ -548,15 +408,11 @@ export function TypingSession(props: {
             // ignore modifiers
             if (e.ctrlKey || e.metaKey || e.altKey) return
 
-            ambientPlugin.noteTypingActivity()
+            ambientEngine.noteTypingActivity()
 
             const modeGain = props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85
 
             if (e.key === 'Backspace') {
-              if (props.ruleSet === 'no_backspace') {
-                e.preventDefault()
-                return
-              }
               setBackspaces((v) => v + 1)
               typewriterAudio.play('backspace', {
                 enabled: props.prefs.soundEnabled,
@@ -604,16 +460,9 @@ export function TypingSession(props: {
           onChange={(e) => {
             if (isComplete) return
             const next = e.target.value
-
-            // Belt-and-suspenders: if no_backspace rule and text got shorter, revert
-            if (props.ruleSet === 'no_backspace' && next.length < typed.length) {
-              e.target.value = typed
-              return
-            }
-
             setTyped(next)
 
-            if (next.length !== typed.length) ambientPlugin.noteTypingActivity()
+            if (next.length !== typed.length) ambientEngine.noteTypingActivity()
 
             if (startedAtMs == null && next.length > 0) setStartedAtMs(Date.now())
 
@@ -629,18 +478,14 @@ export function TypingSession(props: {
         <div id={helpTextId} className="mt-3 text-xs text-zinc-400" aria-live="polite" aria-atomic="true">
           {isComplete ? (
             <div className="space-y-2">
-              <div className="font-medium text-zinc-200">{feedback.primary}</div>
+              <div className="flex items-center gap-1.5 font-medium text-zinc-200">
+                <Icon name="checkmark-circle" size={14} className="shrink-0 text-zinc-400" />
+                {feedback.primary}
+              </div>
               {feedback.secondary ? <div className="text-zinc-300">{feedback.secondary}</div> : null}
-              {props.mode === 'competitive' && runValidity ? (
-                <div className={[
-                  'text-xs font-medium',
-                  runValidity === 'valid' ? 'text-green-400' : 'text-zinc-500',
-                ].join(' ')}>
-                  {validityLabel(runValidity)}
-                </div>
-              ) : null}
               {props.mode === 'competitive' && pb ? (
-                <div>
+                <div className="flex items-center gap-1.5">
+                  <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
                   PB: <span className="text-zinc-200">{Math.round(pb.wpm)} WPM</span> at{' '}
                   <span className="text-zinc-200">{Math.round(pb.accuracy * 1000) / 10}%</span>
                   {live.accuracy >= 0.95 ? (
@@ -651,39 +496,24 @@ export function TypingSession(props: {
                 </div>
               ) : null}
               <div className="grid gap-2 sm:grid-cols-4">
-                <div>WPM: {Math.round(live.wpm)}</div>
-                <div>Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
-                <div>Errors: {live.errors}</div>
-                <div>Backspaces: {backspaces}</div>
+                <div className="flex items-center gap-1"><Icon name="stat-speed" size={12} className="text-zinc-500" /> WPM: {Math.round(live.wpm)}</div>
+                <div className="flex items-center gap-1"><Icon name="stat-accuracy" size={12} className="text-zinc-500" /> Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
+                <div className="flex items-center gap-1"><Icon name="zap" size={12} className="text-zinc-500" /> Errors: {live.errors}</div>
+                <div className="flex items-center gap-1"><Icon name="backspace" size={12} className="text-zinc-500" /> Backspaces: {backspaces}</div>
               </div>
             </div>
           ) : (
-            <div>Punctuation and newlines are supported. Backspace is allowed (counted).</div>
+            <div className="flex items-center gap-1.5">
+              <Icon name="keyboard" size={13} className="shrink-0 text-zinc-500" />
+              Punctuation and newlines are supported. Backspace is allowed (counted).
+            </div>
           )}
         </div>
       </div>
 
-      {isComplete && newUnlocks.length > 0 ? (
-        <div className="rounded-lg border border-zinc-700 bg-zinc-900/60 px-4 py-3">
-          <div className="text-xs font-medium text-zinc-300">
-            {newUnlocks.length === 1 ? 'New unlock' : 'New unlocks'}
-          </div>
-          <div className="mt-1 flex flex-wrap gap-2">
-            {newUnlocks.map((u) => (
-              <span key={u.label} className="rounded-full border border-zinc-600 bg-zinc-900 px-2.5 py-0.5 text-xs font-medium text-zinc-200">
-                {u.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      {isComplete ? (
-        <SessionReflection sessionTimestamp={endedAtMs ? Math.floor(endedAtMs / 1000) : Math.floor(Date.now() / 1000)} />
-      ) : null}
-
       {props.mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">
+        <div className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">
+          <Icon name="info" size={14} className="shrink-0 text-zinc-500" />
           PB updates require accuracy ≥ 95%.
         </div>
       ) : null}

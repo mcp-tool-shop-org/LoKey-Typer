@@ -17,20 +17,6 @@
       ]
     },
     {
-      "id": "competitive_mixed_01_002",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 2,
-      "estimated_seconds": 75,
-      "text": "Fast, but precise: spacing and punctuation are still errors if missed.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
-      ]
-    },
-    {
       "id": "competitive_mixed_01_003",
       "mode": "competitive",
       "pack": "competitive_mixed_01",
@@ -96,20 +82,6 @@
       "tags": [
         "competitive",
         "short"
-      ]
-    },
-    {
-      "id": "competitive_mixed_01_008",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 2,
-      "estimated_seconds": 20,
-      "text": "Fast, but precise: punctuation is part of the score.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
       ]
     },
     {
@@ -181,20 +153,6 @@
       ]
     },
     {
-      "id": "competitive_mixed_01_014",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 2,
-      "estimated_seconds": 120,
-      "text": "Speed is fine, but precision wins: commas, periods, and apostrophes still count.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
-      ]
-    },
-    {
       "id": "competitive_mixed_01_015",
       "mode": "competitive",
       "pack": "competitive_mixed_01",
@@ -260,20 +218,6 @@
       "tags": [
         "competitive",
         "short"
-      ]
-    },
-    {
-      "id": "competitive_mixed_01_020",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 3,
-      "estimated_seconds": 20,
-      "text": "Push pace, but keep it clean: punctuation is part of the score.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
       ]
     },
     {
@@ -345,20 +289,6 @@
       ]
     },
     {
-      "id": "competitive_mixed_01_026",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 3,
-      "estimated_seconds": 20,
-      "text": "Push pace, but keep it clean: spacing and punctuation are still errors if missed.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
-      ]
-    },
-    {
       "id": "competitive_mixed_01_027",
       "mode": "competitive",
       "pack": "competitive_mixed_01",
@@ -424,20 +354,6 @@
       "tags": [
         "competitive",
         "short"
-      ]
-    },
-    {
-      "id": "competitive_mixed_01_032",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 3,
-      "estimated_seconds": 30,
-      "text": "Speed is fine, but precision wins: punctuation is part of the score.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
       ]
     },
     {
@@ -509,20 +425,6 @@
       ]
     },
     {
-      "id": "competitive_mixed_01_038",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 4,
-      "estimated_seconds": 90,
-      "text": "Fast, but precise: commas, periods, and apostrophes still count.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
-      ]
-    },
-    {
       "id": "competitive_mixed_01_039",
       "mode": "competitive",
       "pack": "competitive_mixed_01",
@@ -591,20 +493,6 @@
       ]
     },
     {
-      "id": "competitive_mixed_01_044",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 4,
-      "estimated_seconds": 90,
-      "text": "Speed is fine, but precision wins: commas, periods, and apostrophes still count.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
-      ]
-    },
-    {
       "id": "competitive_mixed_01_045",
       "mode": "competitive",
       "pack": "competitive_mixed_01",
@@ -670,20 +558,6 @@
       "tags": [
         "competitive",
         "short"
-      ]
-    },
-    {
-      "id": "competitive_mixed_01_050",
-      "mode": "competitive",
-      "pack": "competitive_mixed_01",
-      "title": "Punctuation Snap",
-      "difficulty": 4,
-      "estimated_seconds": 90,
-      "text": "Speed is fine, but precision wins: spacing and punctuation are still errors if missed.",
-      "tags": [
-        "competitive",
-        "punctuation",
-        "colon"
       ]
     }
   ]

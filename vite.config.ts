@@ -30,7 +30,7 @@ export default defineConfig({
         theme_color: '#09090b',
         icons: [
           {
-            src: '/vite.svg',
+            src: '/logo.svg',
             sizes: 'any',
             type: 'image/svg+xml',
           },

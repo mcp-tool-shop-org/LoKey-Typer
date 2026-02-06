@@ -1,8 +1,5 @@
-import { useEffect, useMemo, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { typewriterAudio } from '@lib'
-import { ambientPlugin } from '../../plugins/ambientPlugin'
-import { usePreferences } from '@app'
+import { NavLink, Outlet } from 'react-router-dom'
+import { Icon } from '@app/components/Icon'
 
 function NavItem({ to, label }: { to: string; label: string }) {
   return (
@@ -22,77 +19,15 @@ function NavItem({ to, label }: { to: string; label: string }) {
 }
 
 export function AppShell() {
-  const { prefs } = usePreferences()
-  const location = useLocation()
-  const [audioUnlocked, setAudioUnlocked] = useState<boolean>(() => {
-    try {
-      return localStorage.getItem('lkt_audio_unlocked') === '1'
-    } catch {
-      return false
-    }
-  })
-
-  const shellMode = useMemo(() => {
-    const p = location.pathname
-    if (p.startsWith('/competitive')) return 'competitive' as const
-    if (p.startsWith('/real-life')) return 'real_life' as const
-    return 'focus' as const
-  }, [location.pathname])
-
-  useEffect(() => {
-    let didUnlock = false
-
-    const unlock = () => {
-      if (didUnlock) return
-      didUnlock = true
-
-      typewriterAudio
-        .ensureReady()
-        .then(() => typewriterAudio.resume())
-        .catch(() => {
-          // ignore
-        })
-
-      ambientPlugin.init(true)
-
-      setAudioUnlocked(true)
-      try {
-        localStorage.setItem('lkt_audio_unlocked', '1')
-      } catch {
-        // ignore
-      }
-    }
-
-    window.addEventListener('pointerdown', unlock, { capture: true })
-    window.addEventListener('keydown', unlock, { capture: true })
-    window.addEventListener('touchstart', unlock, { capture: true })
-
-    return () => {
-      window.removeEventListener('pointerdown', unlock, { capture: true })
-      window.removeEventListener('keydown', unlock, { capture: true })
-      window.removeEventListener('touchstart', unlock, { capture: true })
-    }
-  }, [])
-
-  useEffect(() => {
-    // Keep ambient running globally and persistently; update parameters on navigation.
-    ambientPlugin.update({
-      mode: shellMode,
-      prefs,
-      sessionPaused: false,
-      exerciseRemainingMs: null,
-    })
-  }, [location.pathname, prefs, shellMode])
-
-  const showUnlockHint = !audioUnlocked && prefs.soundEnabled && prefs.ambientEnabled
-
   return (
     <div className="min-h-full">
       <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4">
-          <div className="flex items-baseline gap-3">
+          <div className="flex items-center gap-2.5">
+            <Icon name="logo-mark" size={22} className="text-zinc-400" />
             <div className="text-base font-semibold tracking-tight text-zinc-50">LoKey Typer</div>
-            <div className="hidden text-xs text-zinc-400 sm:block">Speed • Accuracy • Consistency</div>
+            <div className="hidden text-xs text-zinc-500 sm:block">·</div>
+            <div className="hidden text-xs text-zinc-500 sm:block">Speed • Accuracy • Consistency</div>
           </div>
           <nav className="flex items-center gap-2">
             <NavItem to="/" label="Home" />
@@ -105,32 +40,6 @@ export function AppShell() {
       </header>
 
       <main className="mx-auto max-w-6xl px-4 py-8">
-        {showUnlockHint ? (
-          <div className="mb-6 rounded-xl border border-zinc-800 bg-zinc-950 p-3 text-sm text-zinc-300">
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                Sound is ready. Tap or press any key to enable audio.
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  setAudioUnlocked(true)
-                  try {
-                    localStorage.setItem('lkt_audio_unlocked', '1')
-                  } catch {
-                    // ignore
-                  }
-                  // Attempt to unlock audio immediately on button click.
-                  typewriterAudio.ensureReady().then(() => typewriterAudio.resume()).catch(() => {})
-                  ambientPlugin.init(true)
-                }}
-                className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs font-semibold text-zinc-200 hover:bg-zinc-900"
-              >
-                Dismiss
-              </button>
-            </div>
-          </div>
-        ) : null}
         <Outlet />
       </main>
 

@@ -3,12 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import { getEffectiveAmbientEnabled, isAmbientLockedOff, modeLabel, resetPreferencesToDefaults, type SprintDurationMs } from '@lib'
 import { usePreferences } from '@app'
-import { DataManagement } from '../DataManagement'
+import { Icon, type IconName } from '@app/components/Icon'
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+function Field({ label, icon, children }: { label: string; icon?: IconName; children: React.ReactNode }) {
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-      <div className="text-sm font-semibold text-zinc-50">{label}</div>
+      <div className="flex items-center gap-2 text-sm font-semibold text-zinc-50">
+        {icon ? <Icon name={icon} size={16} className="shrink-0 text-zinc-500" /> : null}
+        {label}
+      </div>
       <div className="mt-3 text-sm text-zinc-300">{children}</div>
     </div>
   )
@@ -24,14 +27,11 @@ export function SettingsPage({ mode }: { mode: Mode }) {
 
   const ambientDescription = (() => {
     const p = prefs.ambientProfile
-    if (p === 'random') return 'A different soundscape every time you reload.'
+    if (p === 'random') return 'Varies each session. Keeps things fresh.'
     if (p === 'focus_soft') return 'Quiet, steady background for long focus.'
     if (p === 'focus_warm') return 'Softer bed with warmth and minimal presence.'
     if (p === 'competitive_clean') return 'Clearer presence for fast, precise sessions.'
     if (p === 'nature_air') return 'Airy texture with gentle movement, no beat.'
-    if (p === 'rain_gentle') return 'Soft rainfall with distant rumble and drizzle shimmer.'
-    if (p === 'deep_hum') return 'Deep sub-bass drone for intense concentration.'
-    if (p === 'cafe_murmur') return 'Warm café ambience with soft chatter and clinks.'
     return 'No ambient sound.'
   })()
 
@@ -65,7 +65,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
       <section className="space-y-3">
         <div className="text-xs font-medium text-zinc-400">Global</div>
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Sound">
+          <Field label="Sound" icon="sound-on">
             <div className="flex items-center gap-3">
               <label className="flex items-center gap-2">
                 <input
@@ -100,7 +100,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
             </div>
           </Field>
 
-          <Field label="Ambient">
+          <Field label="Ambient" icon="ambient-wave">
             <div className="space-y-3">
               <label className="flex items-center gap-2">
                 <input
@@ -131,14 +131,11 @@ export function SettingsPage({ mode }: { mode: Mode }) {
                   }
                   className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
                 >
-                  <option value="random">Random (changes each reload)</option>
+                  <option value="random">Random (recommended)</option>
                   <option value="focus_soft">Soft Focus</option>
                   <option value="focus_warm">Warm Silence</option>
                   <option value="competitive_clean">Clean Drive</option>
-                  <option value="nature_air">Nature Air</option>
-                  <option value="rain_gentle">Gentle Rain</option>
-                  <option value="deep_hum">Deep Hum</option>
-                  <option value="cafe_murmur">Café Murmur</option>
+                  <option value="nature_air">Open Air</option>
                   <option value="off">Off</option>
                 </select>
               </label>
@@ -170,7 +167,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
             </div>
           </Field>
 
-          <Field label="Font size">
+          <Field label="Font size" icon="type-text">
             <div className="flex gap-2">
               {[0.9, 1, 1.1].map((s) => (
                 <button
@@ -190,7 +187,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
             </div>
           </Field>
 
-          <Field label="Live WPM display">
+          <Field label="Live WPM display" icon="stat-speed">
             <div className="space-y-2">
               <label className="flex items-center gap-2">
                 <input
@@ -240,7 +237,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
         <div className="text-xs font-medium text-zinc-400">Mode-specific</div>
         <div className="grid gap-3 sm:grid-cols-2">
           {mode === 'focus' ? (
-            <Field label="Focus HUD">
+            <Field label="Focus HUD" icon="mode-focus">
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
@@ -254,7 +251,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
 
           {mode === 'competitive' ? (
             <>
-              <Field label="Sprint duration">
+              <Field label="Sprint duration" icon="timer">
                 <div className="flex gap-2">
                   {[30_000, 60_000, 120_000].map((d) => (
                     <button
@@ -274,7 +271,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
                 </div>
               </Field>
 
-              <Field label="Ghost run">
+              <Field label="Ghost run" icon="ghost">
                 <label className="flex items-center gap-2">
                   <input
                     type="checkbox"
@@ -297,13 +294,11 @@ export function SettingsPage({ mode }: { mode: Mode }) {
             onClick={() => setPrefs(resetPreferencesToDefaults())}
             className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
-            Reset Preferences to Safe Defaults
+            Reset to Safe Defaults
           </button>
           <div className="text-[11px] text-zinc-500">Shortcut: Ctrl+Alt+R</div>
         </div>
       </div>
-
-      <DataManagement />
     </div>
   )
 }

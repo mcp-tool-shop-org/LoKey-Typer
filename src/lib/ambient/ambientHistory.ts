@@ -123,58 +123,8 @@ export class AmbientHistory {
     return `${profile}|${parts.join('|')}`
   }
 
-  private parseSoundscapeId(id: string) {
-    // Format: `${profile}|layer:id|layer:id|...`
-    const parts = String(id).split('|')
-    const profile = parts.shift() ?? ''
-    if (!profile) return null
-
-    const layers: SoundscapeLayers = {}
-    for (const p of parts) {
-      const idx = p.indexOf(':')
-      if (idx <= 0) continue
-      const layer = p.slice(0, idx) as AmbientLayerName
-      const stemId = p.slice(idx + 1)
-      if (!stemId) continue
-      if (layer !== 'low_bed' && layer !== 'mid_texture' && layer !== 'mid_presence' && layer !== 'air' && layer !== 'room') continue
-      layers[layer] = stemId
-    }
-
-    return { profile, layers }
-  }
-
-  mostRecentSoundscapeLayers(profile: string): SoundscapeLayers | null {
-    const persistedV2 = loadPersistedV2(this.mode)
-    const candidatesV2 = persistedV2.recentSoundscapes
-    for (const e of candidatesV2) {
-      const parsed = this.parseSoundscapeId(e.id)
-      if (!parsed) continue
-      if (parsed.profile !== profile) continue
-      return parsed.layers
-    }
-
-    const persistedV1 = loadPersistedV1(this.mode)
-    const candidatesV1 = persistedV1.recentSoundscapes
-    for (const id of candidatesV1) {
-      const parsed = this.parseSoundscapeId(id)
-      if (!parsed) continue
-      if (parsed.profile !== profile) continue
-      return parsed.layers
-    }
-
-    return null
-  }
-
   dominantStemId(layers: SoundscapeLayers) {
     return layers.mid_texture ?? layers.mid_presence ?? null
-  }
-
-  mostRecentDominantId() {
-    const persistedV2 = loadPersistedV2(this.mode)
-    if (persistedV2.recentDominant.length) return persistedV2.recentDominant[0]?.id ?? null
-
-    const persistedV1 = loadPersistedV1(this.mode)
-    return persistedV1.recentDominant[0] ?? null
   }
 
   wasSoundscapeUsedRecently(profile: string, layers: SoundscapeLayers, n = 50) {

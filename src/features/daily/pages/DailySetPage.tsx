@@ -10,6 +10,7 @@ import {
   type DailySessionType,
   type DailySetItemKind,
 } from '@lib'
+import { Icon, type IconName } from '@app/components/Icon'
 
 function kindLabel(kind: DailySetItemKind) {
   if (kind === 'confidence') return 'Confidence win'
@@ -17,6 +18,14 @@ function kindLabel(kind: DailySetItemKind) {
   if (kind === 'challenge') return 'Challenge'
   if (kind === 'real_life') return 'Real-life scenario'
   return 'Mix'
+}
+
+function kindIcon(kind: DailySetItemKind): IconName {
+  if (kind === 'confidence') return 'kind-confidence'
+  if (kind === 'targeted') return 'kind-targeted'
+  if (kind === 'challenge') return 'kind-challenge'
+  if (kind === 'real_life') return 'kind-real-life'
+  return 'kind-mix'
 }
 
 function sessionLabel(type: DailySessionType) {
@@ -137,15 +146,21 @@ export function DailySetPage() {
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
-          <div className="text-xs font-medium text-zinc-400">Days practiced</div>
-          <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{daysPracticed.size}</div>
-          <div className="mt-1 text-xs text-zinc-500">No penalties. Missed days are just days.</div>
+        <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
+          <Icon name="stat-days" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
+          <div>
+            <div className="text-xs font-medium text-zinc-400">Days practiced</div>
+            <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{daysPracticed.size}</div>
+            <div className="mt-1 text-xs text-zinc-500">No penalties. Missed days are just days.</div>
+          </div>
         </div>
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
-          <div className="text-xs font-medium text-zinc-400">Best week</div>
-          <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{bestWeek}/7 days</div>
-          <div className="mt-1 text-xs text-zinc-500">Your best rolling 7-day stretch.</div>
+        <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
+          <Icon name="stat-streak" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
+          <div>
+            <div className="text-xs font-medium text-zinc-400">Best week</div>
+            <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{bestWeek}/7 days</div>
+            <div className="mt-1 text-xs text-zinc-500">Your best rolling 7-day stretch.</div>
+          </div>
         </div>
       </div>
 
@@ -161,8 +176,9 @@ export function DailySetPage() {
               setShowWhy((v) => !v)
               setOpenWhyKey(null)
             }}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-200 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-200 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="question" size={14} className="shrink-0" />
             {showWhy ? 'Hide why' : 'Why'}
           </button>
         </div>
@@ -189,10 +205,14 @@ export function DailySetPage() {
                 className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-left transition hover:border-zinc-700 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
               >
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <div className="text-xs font-medium text-zinc-400">
+                  <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
+                    <Icon name={kindIcon(it.kind)} size={14} className="shrink-0 text-zinc-500" />
                     {kindLabel(it.kind)} • {ex.mode}
                   </div>
-                  <div className="text-xs text-zinc-500">Difficulty {ex.difficulty}</div>
+                  <div className="flex items-center gap-1 text-xs text-zinc-500">
+                    <Icon name={`difficulty-${ex.difficulty}` as IconName} size={14} className="shrink-0" />
+                    Lvl {ex.difficulty}
+                  </div>
                 </div>
                 <div className="mt-2 text-sm font-semibold text-zinc-50">{ex.title}</div>
                 <div className="mt-1 text-xs text-zinc-500">{ex.pack}</div>

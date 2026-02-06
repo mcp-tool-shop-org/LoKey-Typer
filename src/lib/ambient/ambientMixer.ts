@@ -38,26 +38,13 @@ function randBetween(rand: () => number, min: number, max: number) {
   return min + (max - min) * rand()
 }
 
-function shouldLogAmbientDebug() {
-  try {
-    if (typeof localStorage === 'undefined') return false
-    return localStorage.getItem('lkt_ambient_debug') === '1'
-  } catch {
-    return false
-  }
-}
-
 async function fetchDecode(ctx: AudioContext, url: string): Promise<AudioBuffer | null> {
   try {
     const res = await fetch(url)
-    if (!res.ok) {
-      if (shouldLogAmbientDebug()) console.warn('[ambient] fetch failed', { url, status: res.status })
-      return null
-    }
+    if (!res.ok) return null
     const ab = await res.arrayBuffer()
     return await ctx.decodeAudioData(ab)
   } catch {
-    if (shouldLogAmbientDebug()) console.warn('[ambient] decode failed', { url })
     return null
   }
 }
@@ -114,7 +101,6 @@ export class AmbientMixer {
         if (this.bufferCache.has(s.path)) return
         const buf = await fetchDecode(g.ctx, s.path)
         if (buf) this.bufferCache.set(s.path, buf)
-        else if (shouldLogAmbientDebug()) console.warn('[ambient] preload failed', { id: s.id, path: s.path })
       }),
     )
   }
@@ -128,18 +114,15 @@ export class AmbientMixer {
 
     const buf = await fetchDecode(g.ctx, stem.path)
     if (buf) this.bufferCache.set(stem.path, buf)
-    else if (shouldLogAmbientDebug()) console.warn('[ambient] buffer unavailable', { id: stem.id, path: stem.path })
     return buf
   }
 
   private baseGainDbForLayer(layer: AmbientLayerName) {
     // Relative mix targets; actual master volume is applied on top.
-    // Slightly hotter defaults so ambient is audible on typical laptop speakers.
-    // Safety caps are still enforced at the engine level.
-    if (layer === 'mid_texture' || layer === 'mid_presence') return -8
-    if (layer === 'low_bed') return -12
-    if (layer === 'air') return -18
-    return -20 // room
+    if (layer === 'mid_texture' || layer === 'mid_presence') return -14
+    if (layer === 'low_bed') return -18
+    if (layer === 'air') return -24
+    return -26 // room
   }
 
   private dbToGain(db: number) {
@@ -240,10 +223,7 @@ export class AmbientMixer {
     const entries = Object.entries(params.stemsByLayer) as Array<[AmbientLayerName, AmbientStem]>
     for (const [layer, stem] of entries) {
       const buf = await this.getBuffer(stem)
-      if (!buf) {
-        if (shouldLogAmbientDebug()) console.warn('[ambient] layer skipped (no buffer)', { layer, id: stem.id, path: stem.path })
-        continue
-      }
+      if (!buf) continue
       this.layers[layer] = this.buildLayerGraph({
         ctx: g.ctx,
         stem,

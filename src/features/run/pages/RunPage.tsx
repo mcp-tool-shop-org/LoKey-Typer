@@ -1,22 +1,16 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { findExercise, type Mode } from '@content'
 import {
   getOrCreateUserId,
-  incrementRestartCount,
   isTemplateExercise,
-  loadCompetitiveAsync,
-  loadSkillModel,
-  loadStatsAsync,
   modeToPath,
   renderTemplateExercise,
-  resetRestartCount,
   topCompetitiveRuns,
-  type RuleSet,
   type SprintDurationMs,
 } from '@lib'
-import { selectScenarioVariant, variantLabel, type ScenarioSelection } from '@lib-internal/scenarioEngine'
 import { usePreferences } from '@app'
+import { Icon } from '@app/components/Icon'
 import { TypingSession } from '@features/typing'
 
 function repeatToLength(base: string, minLen: number) {
@@ -31,60 +25,10 @@ export function RunPage({ mode }: { mode: Mode }) {
   const [search] = useSearchParams()
   const { prefs } = usePreferences()
 
-  const [ruleSet, setRuleSet] = useState<RuleSet>('standard')
-  const [scenario, setScenario] = useState<ScenarioSelection | null>(null)
-
-  // Reset restart counter on mount (new exercise = new session)
-  useEffect(() => {
-    if (mode === 'competitive') resetRestartCount()
-  }, [mode, params.exerciseId])
-
-  // Load scenario variant for real_life mode
-  useEffect(() => {
-    if (mode !== 'real_life') return
-    const ex = exerciseId ? findExercise(exerciseId) : null
-    if (!ex) return
-    let cancelled = false
-    ;(async () => {
-      try {
-        const skill = loadSkillModel()
-        const stats = await loadStatsAsync()
-        if (cancelled) return
-        const sel = selectScenarioVariant({ exercise: ex, skill, stats })
-        setScenario(sel)
-      } catch {
-        // silent — fall back to URL variant
-      }
-    })()
-    return () => { cancelled = true }
-  }, [mode, exerciseId])
-
-  // Load active rule set from competitive state (competitive mode only)
-  useEffect(() => {
-    if (mode !== 'competitive') return
-    const paramRuleSet = search.get('ruleSet') as RuleSet | null
-    if (paramRuleSet && ['standard', 'no_backspace', 'accuracy_gate', 'consistency_ladder'].includes(paramRuleSet)) {
-      setRuleSet(paramRuleSet)
-      return
-    }
-    let cancelled = false
-    ;(async () => {
-      try {
-        const state = await loadCompetitiveAsync()
-        if (!cancelled) setRuleSet(state.activeRuleSet)
-      } catch {
-        // silent
-      }
-    })()
-    return () => { cancelled = true }
-  }, [mode, search])
-
   const exerciseId = params.exerciseId ?? ''
   const exercise = findExercise(exerciseId)
 
-  const urlVariant = (search.get('variant') === 'long' ? 'long' : 'short') as 'short' | 'long'
-  // Real-life mode uses scenario engine to pick variant; others use URL param
-  const variant = mode === 'real_life' && scenario ? scenario.textVariant : urlVariant
+  const variant = (search.get('variant') === 'long' ? 'long' : 'short') as 'short' | 'long'
   const ghost = mode === 'competitive' && prefs.competitiveGhostEnabled && search.get('ghost') !== '0'
 
   const sprintDurationMs = useMemo(() => {
@@ -131,40 +75,45 @@ export function RunPage({ mode }: { mode: Mode }) {
       {mode === 'competitive' ? (
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div>
+            <div className="flex items-center gap-2">
+              <Icon name="timer" size={15} className="shrink-0 text-zinc-400" />
               Sprint: <span className="text-zinc-50">{(sprintDurationMs ?? 60_000) / 1000}s</span>
-              {ruleSet !== 'standard' ? (
-                <span className="ml-2 text-zinc-400">• {ruleSet.replace(/_/g, ' ')}</span>
+              {ghost ? (
+                <span className="ml-1 flex items-center gap-1 text-zinc-400">
+                  <Icon name="ghost" size={14} className="shrink-0" /> Ghost comparison
+                </span>
               ) : null}
-              {ghost ? <span className="ml-2 text-zinc-400">• Ghost comparison</span> : null}
             </div>
             <button
               type="button"
               onClick={() => navigate(`/${modeToPath(mode)}`)}
-              className="rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-900"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-900"
             >
+              <Icon name="arrow-left" size={14} className="shrink-0" />
               Mode
             </button>
           </div>
           <div className="mt-3 text-xs text-zinc-400">
-            Leaderboard (local) — top WPM for this duration:
+            <div className="flex items-center gap-1.5">
+              <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
+              Leaderboard (local) — top WPM for this duration:
+            </div>
             <div className="mt-2 grid gap-1">
-              {topCompetitiveRuns({ durationMs: sprintDurationMs ?? 60_000, limit: 3 }).map((r, i) => (
-                <div key={`${r.timestamp}-${i}`} className="flex justify-between">
-                  <div className="text-zinc-500">#{i + 1}</div>
-                  <div className="text-zinc-200">{Math.round(r.wpm)} WPM</div>
-                  <div className="text-zinc-500">{Math.round(r.accuracy * 1000) / 10}%</div>
-                </div>
-              ))}
+              {topCompetitiveRuns({ durationMs: sprintDurationMs ?? 60_000, limit: 3 }).map((r, i) => {
+                const medalIcon = i === 0 ? 'medal-gold' as const : i === 1 ? 'medal-silver' as const : 'medal-bronze' as const
+                return (
+                  <div key={`${r.timestamp}-${i}`} className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5 text-zinc-500">
+                      <Icon name={medalIcon} size={14} className="shrink-0" />
+                      #{i + 1}
+                    </div>
+                    <div className="text-zinc-200">{Math.round(r.wpm)} WPM</div>
+                    <div className="text-zinc-500">{Math.round(r.accuracy * 1000) / 10}%</div>
+                  </div>
+                )
+              })}
             </div>
           </div>
-        </div>
-      ) : null}
-
-      {mode === 'real_life' && scenario && scenario.variant !== 'standard' ? (
-        <div className="rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-2.5 text-sm">
-          <span className="font-medium text-zinc-300">{variantLabel(scenario.variant)}</span>
-          <span className="ml-2 text-zinc-400">{scenario.rationale}</span>
         </div>
       ) : null}
 
@@ -173,15 +122,11 @@ export function RunPage({ mode }: { mode: Mode }) {
         exercise={exercise}
         targetText={targetText}
         prefs={prefs}
-        ruleSet={mode === 'competitive' ? ruleSet : undefined}
         sprintDurationMs={mode === 'competitive' ? (sprintDurationMs as SprintDurationMs) : undefined}
         showCompetitiveHud={showCompetitiveHud}
         ghostEnabled={ghost}
         onExit={() => navigate(`/${modeToPath(mode)}`)}
-        onRestart={() => {
-          if (mode === 'competitive') incrementRestartCount()
-          navigate(0)
-        }}
+        onRestart={() => navigate(0)}
       />
     </div>
   )

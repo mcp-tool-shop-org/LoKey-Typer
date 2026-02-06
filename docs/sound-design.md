@@ -26,67 +26,55 @@ The ambient system must:
 
 ## 1) Psychoacoustic design principles
 
-These principles draw on published research in environmental acoustics, psychoacoustics, and stress physiology. Each profile is synthesized to match the acoustic properties of sounds shown to reduce cortisol, support sustained attention, or activate parasympathetic relaxation.
+These principles are “scientifically informed” in the practical sense: they align with established psychoacoustics and human attention constraints, and they are testable.
 
-### 1.1 No rhythmic entrainment — aperiodic modulation
+### 1.1 No rhythmic entrainment
 
 **Why**
 
-Rhythmic or periodic audio can entrain attention and motor timing. For a typing trainer, that's undesirable: it competes with reading and keystroke cadence. Additionally, periodic modulation in 10-second looping stems creates audible "looping" artifacts.
+Rhythmic or periodic audio can entrain attention and motor timing. For a typing trainer, that’s undesirable: it competes with reading and keystroke cadence.
 
 **Audit criteria**
 
 - No audible BPM.
 - No repeating transient patterns.
 - No regular amplitude modulation in ~0.5–4 Hz (where entrainment is strongest).
-- No audible periodicity when stems loop seamlessly.
 
-**Implementation: irrational rate modulation**
+**Implementation guardrails**
 
-All amplitude modulation uses 5 incommensurate frequencies based on irrational numbers (golden ratio, sqrt(2), sqrt(3), sqrt(5), sqrt(7)). These mathematically guarantee no repeating pattern within any finite window, eliminating perceived looping.
-
-Each stem variant receives unique phase offsets and rate multipliers derived from its index, ensuring no two variants share modulation patterns.
-
+- Prefer aperiodic modulation (noise / random walk) over fixed-frequency LFOs.
 - Macro evolution intervals are randomized (engine schedules ~3–6 minutes).
 
 **Defensible claim**
 
-> LoKey Typer uses mathematically aperiodic modulation to eliminate both rhythmic entrainment and perceptible looping.
+> LoKey Typer avoids rhythmic or tempo-based ambient audio to reduce attentional entrainment.
 
-### 1.2 Spectral balance — negative spectral slope
+### 1.2 Spectral balance tuned for focus
 
 **Why**
 
-Research shows that sounds with negative spectral slopes (-3 to -6 dB/octave) are perceived as calming, while flat or positive slopes increase alertness and fatigue. Natural calming sounds (rain, wind, streams) all share this spectral property.
+Spectral balance impacts fatigue and alertness. Over-emphasizing upper mids (roughly 2–5 kHz) can feel “sharp” over time; excessive sub-bass can feel physiologically arousing.
 
-**Spectral targets per profile**
+**Practical targets (guidance)**
 
-| Profile | Spectral Slope | Primary Energy Band | Science Basis |
-|---------|---------------|---------------------|---------------|
-| rain_gentle | -3 dB/oct (pink) | 1–5 kHz broadband | Rain psychoacoustics |
-| focus_warm | -3 dB/oct | < 500 Hz | Singing bowl modal analysis |
-| nature_air | -3 to -6 dB/oct | 400 Hz–2 kHz + 2–6 kHz chirps | Birdsong + water research |
-| deep_hum | -6 dB/oct (brown) | < 200 Hz | Brown noise + 40 Hz gamma |
-| cafe_murmur | -6 dB/oct (brown) | 50–500 Hz formants | ASMR + social presence |
+- Most energy concentrated roughly in **150 Hz – 1.5 kHz**.
+- Gentle roll-off above ~4 kHz.
+- Avoid dominant tones that persist > ~500 ms.
 
-**Shared spectral rules**
+**Manifest metadata (optional but recommended)**
 
-- No sharp peaks in the 2–4 kHz "alert" band
-- Gentle roll-off above 4 kHz in all profiles
-- All transients have >50 ms attack (no startle response)
-
-**Manifest metadata**
-
-Each stem includes:
+Each stem *may* include:
 
 - `lufs_i`: integrated loudness estimate (LUFS-I)
 - `features.brightness` (0–1): relative brightness
 - `features.density` (0–1): textural density
 - `features.movement` (0–1): perceived motion
 
+These are not “scientific measurements” by themselves; they are internal descriptors to enforce consistency and enable future selection logic.
+
 **Defensible claim**
 
-> Ambient stems use negative spectral slopes matching naturally calming sounds, with no sharp energy in alerting frequency bands.
+> Ambient stems are mixed and selected to avoid harsh or fatiguing spectral emphasis.
 
 ### 1.3 Loudness safety for long sessions
 
@@ -252,43 +240,3 @@ When adding a new stem to `public/audio/ambient/**` and `public/audio/ambient/ma
 - Validate file existence via `npm run qa:ambient:assets`.
 
 Versioning note: treat changes to this doc as versioned product behavior. If the criteria change, explain why.
-
-## 8) Ambient profile library — science-backed synthesis
-
-All ambient profiles are procedurally synthesized using DSP primitives (state-variable filters, oscillators, noise generators, reverb). No external audio samples are used.
-
-### Profile descriptions
-
-**rain_gentle** — Pink/brown noise shaped to natural rain spectrum
-- Pink noise base (-3 dB/oct) with broadband 1–5 kHz peak
-- Independent L/R noise streams for stereo width
-- Brown noise sub-bass activates vagal response
-- Muffled room layer = shelter/safety psychoacoustic signal
-
-**focus_warm** — Singing bowl-inspired inharmonic partials
-- Non-integer partial ratios (1:1.503:2.71:4.56) from Tibetan bowl modal analysis
-- 2–6 Hz beating from detuned partials = meditative quality
-- Sub-octave warmth, energy concentrated below 500 Hz
-- Parasympathetic-rate AM (0.05–0.15 Hz)
-
-**nature_air** — Birdsong + stream + wind
-- Descending bird chirps (calming; ascending chirps are alerting)
-- Brown noise stream (-6 dB/oct) = universally calming water sound
-- Pink noise wind with gusty aperiodic AM
-- sin^2 envelopes on all chirps guarantee >50 ms attack
-
-**deep_hum** — Brown noise drone + gamma entrainment
-- 40 Hz component: linked to enhanced focus and reduced anxiety (Martorell et al.)
-- Theta-rate beating (4–8 Hz) on consonant overtones
-- Brown noise air layer (not white) avoids alerting high frequencies
-- Sub-100 Hz drone stimulates vagus nerve
-
-**cafe_murmur** — ASMR-like formant murmur + fire crackle
-- Brown noise through formant filter banks = warm indistinct speech
-- Stochastic transients at 0.5–3/sec match fire crackle research
-- All transients smoothed with >50 ms attack envelope
-- Low-frequency dominance (50–500 Hz) = safety/shelter signal
-
-### Generation
-
-Stems are generated via `node scripts/audio/generateStems.mjs`. Each profile produces 11–15 stems across 3–4 layers (low_bed, mid_texture, air, room). The `random` profile setting picks a different profile each page load for variety.

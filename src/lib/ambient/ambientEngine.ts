@@ -6,12 +6,9 @@ import { fetchAmbientManifest, type AmbientStem } from '../ambientManifest'
 import { AmbientHistory, type AmbientLayerName, type SoundscapeLayers } from './ambientHistory'
 import { AmbientMixer } from './ambientMixer'
 
-export type AmbientProfile = 'off' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air' | 'rain_gentle' | 'deep_hum' | 'cafe_murmur' | 'random'
+export type AmbientProfile = 'off' | 'random' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air'
 
-const FOCUS_PROFILES: AmbientProfile[] = ['focus_soft', 'focus_warm', 'nature_air', 'rain_gentle', 'deep_hum', 'cafe_murmur']
-
-/** Pick a random focus profile (seeded per page load for consistency within a session). */
-const sessionRandomProfile: AmbientProfile = FOCUS_PROFILES[Math.floor(Math.random() * FOCUS_PROFILES.length)]
+const FOCUS_PROFILES: AmbientProfile[] = ['focus_soft', 'focus_warm', 'nature_air']
 
 type EngineParams = {
   mode: Mode
@@ -79,27 +76,34 @@ function mulberry32(seed: number) {
   }
 }
 
+function resolveRandom(mode: Mode): AmbientProfile {
+  // Seeded per day so the profile stays stable within a session
+  const dayKey = new Date().toISOString().slice(0, 10)
+  const seed = xmur3(`random|${mode}|${dayKey}`)()
+  const rand = mulberry32(seed)
+  if (mode === 'competitive') return 'competitive_clean'
+  const idx = Math.floor(rand() * FOCUS_PROFILES.length)
+  return FOCUS_PROFILES[idx] ?? 'focus_soft'
+}
+
 function deriveEffectiveProfile(mode: Mode, selected: AmbientProfile): AmbientProfile {
   if (selected === 'off') return 'off'
-
-  // Resolve 'random' to a session-stable random profile.
-  const resolved = selected === 'random' ? sessionRandomProfile : selected
-
-  if (resolved === 'nature_air') return 'nature_air'
+  if (selected === 'random') return resolveRandom(mode)
+  if (selected === 'nature_air') return 'nature_air'
 
   if (mode === 'competitive') return 'competitive_clean'
-  if (resolved === 'competitive_clean') return 'focus_soft'
-  return resolved
+  if (selected === 'competitive_clean') return 'focus_soft'
+  return selected
 }
 
 function computeEffectiveVolume(prefs: Preferences) {
   const base = clamp(Number(prefs.ambientVolume), 0, 1)
 
   // Safety cap.
-  const maxVolume = 0.65
+  const maxVolume = 0.5
 
   // Keep ambience below typing SFX when enabled.
-  const typingCap = prefs.soundEnabled ? clamp(prefs.volume, 0, 1) * 0.85 : maxVolume
+  const typingCap = prefs.soundEnabled ? clamp(prefs.volume, 0, 1) * 0.7 : maxVolume
 
   return clamp(base, 0, Math.min(maxVolume, typingCap))
 }
@@ -151,23 +155,6 @@ export class AmbientEngineV2 {
   private macroTimer: number | null = null
 
   private rand = mulberry32(xmur3('ambient')())
-
-  private seedNonce: number | null = null
-  private forceFreshStart = false
-
-  constructor() {
-    // If the browser restores the page from the back/forward cache, JS state can
-    // resume exactly where it left off. That can feel like a “reload” that
-    // doesn't change the ambience. Force a fresh soundscape on restore.
-    try {
-      window.addEventListener('pageshow', (e) => {
-        const persisted = Boolean((e as unknown as { persisted?: boolean })?.persisted)
-        if (persisted) this.forceFreshStart = true
-      })
-    } catch {
-      // ignore
-    }
-  }
 
   async userGestureUnlock() {
     await resumeAudioContext()
@@ -240,7 +227,7 @@ export class AmbientEngineV2 {
   }
 
   private computeEnabled(prefs: Preferences) {
-    return Boolean(prefs.soundEnabled) && Boolean(getEffectiveAmbientEnabled(prefs))
+    return Boolean(getEffectiveAmbientEnabled(prefs))
   }
 
   private applyVolumes(seconds: number) {
@@ -254,36 +241,6 @@ export class AmbientEngineV2 {
       return localStorage.getItem('lkt_ambient_debug') === '1'
     } catch {
       return false
-    }
-  }
-
-  private getSeedNonce() {
-    if (this.seedNonce != null) return this.seedNonce
-    try {
-      if (typeof localStorage === 'undefined') {
-        this.seedNonce = 0
-        return this.seedNonce
-      }
-
-      const raw = localStorage.getItem('lkt_ambient_seed_nonce_v1')
-      const parsed = raw == null ? 0 : Number.parseInt(raw, 10)
-      this.seedNonce = Number.isFinite(parsed) && parsed >= 0 ? parsed : 0
-      return this.seedNonce
-    } catch {
-      this.seedNonce = 0
-      return this.seedNonce
-    }
-  }
-
-  private bumpSeedNonce() {
-    const cur = this.getSeedNonce()
-    const next = (cur + 1) % 1_000_000_000
-    this.seedNonce = next
-    try {
-      if (typeof localStorage === 'undefined') return
-      localStorage.setItem('lkt_ambient_seed_nonce_v1', String(next))
-    } catch {
-      // ignore
     }
   }
 
@@ -341,25 +298,13 @@ export class AmbientEngineV2 {
     if (this.nextEvolutionAtMs == null) this.planNextEvolution()
   }
 
-  private pickInitialSoundscape(params: {
-    mode: Mode
-    profile: AmbientProfile
-    avoidLayerIds?: Partial<Record<AmbientLayerName, string>>
-  }) {
+  private pickInitialSoundscape(params: { mode: Mode; profile: AmbientProfile }) {
     const layers = layersForMode(params.mode)
     const stemsByLayer: Partial<Record<AmbientLayerName, AmbientStem>> = {}
 
     for (const layer of layers) {
-      const candidatesRaw = this.stemsFor({ mode: params.mode, profile: params.profile, layer })
+      const candidates = this.stemsFor({ mode: params.mode, profile: params.profile, layer })
       if (!this.history) continue
-
-       if (candidatesRaw.length === 0) {
-         this.logDebug('No candidates for layer', { mode: params.mode, profile: params.profile, layer })
-       }
-
-      const avoidId = params.avoidLayerIds?.[layer]
-      const candidates =
-        avoidId && candidatesRaw.length > 1 ? candidatesRaw.filter((c) => c.id !== avoidId) : candidatesRaw
 
       const picked = pickWeighted(
         candidates.filter((c) => !this.history!.wasLayerUsedRecently(layer, c.id, 5)),
@@ -369,13 +314,7 @@ export class AmbientEngineV2 {
 
       if (picked) {
         stemsByLayer[layer] = picked
-      } else if (candidatesRaw.length > 0) {
-        this.logDebug('Could not pick stem for layer (all recently used?)', {
-          mode: params.mode,
-          profile: params.profile,
-          layer,
-          candidates: candidatesRaw.length,
-        })
+        this.history.noteLayerUse(layer, picked.id, 5)
       }
     }
 
@@ -390,60 +329,19 @@ export class AmbientEngineV2 {
   }) {
     if (!this.history || this.activeMode !== params.mode) this.history = new AmbientHistory(params.mode)
 
-    const dominantLayer: AmbientLayerName = params.mode === 'competitive' ? 'mid_presence' : 'mid_texture'
-    const lastSoundscape = this.history.mostRecentSoundscapeLayers(params.profile)
-    const lastDominant = this.history.mostRecentDominantId()
-    const avoidLayerIds: Partial<Record<AmbientLayerName, string>> = {
-      ...(lastSoundscape ?? {}),
-      ...(lastDominant ? { [dominantLayer]: lastDominant } : {}),
-    }
-
     // Choose initial stems.
-    // We try a few times to avoid repeating the most recent soundscape across app starts,
-    // but we always allow a fallback if the library is small.
-    const maxAttempts = 8
-    let stemsByLayer: Partial<Record<AmbientLayerName, AmbientStem>> = {}
-    let activeIds: SoundscapeLayers = {}
-    let repeatedLast = false
-
-    for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const candidate = this.pickInitialSoundscape({
-        mode: params.mode,
-        profile: params.profile,
-        avoidLayerIds,
-      })
-      const candidateIds: SoundscapeLayers = {}
-      for (const [layer, stem] of Object.entries(candidate) as Array<[AmbientLayerName, AmbientStem]>) {
-        candidateIds[layer] = stem.id
-      }
-
-      stemsByLayer = candidate
-      activeIds = candidateIds
-
-      const repeatsSoundscape = this.history.wasSoundscapeUsedRecently(params.profile, candidateIds, 1)
-      const repeatsDominant = this.history.wasDominantUsedRecently(candidateIds, 1)
-
-      if (!repeatsSoundscape && !repeatsDominant) {
-        repeatedLast = false
-        break
-      }
-
-      repeatedLast = true
-      // Nudge RNG forward to explore a different region.
-      this.rand()
-      this.rand()
-      this.rand()
-    }
-
+    const stemsByLayer = this.pickInitialSoundscape({ mode: params.mode, profile: params.profile })
+    const activeIds: SoundscapeLayers = {}
     for (const [layer, stem] of Object.entries(stemsByLayer) as Array<[AmbientLayerName, AmbientStem]>) {
-      this.history.noteLayerUse(layer, stem.id, 5)
+      activeIds[layer] = stem.id
     }
 
-    this.history.noteSoundscape(params.profile, activeIds)
-
-    if (repeatedLast) {
-      this.logDebug('Repeated last soundscape; will evolve soon if possible', activeIds)
+    // Cross-session no-repeat: if we accidentally picked a recent full soundscape, we’ll let macro evolution swap quickly.
+    if (this.history.wasSoundscapeUsedWithinMs(params.profile, activeIds, 30 * 60_000)) {
+      this.logDebug('Picked recently-used soundscape; will evolve soon', activeIds)
       this.nextEvolutionAtMs = Date.now() + 15_000
+    } else {
+      this.history.noteSoundscape(params.profile, activeIds)
     }
 
     await this.mixer.preload(Object.values(stemsByLayer).filter(Boolean) as AmbientStem[])
@@ -520,8 +418,6 @@ export class AmbientEngineV2 {
   }
 
   update(params: EngineParams) {
-    const wasPlaying = this.shouldPlay
-
     this.enabled = this.computeEnabled(params.prefs)
     this.pauseOnTyping = Boolean(params.prefs.ambientPauseOnTyping)
 
@@ -559,9 +455,7 @@ export class AmbientEngineV2 {
     }
 
     // When switching mode/profile mid-session, rebuild the soundscape.
-    const needsRebuild = modeChanged || profileChanged || this.forceFreshStart
-    if (needsRebuild) {
-      this.forceFreshStart = false
+    if (modeChanged || profileChanged) {
       this.mixer.stopAll(1.0)
       this.history = new AmbientHistory(this.activeMode)
       this.nextEvolutionAtMs = null
@@ -569,14 +463,8 @@ export class AmbientEngineV2 {
       this.evolutionDebounceUntilMs = null
     }
 
-    const startingNow = shouldPlay && !wasPlaying
-    if (startingNow || modeChanged || profileChanged || needsRebuild) {
-      this.bumpSeedNonce()
-    }
-
-    // Seed RNG per session+profile+mode day bucket + a per-start nonce.
-    // This keeps ambience stable within a single play session, but different across app launches.
-    const seed = `${this.activeMode}|${this.activeProfile}|${new Date().toISOString().slice(0, 10)}|${this.getSeedNonce()}`
+    // Seed RNG per session+profile+mode day bucket for stable "feel" within a day.
+    const seed = `${this.activeMode}|${this.activeProfile}|${new Date().toISOString().slice(0, 10)}`
     this.rand = mulberry32(xmur3(seed)())
 
     void (async () => {
@@ -606,9 +494,7 @@ export class AmbientEngineV2 {
       this.scheduleMacroTick()
 
       // Keep master volume in sync.
-      // Use a slower fade-in on first start/unlock so ambience feels gentle.
-      const fadeSeconds = wasPlaying ? 0.8 : 2.6
-      this.applyVolumes(fadeSeconds)
+      this.applyVolumes(0.8)
 
       // Debug state updates.
       if (this.shouldLogDebug()) {

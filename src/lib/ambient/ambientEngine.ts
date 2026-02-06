@@ -371,8 +371,12 @@ export class AmbientEngineV2 {
     if (!this.history || this.activeMode !== params.mode) this.history = new AmbientHistory(params.mode)
 
     const dominantLayer: AmbientLayerName = params.mode === 'competitive' ? 'mid_presence' : 'mid_texture'
+    const lastSoundscape = this.history.mostRecentSoundscapeLayers(params.profile)
     const lastDominant = this.history.mostRecentDominantId()
-    const avoidLayerIds: Partial<Record<AmbientLayerName, string>> = lastDominant ? { [dominantLayer]: lastDominant } : {}
+    const avoidLayerIds: Partial<Record<AmbientLayerName, string>> = {
+      ...(lastSoundscape ?? {}),
+      ...(lastDominant ? { [dominantLayer]: lastDominant } : {}),
+    }
 
     // Choose initial stems.
     // We try a few times to avoid repeating the most recent soundscape across app starts,

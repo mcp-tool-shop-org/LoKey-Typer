@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import { getEffectiveAmbientEnabled, isAmbientLockedOff, modeLabel, resetPreferencesToDefaults, type SprintDurationMs } from '@lib'
 import { usePreferences } from '@app'
+import { DataManagement } from '../DataManagement'
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -296,11 +297,13 @@ export function SettingsPage({ mode }: { mode: Mode }) {
             onClick={() => setPrefs(resetPreferencesToDefaults())}
             className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-xs font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
-            Reset to Safe Defaults
+            Reset Preferences to Safe Defaults
           </button>
           <div className="text-[11px] text-zinc-500">Shortcut: Ctrl+Alt+R</div>
         </div>
       </div>
+
+      <DataManagement />
     </div>
   )
 }

@@ -88,3 +88,11 @@ export {
   clearAllStoresExceptPreferences,
   migrateFromLocalStorage,
 } from '../db'
+
+export {
+  exportAllData,
+  importData,
+  resetAllData,
+  type ExportPayload,
+  type ImportResult,
+} from '../dataExport'

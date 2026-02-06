@@ -37,6 +37,7 @@ See `modular.md` for the repository modularity contracts (public APIs, import bo
 
 - `modular.md` — architecture + import boundary contracts (treat as “law”)
 - `personalization_engine.md` — Phase 3 plan for recommendations/daily sets (rules + metrics)
+- `docs/sound-design.md` — ambient sound design + audit framework (Phase 3.4)
 
 ## Contributing
 

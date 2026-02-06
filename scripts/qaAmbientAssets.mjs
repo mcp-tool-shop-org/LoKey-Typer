@@ -92,7 +92,7 @@ const expectedFromManifest = hasManifest
   ? manifest.stems
       .map((s) => ({
         profile: `${s.mode}_${s.profile}_${s.layer}`,
-        file: String(s.url ?? ''),
+        file: String(s.path ?? s.url ?? ''),
       }))
       .filter((e) => e.file.length > 0)
   : []

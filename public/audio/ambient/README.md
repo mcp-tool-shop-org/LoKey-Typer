@@ -13,7 +13,7 @@ Each stem entry in the manifest should include:
 - `mode`: `focus` | `competitive` (optionally `real_life` treated as focus)
 - `profile`: e.g. `focus_soft`, `focus_warm`, `competitive_clean`, `nature_air`
 - `layer`: `low_bed` | `mid_texture` | `mid_presence` | `air` | `room`
-- `url`: public URL path (e.g. `audio/ambient/focus/.../file.wav`)
+- `path`: public URL path (e.g. `audio/ambient/focus/.../file.wav`)
 
 ## Notes
 

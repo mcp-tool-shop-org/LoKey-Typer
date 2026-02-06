@@ -100,7 +100,7 @@ export function SettingsPage({ mode }: { mode: Mode }) {
 
               {ambientLockedOff ? (
                 <div className="text-xs text-zinc-400">
-                  Ambient is disabled while Screen Reader Mode or Reduced Motion is active.
+                  Ambient is disabled while Screen Reader Mode is active.
                 </div>
               ) : null}
 

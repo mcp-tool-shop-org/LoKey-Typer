@@ -5,7 +5,9 @@ export type AccessibilityLockPrefs = {
 }
 
 export function isAmbientLockedOff(prefs: Pick<AccessibilityLockPrefs, 'screenReaderMode' | 'reducedMotion'>) {
-  return Boolean(prefs.screenReaderMode || prefs.reducedMotion)
+  // Screen reader mode forces ambient off.
+  // Reduced motion keeps ambient allowed, but should disable macro evolutions.
+  return Boolean(prefs.screenReaderMode)
 }
 
 export function enforceAccessibilityLocks<T extends AccessibilityLockPrefs>(prefs: T): T {

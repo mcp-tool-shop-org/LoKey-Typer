@@ -136,7 +136,13 @@ export function TypingSession(props: {
   useEffect(() => {
     const sessionActive = startedAtMs != null && !isComplete
     const sessionPaused = !inputFocused
-    ambientEngine.update({ mode: props.mode, prefs: props.prefs, sessionActive, sessionPaused })
+    ambientEngine.update({
+      mode: props.mode,
+      prefs: props.prefs,
+      sessionActive,
+      sessionPaused,
+      exerciseRemainingMs: remainingMs,
+    })
 
     return () => {
       // On unmount, ensure we fade down quickly.
@@ -145,9 +151,10 @@ export function TypingSession(props: {
         prefs: props.prefs,
         sessionActive: false,
         sessionPaused: true,
+        exerciseRemainingMs: null,
       })
     }
-  }, [inputFocused, isComplete, props.mode, props.prefs, startedAtMs])
+  }, [inputFocused, isComplete, props.mode, props.prefs, startedAtMs, remainingMs])
 
   useEffect(() => {
     if (!isComplete || endedAtMs == null) return

@@ -405,6 +405,8 @@ export class AmbientEngineV2 {
   }
 
   update(params: EngineParams) {
+    const wasPlaying = this.shouldPlay
+
     this.enabled = this.computeEnabled(params.prefs)
     this.pauseOnTyping = Boolean(params.prefs.ambientPauseOnTyping)
 
@@ -481,7 +483,9 @@ export class AmbientEngineV2 {
       this.scheduleMacroTick()
 
       // Keep master volume in sync.
-      this.applyVolumes(0.8)
+      // Use a slower fade-in on first start/unlock so ambience feels gentle.
+      const fadeSeconds = wasPlaying ? 0.8 : 2.6
+      this.applyVolumes(fadeSeconds)
 
       // Debug state updates.
       if (this.shouldLogDebug()) {

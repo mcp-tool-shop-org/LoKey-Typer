@@ -165,3 +165,10 @@ export {
   adjustDifficultyBand,
   type AdaptiveProfile,
 } from '../adaptiveEngine'
+
+export {
+  planNextSessions,
+  generatePlanReasons,
+  resolvePlanExercise,
+  type SessionPlan,
+} from '../rotationEngine'

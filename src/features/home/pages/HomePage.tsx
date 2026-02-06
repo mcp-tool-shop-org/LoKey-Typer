@@ -1,14 +1,20 @@
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode } from '@lib'
+import { loadProfileAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type UserProfile } from '@lib'
 
-function ModeCard({ mode, description }: { mode: Mode; description: string }) {
+function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
   const navigate = useNavigate()
   const label = modeLabel(mode)
   const path = modeToPath(mode)
 
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+    <div
+      className={[
+        'rounded-2xl border p-6',
+        highlight ? 'border-zinc-600 bg-zinc-900/50' : 'border-zinc-800 bg-zinc-950',
+      ].join(' ')}
+    >
       <div className="text-base font-semibold tracking-tight text-zinc-50">
         {label}
         {mode === 'competitive' ? (
@@ -48,15 +54,30 @@ function ModeCard({ mode, description }: { mode: Mode; description: string }) {
   )
 }
 
+function goalToMode(goal: UserProfile['goal']): Mode | null {
+  if (goal === 'calm' || goal === 'speed') return 'focus'
+  if (goal === 'work_writing') return 'real_life'
+  if (goal === 'competition') return 'competitive'
+  return null
+}
+
 export function HomePage() {
   const preferred = preferredQuickstartMode()
+  const [profile, setProfile] = useState<UserProfile | null>(null)
+
+  useEffect(() => {
+    loadProfileAsync().then(setProfile).catch(() => {})
+  }, [])
+
+  const userName = profile?.name?.trim() || ''
+  const highlightMode = profile?.goal ? goalToMode(profile.goal) : null
 
   return (
     <div className="space-y-8">
       <section className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6 sm:p-8">
         <div className="max-w-3xl">
           <h1 className="text-2xl font-semibold tracking-tight text-zinc-50 sm:text-3xl">
-            Calm by default. Competitive on purpose.
+            {userName ? `Welcome back, ${userName}.` : 'Calm by default. Competitive on purpose.'}
           </h1>
           <p className="mt-3 text-sm leading-6 text-zinc-300 sm:text-base">
             Choose a mode and train with low noise: clean typography, gentle feedback, and local-only
@@ -71,9 +92,9 @@ export function HomePage() {
       </section>
 
       <section className="grid gap-4 md:grid-cols-3">
-        <ModeCard mode="focus" description="Calm practice. Minimal HUD by default." />
-        <ModeCard mode="real_life" description="Emails, texts, support replies, and journaling." />
-        <ModeCard mode="competitive" description="Timed sprints, PBs, and a simple local leaderboard." />
+        <ModeCard mode="focus" description="Calm practice. Minimal HUD by default." highlight={highlightMode === 'focus'} />
+        <ModeCard mode="real_life" description="Emails, texts, support replies, and journaling." highlight={highlightMode === 'real_life'} />
+        <ModeCard mode="competitive" description="Timed sprints, PBs, and a simple local leaderboard." highlight={highlightMode === 'competitive'} />
       </section>
     </div>
   )

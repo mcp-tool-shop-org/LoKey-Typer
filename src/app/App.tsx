@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AppShell } from '@app/shell'
-import { AbilitiesPage, DailySetPage, ExerciseListPage, GoalsPage, HomePage, ModeHubPage, OnboardingPage, RunPage, SettingsPage } from '@features'
+import { AbilitiesPage, CompetitiveLeaguePage, DailySetPage, ExerciseListPage, GoalsPage, HomePage, ModeHubPage, OnboardingPage, RunPage, SettingsPage } from '@features'
 import { loadProfileAsync, loadRuns } from '@lib'
 
 function useNeedsOnboarding() {
@@ -77,6 +77,7 @@ export default function App() {
         <Route path="real-life/run/:exerciseId" element={<RunPage mode="real_life" />} />
 
         <Route path="competitive" element={<ModeHubPage mode="competitive" />} />
+        <Route path="competitive/league" element={<CompetitiveLeaguePage />} />
         <Route path="competitive/exercises" element={<ExerciseListPage mode="competitive" />} />
         <Route path="competitive/settings" element={<SettingsPage mode="competitive" />} />
         <Route path="competitive/run/:exerciseId" element={<RunPage mode="competitive" />} />

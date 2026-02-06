@@ -98,6 +98,7 @@ export function TypingSession(props: {
   exercise: Exercise
   targetText: string
   prefs: Preferences
+  ruleSet?: import('@lib').RuleSet
   sprintDurationMs?: SprintDurationMs
   showCompetitiveHud: boolean
   ghostEnabled?: boolean
@@ -461,6 +462,10 @@ export function TypingSession(props: {
             const modeGain = props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85
 
             if (e.key === 'Backspace') {
+              if (props.ruleSet === 'no_backspace') {
+                e.preventDefault()
+                return
+              }
               setBackspaces((v) => v + 1)
               typewriterAudio.play('backspace', {
                 enabled: props.prefs.soundEnabled,
@@ -508,6 +513,13 @@ export function TypingSession(props: {
           onChange={(e) => {
             if (isComplete) return
             const next = e.target.value
+
+            // Belt-and-suspenders: if no_backspace rule and text got shorter, revert
+            if (props.ruleSet === 'no_backspace' && next.length < typed.length) {
+              e.target.value = typed
+              return
+            }
+
             setTyped(next)
 
             if (next.length !== typed.length) ambientPlugin.noteTypingActivity()

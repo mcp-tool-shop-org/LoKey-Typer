@@ -54,10 +54,19 @@ export function ModeHubPage({ mode }: { mode: Mode }) {
       </div>
 
       {mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
-          Competitive mode is explicit opt-in and shows more data (timer, live WPM, deltas). All records
-          are stored locally.
-        </div>
+        <>
+          <Link
+            to="/competitive/league"
+            className="block rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-left transition hover:border-zinc-700 hover:bg-zinc-900"
+          >
+            <div className="text-sm font-semibold text-zinc-50">League</div>
+            <div className="mt-1 text-sm text-zinc-400">Rating, league standing, and rule sets.</div>
+          </Link>
+          <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
+            Competitive mode is explicit opt-in and shows more data (timer, live WPM, deltas). All records
+            are stored locally.
+          </div>
+        </>
       ) : null}
     </div>
   )

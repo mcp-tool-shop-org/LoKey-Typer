@@ -131,3 +131,10 @@ export {
   xpForLevel,
   type XpGains,
 } from '../skillTree'
+
+export {
+  determineLeague,
+  validateRunAgainstRuleSet,
+  updateCompetitiveAfterRun,
+  type RunValidation,
+} from '../competitiveEngine'

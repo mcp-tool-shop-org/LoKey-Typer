@@ -1,12 +1,14 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { findExercise, type Mode } from '@content'
 import {
   getOrCreateUserId,
   isTemplateExercise,
+  loadCompetitiveAsync,
   modeToPath,
   renderTemplateExercise,
   topCompetitiveRuns,
+  type RuleSet,
   type SprintDurationMs,
 } from '@lib'
 import { usePreferences } from '@app'
@@ -23,6 +25,28 @@ export function RunPage({ mode }: { mode: Mode }) {
   const params = useParams<{ exerciseId: string }>()
   const [search] = useSearchParams()
   const { prefs } = usePreferences()
+
+  const [ruleSet, setRuleSet] = useState<RuleSet>('standard')
+
+  // Load active rule set from competitive state (competitive mode only)
+  useEffect(() => {
+    if (mode !== 'competitive') return
+    const paramRuleSet = search.get('ruleSet') as RuleSet | null
+    if (paramRuleSet && ['standard', 'no_backspace', 'accuracy_gate', 'consistency_ladder'].includes(paramRuleSet)) {
+      setRuleSet(paramRuleSet)
+      return
+    }
+    let cancelled = false
+    ;(async () => {
+      try {
+        const state = await loadCompetitiveAsync()
+        if (!cancelled) setRuleSet(state.activeRuleSet)
+      } catch {
+        // silent
+      }
+    })()
+    return () => { cancelled = true }
+  }, [mode, search])
 
   const exerciseId = params.exerciseId ?? ''
   const exercise = findExercise(exerciseId)
@@ -76,6 +100,9 @@ export function RunPage({ mode }: { mode: Mode }) {
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               Sprint: <span className="text-zinc-50">{(sprintDurationMs ?? 60_000) / 1000}s</span>
+              {ruleSet !== 'standard' ? (
+                <span className="ml-2 text-zinc-400">• {ruleSet.replace(/_/g, ' ')}</span>
+              ) : null}
               {ghost ? <span className="ml-2 text-zinc-400">• Ghost comparison</span> : null}
             </div>
             <button
@@ -106,6 +133,7 @@ export function RunPage({ mode }: { mode: Mode }) {
         exercise={exercise}
         targetText={targetText}
         prefs={prefs}
+        ruleSet={mode === 'competitive' ? ruleSet : undefined}
         sprintDurationMs={mode === 'competitive' ? (sprintDurationMs as SprintDurationMs) : undefined}
         showCompetitiveHud={showCompetitiveHud}
         ghostEnabled={ghost}

@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  @apply bg-zinc-950 text-zinc-100 antialiased;
+}
+
+a {
+  @apply underline underline-offset-4 decoration-zinc-700 hover:decoration-zinc-500;
+}

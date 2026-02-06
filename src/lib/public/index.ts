@@ -23,6 +23,13 @@ export { pickQuickstartExercise, preferredQuickstartMode } from '../quickstart'
 export { updateSkillModelFromRun } from '../skillModel'
 
 export {
+  getNextRecommendations,
+  type Recommendation,
+  type RecommendationContext,
+  type RecommendationPrefs,
+} from '../recommendations'
+
+export {
   appendRun,
   bestAccuracyForExercise,
   bestWpmForExercise,

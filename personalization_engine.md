@@ -4,6 +4,28 @@ This document is the Phase 3 handoff for implementing **adaptive exercise select
 
 North Star: *Make the trainer feel like it learns you — quietly chooses better exercises, supports a calm daily ritual, enables competitive intensity when requested, and remains accessibility-first.*
 
+## Repo integration contract (read this first)
+
+This repo is contract-driven. Before implementing Phase 3 work, read `modular.md`.
+
+Non-negotiables:
+
+- Feature/UI code in `src/features/**` only imports public surfaces: `@lib`, `@content`, `@app`.
+- Implementation details and engines live in `src/lib/**` and are exposed selectively via `src/lib/public/index.ts` (`@lib`).
+- Content access goes through the content gateway (`@content`). Features must not load packs directly.
+- “Effective settings” (accessibility locks) are derived centrally (no local drift).
+
+## Current status (already implemented foundations)
+
+These are already present in code and should be extended rather than re-created:
+
+- **Skill model storage + self-heal:** `UserSkillModel` is persisted locally and loaded with corruption-safe defaults.
+- **Skill model update logic:** `updateSkillModelFromRun` computes the next model from a `RunResult`.
+- **Run-time integration:** typing sessions update and persist the skill model after a run.
+- **Schema stub:** `src/content/phase3/schemas/user_skill_model.schema.json` exists as the shape contract.
+
+Phase 3 work should build on top of these pieces (and keep imports within the modularity rules).
+
 ## Scope and non-goals
 
 **In scope**

@@ -1,4 +1,4 @@
-import type { Exercise } from '@content'
+import type { Exercise, Mode } from '@content'
 import type { RunResult, UserSkillModel } from './storage'
 
 export type CharClass =
@@ -91,28 +91,36 @@ export function computeErrorHotspots(params: {
   return out
 }
 
-function deriveWeakTags(errorsByClass: Record<string, number>): string[] {
-  const entries = Object.entries(errorsByClass)
-    .filter(([, v]) => Number.isFinite(v) && v > 0)
+function deriveWeakTagsFromScores(scores: Record<string, number>): string[] {
+  return Object.entries(scores)
+    .filter(([, v]) => Number.isFinite(v) && v > 0.001)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 8)
+    .map(([k]) => k)
+}
 
-  // Map internal classes into tags that already exist in content.
-  const map: Record<string, string> = {
-    numbers: 'numbers',
-    apostrophe: 'apostrophe',
-    quotes: 'quotes',
-    dash: 'dashes',
-    punctuation: 'punctuation',
-    slash: 'slashes',
-    brackets: 'brackets',
+function updateRecentIds(params: { prev: string[] | undefined; nextId: string; max: number }): string[] {
+  const prev = Array.isArray(params.prev) ? params.prev : []
+  return [params.nextId, ...prev.filter((id) => id !== params.nextId)].slice(0, params.max)
+}
+
+function updateByModeStats(params: {
+  prev: UserSkillModel['by_mode']
+  mode: Mode
+  wpm: number
+  accuracy: number
+  backspaceRate: number
+  alpha: number
+}): UserSkillModel['by_mode'] {
+  const next = { ...params.prev }
+  const prevBucket = next[params.mode] ?? { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 }
+  next[params.mode] = {
+    ema_wpm: emaUpdate(prevBucket.ema_wpm, params.wpm, params.alpha),
+    ema_accuracy: emaUpdate(prevBucket.ema_accuracy, params.accuracy, params.alpha),
+    ema_backspace_rate: emaUpdate(prevBucket.ema_backspace_rate, params.backspaceRate, params.alpha),
+    runs: (prevBucket.runs ?? 0) + 1,
   }
-
-  const tags = entries
-    .map(([k]) => map[k] ?? null)
-    .filter((t): t is string => Boolean(t))
-
-  return Array.from(new Set(tags))
+  return next
 }
 
 export function updateSkillModelFromRun(params: {
@@ -137,6 +145,16 @@ export function updateSkillModelFromRun(params: {
     nextErrorsByClass[cls] = emaUpdate(prevVal, count, alpha)
   }
 
+  const errorRate = Math.max(0, Math.min(1, params.run.errors / Math.max(1, params.targetText.length)))
+  const tagsHit = (params.run.tags_hit ?? []).filter((t) => typeof t === 'string')
+  const nextWeaknessByTag: Record<string, number> = { ...(params.prev.weakness_by_tag ?? {}) }
+  for (const tag of tagsHit) {
+    const prevScore = nextWeaknessByTag[tag] ?? 0
+    nextWeaknessByTag[tag] = emaUpdate(prevScore, errorRate, alpha)
+  }
+
+  const derivedWeakTags = deriveWeakTagsFromScores(nextWeaknessByTag)
+
   const nextPerf = { ...params.prev.performance_by_length }
   const prevBucket = nextPerf[bucket]
   nextPerf[bucket] = {
@@ -148,7 +166,7 @@ export function updateSkillModelFromRun(params: {
 
   const next: UserSkillModel = {
     ...params.prev,
-    version: 1,
+    version: 2,
     updated_at: now,
     total_runs: (params.prev.total_runs ?? 0) + 1,
     ema: {
@@ -156,9 +174,32 @@ export function updateSkillModelFromRun(params: {
       accuracy: emaUpdate(params.prev.ema?.accuracy ?? 1, params.run.accuracy, alpha),
       backspace_rate: emaUpdate(params.prev.ema?.backspace_rate ?? 0, backspaceRate, alpha),
     },
+    by_mode: updateByModeStats({
+      prev:
+        params.prev.by_mode ??
+        ({
+          focus: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+          real_life: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+          competitive: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+        } as UserSkillModel['by_mode']),
+      mode: params.run.mode,
+      wpm: params.run.wpm,
+      accuracy: params.run.accuracy,
+      backspaceRate,
+      alpha,
+    }),
     errors_by_class: nextErrorsByClass,
     performance_by_length: nextPerf,
-    weak_tags: deriveWeakTags(nextErrorsByClass),
+    weakness_by_tag: nextWeaknessByTag,
+    weak_tags: derivedWeakTags.length > 0 ? derivedWeakTags : (params.prev.weak_tags ?? []),
+    recent_exercise_ids_by_mode: {
+      ...(params.prev.recent_exercise_ids_by_mode ?? { focus: [], real_life: [], competitive: [] }),
+      [params.run.mode]: updateRecentIds({
+        prev: params.prev.recent_exercise_ids_by_mode?.[params.run.mode],
+        nextId: params.run.exercise_id,
+        max: 50,
+      }),
+    },
   }
 
   return next

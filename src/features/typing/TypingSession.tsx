@@ -20,6 +20,47 @@ import {
 } from '@lib'
 import { TypingOverlay } from './TypingOverlay'
 
+function fnv1a32Hex(input: string) {
+  let h = 0x811c9dc5
+  for (let i = 0; i < input.length; i++) {
+    h ^= input.charCodeAt(i)
+    h = Math.imul(h, 0x01000193)
+  }
+  return (h >>> 0).toString(16).padStart(8, '0')
+}
+
+function computeTagsHit(params: { exercise: Exercise; targetText: string }): string[] {
+  const tags = new Set<string>()
+
+  const t = params.targetText
+  if (t.includes('\n')) tags.add('multiline')
+  if (/[0-9]/.test(t)) tags.add('numbers')
+  if (/[.,;:?!]/.test(t)) tags.add('punctuation')
+  if (/["“”]/.test(t)) tags.add('quotes')
+  if (/[’']/.test(t)) tags.add('apostrophe')
+  if (/[-–—]/.test(t)) tags.add('dashes')
+  if (
+    t.includes('(') ||
+    t.includes(')') ||
+    t.includes('[') ||
+    t.includes(']') ||
+    t.includes('{') ||
+    t.includes('}') ||
+    t.includes('<') ||
+    t.includes('>')
+  )
+    tags.add('brackets')
+  if (/[\\/]/.test(t)) tags.add('slashes')
+
+  // Preserve any content-provided tags that match our tracked set.
+  const tracked = new Set(['multiline', 'numbers', 'punctuation', 'quotes', 'apostrophe', 'dashes', 'brackets', 'slashes'])
+  for (const exTag of params.exercise.tags ?? []) {
+    if (tracked.has(exTag)) tags.add(exTag)
+  }
+
+  return Array.from(tags)
+}
+
 function formatMs(ms: number) {
   const totalSeconds = Math.floor(ms / 1000)
   const minutes = Math.floor(totalSeconds / 60)
@@ -119,11 +160,13 @@ export function TypingSession(props: {
       exercise_id: props.exercise.id,
       timestamp,
       mode: props.mode,
+      rendered_text_hash: fnv1a32Hex(targetText),
       wpm: live.wpm,
       accuracy: live.accuracy,
       errors: live.errors,
       backspaces,
       duration_ms: timeLimitMs ?? Math.max(0, endedAtMs - (startedAtMs ?? endedAtMs)),
+      tags_hit: computeTagsHit({ exercise: props.exercise, targetText }),
       sprint_duration_ms: timeLimitMs as SprintDurationMs | undefined,
     }
 

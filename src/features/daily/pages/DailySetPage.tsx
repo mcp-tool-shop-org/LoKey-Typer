@@ -13,6 +13,7 @@ import {
 
 function kindLabel(kind: DailySetItemKind) {
   if (kind === 'confidence') return 'Confidence win'
+  if (kind === 'targeted') return 'Targeted practice'
   if (kind === 'challenge') return 'Challenge'
   if (kind === 'real_life') return 'Real-life scenario'
   return 'Mix'
@@ -54,8 +55,9 @@ export function DailySetPage() {
       userId,
       sessionType,
       weakTags: skill.weak_tags,
+      skill,
     })
-  }, [userId, sessionType, skill.weak_tags])
+  }, [userId, sessionType, skill])
 
   const daysPracticed = useMemo(() => computeDaysPracticed(loadRuns()), [])
   const bestWeek = useMemo(() => computeBestWeek(daysPracticed), [daysPracticed])

@@ -33,31 +33,46 @@ Phase 1 includes:
 
 See `modular.md` for the repository modularity contracts (public APIs, import boundaries, effective prefs rules, and content gateway guarantees).
 
+## Docs
+
+- `modular.md` — architecture + import boundary contracts (treat as “law”)
+- `personalization_engine.md` — Phase 3 plan for recommendations/daily sets (rules + metrics)
+
+## Contributing
+
+- Read `modular.md` before adding new modules or refactoring imports.
+- Keep these checks green: `npm run lint` and `npm run build`.
+
 ### Import aliases
 
 To keep imports stable as the repo grows (and to avoid Windows casing/path edge-cases), the app uses these aliases:
 
-- `@app` → `src/app/index.ts`
-- `@app/*` → `src/app/*`
-- `@features/*` → `src/features/*`
-- `@lib/*` → `src/lib/*`
-- `@content/*` → `src/content/*`
+- `@app` / `@app/*` → `src/app` (public entrypoint is `src/app/index.ts`)
+- `@features` / `@features/*` → `src/features` (public entrypoint is `src/features/index.ts`)
+- `@content` / `@content/*` → `src/content` (public entrypoint is `src/content/index.ts`)
+- `@lib` / `@lib/*` → `src/lib/public` (public lib surface; entrypoint is `src/lib/public/index.ts`)
 
-Shared code is also available via public entrypoints:
-
-- `@features` → `src/features/index.ts`
-- `@lib` → `src/lib/index.ts`
-- `@content` → `src/content/index.ts`
-
-`@lib` is a public surface intended for UI/features. Lib internals are available only via:
+Lib internals are available only via:
 
 - `@lib-internal/*` → `src/lib/*`
+
+Notes:
+
+- Feature modules are expected to import from public entrypoints (`@lib`, `@content`, `@app`). ESLint enforces that features don’t reach into internals.
+- `@lib-internal/*` is intentionally unstable and is restricted to app wiring/providers.
 
 App wiring can also import app-level exports from the public entrypoint:
 
 - `@app` → `src/app/index.ts`
 
 ## Run locally
+
+```bash
+npm ci
+npm run dev
+```
+
+If you’re iterating on deps locally:
 
 ```bash
 npm install

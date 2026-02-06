@@ -26,14 +26,17 @@ export type Preferences = {
 }
 
 export type RunResult = {
+  v?: 2
   exercise_id: string
   timestamp: number
   mode: Mode
+  rendered_text_hash?: string
   wpm: number
   accuracy: number
   errors: number
   backspaces: number
   duration_ms: number
+  tags_hit?: string[]
   sprint_duration_ms?: SprintDurationMs
 }
 
@@ -207,7 +210,7 @@ export function getOrCreateUserId(): string {
 }
 
 export type UserSkillModel = {
-  version: 1
+  version: 2
   updated_at: string
   total_runs: number
   ema: {
@@ -215,7 +218,9 @@ export type UserSkillModel = {
     accuracy: number
     backspace_rate: number
   }
+  by_mode: Record<Mode, { ema_wpm: number; ema_accuracy: number; ema_backspace_rate: number; runs: number }>
   errors_by_class: Record<string, number>
+  weakness_by_tag: Record<string, number>
   performance_by_length: {
     short: { ema_wpm: number; ema_accuracy: number; ema_backspace_rate: number; runs: number }
     medium: { ema_wpm: number; ema_accuracy: number; ema_backspace_rate: number; runs: number }
@@ -223,15 +228,22 @@ export type UserSkillModel = {
     multiline: { ema_wpm: number; ema_accuracy: number; ema_backspace_rate: number; runs: number }
   }
   weak_tags: string[]
+  recent_exercise_ids_by_mode: Record<Mode, string[]>
 }
 
 function defaultSkillModel(): UserSkillModel {
   return {
-    version: 1,
+    version: 2,
     updated_at: new Date().toISOString(),
     total_runs: 0,
     ema: { wpm: 0, accuracy: 1, backspace_rate: 0 },
+    by_mode: {
+      focus: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+      real_life: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+      competitive: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
+    },
     errors_by_class: {},
+    weakness_by_tag: {},
     performance_by_length: {
       short: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
       medium: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
@@ -239,22 +251,68 @@ function defaultSkillModel(): UserSkillModel {
       multiline: { ema_wpm: 0, ema_accuracy: 1, ema_backspace_rate: 0, runs: 0 },
     },
     weak_tags: [],
+    recent_exercise_ids_by_mode: {
+      focus: [],
+      real_life: [],
+      competitive: [],
+    },
+  }
+}
+
+type UserSkillModelV1 = {
+  version: 1
+  updated_at: string
+  total_runs: number
+  ema: { wpm: number; accuracy: number; backspace_rate: number }
+  errors_by_class: Record<string, number>
+  performance_by_length: UserSkillModel['performance_by_length']
+  weak_tags: string[]
+}
+
+function migrateSkillModelV1ToV2(input: UserSkillModelV1): UserSkillModel {
+  const base = defaultSkillModel()
+  const seededWeakness: Record<string, number> = {}
+  for (const t of input.weak_tags ?? []) seededWeakness[t] = 0.25
+
+  return {
+    ...base,
+    version: 2,
+    updated_at: input.updated_at ?? base.updated_at,
+    total_runs: Number.isFinite(input.total_runs) ? input.total_runs : base.total_runs,
+    ema: input.ema ?? base.ema,
+    errors_by_class: input.errors_by_class ?? base.errors_by_class,
+    performance_by_length: input.performance_by_length ?? base.performance_by_length,
+    weak_tags: Array.isArray(input.weak_tags) ? input.weak_tags.slice(0, 12) : base.weak_tags,
+    weakness_by_tag: seededWeakness,
   }
 }
 
 export function loadSkillModel(): UserSkillModel {
   ensureStorageKeysMigrated()
-  const parsed = safeParse<UserSkillModel>(localStorage.getItem(KEY_SKILL))
-  if (!parsed || parsed.version !== 1) {
-    const fresh = defaultSkillModel()
+  const raw = safeParse<unknown>(localStorage.getItem(KEY_SKILL))
+
+  const parsed = raw as Partial<UserSkillModel> | null
+  if (parsed && parsed.version === 2) return parsed as UserSkillModel
+
+  // Lightweight migration from v1 -> v2.
+  const v1 = raw as { version?: number } | null
+  if (v1 && v1.version === 1) {
+    const migrated = migrateSkillModelV1ToV2(v1 as unknown as UserSkillModelV1)
     try {
-      localStorage.setItem(KEY_SKILL, JSON.stringify(fresh))
+      localStorage.setItem(KEY_SKILL, JSON.stringify(migrated))
     } catch {
       // ignore
     }
-    return fresh
+    return migrated
   }
-  return parsed
+
+  const fresh = defaultSkillModel()
+  try {
+    localStorage.setItem(KEY_SKILL, JSON.stringify(fresh))
+  } catch {
+    // ignore
+  }
+  return fresh
 }
 
 export function saveSkillModel(model: UserSkillModel) {
@@ -296,12 +354,53 @@ export function resetPreferencesToDefaults() {
 
 export function loadRuns(): RunResult[] {
   ensureStorageKeysMigrated()
-  return safeParse<RunResult[]>(localStorage.getItem(KEY_RUNS)) ?? []
+  const parsed = safeParse<unknown>(localStorage.getItem(KEY_RUNS))
+  if (!Array.isArray(parsed)) return []
+
+  const out: RunResult[] = []
+  for (const item of parsed) {
+    const r = item as Partial<RunResult> | null
+    if (!r) continue
+    if (typeof r.exercise_id !== 'string' || r.exercise_id.length === 0) continue
+    if (r.mode !== 'focus' && r.mode !== 'real_life' && r.mode !== 'competitive') continue
+    const timestamp = r.timestamp
+    const wpm = r.wpm
+    const accuracy = r.accuracy
+    const errors = r.errors
+    const backspaces = r.backspaces
+    const durationMs = r.duration_ms
+    if (typeof timestamp !== 'number' || !Number.isFinite(timestamp)) continue
+    if (typeof wpm !== 'number' || !Number.isFinite(wpm)) continue
+    if (typeof accuracy !== 'number' || !Number.isFinite(accuracy)) continue
+    if (typeof errors !== 'number' || !Number.isFinite(errors)) continue
+    if (typeof backspaces !== 'number' || !Number.isFinite(backspaces)) continue
+    if (typeof durationMs !== 'number' || !Number.isFinite(durationMs)) continue
+
+    out.push({
+      v: r.v === 2 ? 2 : undefined,
+      exercise_id: r.exercise_id,
+      timestamp,
+      mode: r.mode,
+      rendered_text_hash: typeof r.rendered_text_hash === 'string' ? r.rendered_text_hash : undefined,
+      wpm,
+      accuracy: clamp(accuracy, 0, 1),
+      errors: Math.max(0, Math.floor(errors)),
+      backspaces: Math.max(0, Math.floor(backspaces)),
+      duration_ms: Math.max(0, Math.floor(durationMs)),
+      tags_hit: Array.isArray(r.tags_hit) ? r.tags_hit.filter((t): t is string => typeof t === 'string') : undefined,
+      sprint_duration_ms:
+        r.sprint_duration_ms === 30_000 || r.sprint_duration_ms === 60_000 || r.sprint_duration_ms === 120_000
+          ? r.sprint_duration_ms
+          : undefined,
+    })
+  }
+
+  return out
 }
 
 export function appendRun(run: RunResult) {
   const runs = loadRuns()
-  runs.push(run)
+  runs.push({ ...run, v: 2 })
   // keep it bounded
   const trimmed = runs.slice(Math.max(0, runs.length - 5000))
   localStorage.setItem(KEY_RUNS, JSON.stringify(trimmed))

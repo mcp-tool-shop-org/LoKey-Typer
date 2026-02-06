@@ -524,6 +524,53 @@ export async function clearAllStoresExceptPreferences(): Promise<void> {
   }
 }
 
+// ─── Memory management helpers ───────────────────────────────────────
+
+export async function deleteRecentRunsAsync(count: number): Promise<number> {
+  if (count <= 0) return 0
+  try {
+    const db = await openDb()
+    const all = await new Promise<Array<{ id: number; timestamp: number }>>((resolve, reject) => {
+      const tx = db.transaction(STORE_SESSIONS, 'readonly')
+      const req = tx.objectStore(STORE_SESSIONS).getAll()
+      req.onsuccess = () => resolve((req.result ?? []) as Array<{ id: number; timestamp: number }>)
+      req.onerror = () => reject(req.error)
+    })
+
+    // Sort by timestamp descending (most recent first)
+    all.sort((a, b) => (b.timestamp ?? 0) - (a.timestamp ?? 0))
+    const toDelete = all.slice(0, Math.min(count, all.length))
+
+    if (toDelete.length === 0) return 0
+
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(STORE_SESSIONS, 'readwrite')
+      const store = tx.objectStore(STORE_SESSIONS)
+      for (const item of toDelete) {
+        store.delete(item.id)
+      }
+      tx.oncomplete = () => resolve(toDelete.length)
+      tx.onerror = () => reject(tx.error)
+    })
+  } catch {
+    return 0
+  }
+}
+
+export async function anonymizeProfileAsync(): Promise<void> {
+  try {
+    const profile = await loadProfileAsync()
+    const anonymized: UserProfile = {
+      ...profile,
+      name: '',
+      pronouns: '',
+    }
+    await saveProfileAsync(anonymized)
+  } catch {
+    // silent
+  }
+}
+
 // ─── Migration from localStorage ─────────────────────────────────────
 
 const MIGRATION_FLAG = 'lkt_idb_migrated_v1'

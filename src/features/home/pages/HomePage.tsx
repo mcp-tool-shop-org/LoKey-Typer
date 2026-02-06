@@ -282,6 +282,12 @@ export function HomePage() {
           ))}
         </section>
       ) : null}
+
+      <div className="text-center">
+        <Link to="/memory" className="text-xs text-zinc-500 hover:text-zinc-300">
+          Your data
+        </Link>
+      </div>
     </div>
   )
 }

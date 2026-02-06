@@ -102,6 +102,8 @@ export {
   clearAllStores,
   clearAllStoresExceptPreferences,
   migrateFromLocalStorage,
+  deleteRecentRunsAsync,
+  anonymizeProfileAsync,
 } from '../db'
 
 export {
@@ -202,3 +204,10 @@ export {
   type TitleId,
   type TitleDefinition,
 } from '../titlesEngine'
+
+export {
+  computeStoreSummary,
+  filterSessionsForDeletion,
+  type StoreSummary,
+  type MemoryOverview,
+} from '../memoryEngine'

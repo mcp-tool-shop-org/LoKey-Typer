@@ -3,6 +3,10 @@
 
 import type { Mode } from '@content'
 import type { Preferences, RunResult, PersonalBestsStore, UserSkillModel } from './storage'
+import type { GoalsState } from './goalsEngine'
+
+export { type GoalsState } from './goalsEngine'
+export { defaultGoals as defaultGoalsState } from './goalsEngine'
 
 // ─── New domain types ────────────────────────────────────────────────
 
@@ -60,6 +64,35 @@ export type UnlockStore = {
   cosmetics: string[]
 }
 
+// ─── Forward-declared types for v2 stores ─────────────────────────────
+// Full implementations live in their respective engine modules.
+
+export type SkillBranch = 'accuracy' | 'rhythm' | 'endurance' | 'punctuation'
+
+export type BranchProgress = {
+  level: number
+  xp: number
+  xpToNext: number
+}
+
+export type SkillTreeState = {
+  branches: Record<SkillBranch, BranchProgress>
+  totalXp: number
+  lastUpdated: string
+}
+
+export type League = 'bronze' | 'silver' | 'gold'
+export type RuleSet = 'standard' | 'no_backspace' | 'accuracy_gate' | 'consistency_ladder'
+
+export type CompetitiveState = {
+  rating: number
+  currentLeague: League
+  activeRuleSet: RuleSet
+  totalRatedRuns: number
+  recentDeltas: number[] // last 10 rating deltas
+  seasonStartDate: string
+}
+
 // ─── Defaults ────────────────────────────────────────────────────────
 
 export function defaultProfile(): UserProfile {
@@ -108,10 +141,30 @@ export function defaultUnlocks(): UnlockStore {
   return { achievements: [], titles: [], cosmetics: [] }
 }
 
+export function defaultSkillTreeState(): SkillTreeState {
+  const branch = (): BranchProgress => ({ level: 0, xp: 0, xpToNext: 100 })
+  return {
+    branches: { accuracy: branch(), rhythm: branch(), endurance: branch(), punctuation: branch() },
+    totalXp: 0,
+    lastUpdated: '',
+  }
+}
+
+export function defaultCompetitiveState(): CompetitiveState {
+  return {
+    rating: 1000,
+    currentLeague: 'bronze',
+    activeRuleSet: 'standard',
+    totalRatedRuns: 0,
+    recentDeltas: [],
+    seasonStartDate: new Date().toISOString().slice(0, 10),
+  }
+}
+
 // ─── IDB core ────────────────────────────────────────────────────────
 
 const DB_NAME = 'lokey_db'
-const DB_VERSION = 1
+const DB_VERSION = 2
 
 const STORE_PROFILE = 'profile'
 const STORE_PREFERENCES = 'preferences'
@@ -122,6 +175,10 @@ const STORE_UNLOCKS = 'unlocks'
 const STORE_JOURNAL = 'journal'
 const STORE_SKILL = 'skill'
 const STORE_PBS = 'personal_bests'
+// v2 stores
+const STORE_GOALS = 'goals'
+const STORE_SKILL_TREE = 'skill_tree'
+const STORE_COMPETITIVE = 'competitive'
 
 let dbPromise: Promise<IDBDatabase> | null = null
 
@@ -141,7 +198,7 @@ function openDb(): Promise<IDBDatabase> {
       const db = request.result
 
       // Single-record stores (keyPath = 'id', we always use id=1)
-      for (const name of [STORE_PROFILE, STORE_PREFERENCES, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_SKILL, STORE_PBS]) {
+      for (const name of [STORE_PROFILE, STORE_PREFERENCES, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_SKILL, STORE_PBS, STORE_GOALS, STORE_SKILL_TREE, STORE_COMPETITIVE]) {
         if (!db.objectStoreNames.contains(name)) {
           db.createObjectStore(name, { keyPath: 'id' })
         }
@@ -390,17 +447,71 @@ export async function appendJournalAsync(entry: Omit<JournalEntry, 'id'>): Promi
   }
 }
 
+// Goals
+export async function loadGoalsAsync(): Promise<GoalsState> {
+  try {
+    const data = await idbGet<GoalsState>(STORE_GOALS)
+    return data ?? defaultGoalsState()
+  } catch {
+    return defaultGoalsState()
+  }
+}
+
+export async function saveGoalsAsync(goals: GoalsState): Promise<void> {
+  try {
+    await idbPut(STORE_GOALS, goals)
+  } catch {
+    // silent
+  }
+}
+
+// Skill tree
+export async function loadSkillTreeAsync(): Promise<SkillTreeState> {
+  try {
+    const data = await idbGet<SkillTreeState>(STORE_SKILL_TREE)
+    return data ?? defaultSkillTreeState()
+  } catch {
+    return defaultSkillTreeState()
+  }
+}
+
+export async function saveSkillTreeAsync(tree: SkillTreeState): Promise<void> {
+  try {
+    await idbPut(STORE_SKILL_TREE, tree)
+  } catch {
+    // silent
+  }
+}
+
+// Competitive
+export async function loadCompetitiveAsync(): Promise<CompetitiveState> {
+  try {
+    const data = await idbGet<CompetitiveState>(STORE_COMPETITIVE)
+    return data ?? defaultCompetitiveState()
+  } catch {
+    return defaultCompetitiveState()
+  }
+}
+
+export async function saveCompetitiveAsync(state: CompetitiveState): Promise<void> {
+  try {
+    await idbPut(STORE_COMPETITIVE, state)
+  } catch {
+    // silent
+  }
+}
+
 // ─── Bulk operations (for export/import/reset) ──────────────────────
 
 export async function clearAllStores(): Promise<void> {
-  const stores = [STORE_PROFILE, STORE_PREFERENCES, STORE_SESSIONS, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_JOURNAL, STORE_SKILL, STORE_PBS]
+  const stores = [STORE_PROFILE, STORE_PREFERENCES, STORE_SESSIONS, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_JOURNAL, STORE_SKILL, STORE_PBS, STORE_GOALS, STORE_SKILL_TREE, STORE_COMPETITIVE]
   for (const store of stores) {
     await idbClear(store)
   }
 }
 
 export async function clearAllStoresExceptPreferences(): Promise<void> {
-  const stores = [STORE_PROFILE, STORE_SESSIONS, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_JOURNAL, STORE_SKILL, STORE_PBS]
+  const stores = [STORE_PROFILE, STORE_SESSIONS, STORE_STATS, STORE_STREAKS, STORE_UNLOCKS, STORE_JOURNAL, STORE_SKILL, STORE_PBS, STORE_GOALS, STORE_SKILL_TREE, STORE_COMPETITIVE]
   for (const store of stores) {
     await idbClear(store)
   }

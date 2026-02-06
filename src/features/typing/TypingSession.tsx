@@ -8,11 +8,13 @@ import {
   buildFeedback,
   computeLiveMetrics,
   getPersonalBest,
+  loadGoalsAsync,
   loadSkillModel,
   loadStatsAsync,
   loadStreakAsync,
   maybeUpdatePersonalBest,
   pushRecent,
+  saveGoalsAsync,
   saveLastMode,
   saveSkillModel,
   saveStatsAsync,
@@ -20,6 +22,7 @@ import {
   type Preferences,
   type SprintDurationMs,
   typewriterAudio,
+  updateGoalsAfterRun,
   updateSkillModelFromRun,
 } from '@lib'
 import { updateStatsFromRun, updateStreakFromRun } from '@lib-internal/statsEngine'
@@ -204,6 +207,17 @@ export function TypingSession(props: {
         const nextStats = updateStatsFromRun(prevStats, run)
         const nextStreak = updateStreakFromRun(prevStreak)
         await Promise.all([saveStatsAsync(nextStats), saveStreakAsync(nextStreak)])
+      } catch {
+        // silent
+      }
+    })()
+
+    // Update daily goals (fire-and-forget).
+    ;(async () => {
+      try {
+        const prevGoals = await loadGoalsAsync()
+        const nextGoals = updateGoalsAfterRun(prevGoals, run)
+        await saveGoalsAsync(nextGoals)
       } catch {
         // silent
       }

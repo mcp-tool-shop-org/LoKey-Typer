@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { loadJournalAsync, loadProfileAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type JournalEntry, type UserProfile } from '@lib'
+import { checkGoalCompletion, generateDailyGoal, intentLabel, loadGoalsAsync, loadJournalAsync, loadProfileAsync, loadStatsAsync, loadStreakAsync, modeLabel, modeToPath, pickQuickstartExercise, preferredQuickstartMode, saveLastMode, type GoalsState, type JournalEntry, type UserProfile } from '@lib'
 import { generateHomeCoachMessage, type CoachMessage } from '@lib-internal/coach'
 
 function ModeCard({ mode, description, highlight }: { mode: Mode; description: string; highlight?: boolean }) {
@@ -78,21 +78,24 @@ export function HomePage() {
   const [profile, setProfile] = useState<UserProfile | null>(null)
   const [coachMsg, setCoachMsg] = useState<CoachMessage | null>(null)
   const [recentJournal, setRecentJournal] = useState<JournalEntry[]>([])
+  const [goals, setGoals] = useState<GoalsState | null>(null)
 
   useEffect(() => {
     let cancelled = false
     ;(async () => {
       try {
-        const [p, stats, streak, journal] = await Promise.all([
+        const [p, stats, streak, journal, g] = await Promise.all([
           loadProfileAsync(),
           loadStatsAsync(),
           loadStreakAsync(),
           loadJournalAsync(),
+          loadGoalsAsync(),
         ])
         if (cancelled) return
         setProfile(p)
         setCoachMsg(generateHomeCoachMessage(stats, streak, p))
         setRecentJournal(journal.slice(-3).reverse())
+        setGoals(g)
       } catch {
         // silent
       }
@@ -127,6 +130,30 @@ export function HomePage() {
           {coachMsg.text}
         </div>
       ) : null}
+
+      {goals && goals.weeklyIntent ? (() => {
+        const goal = generateDailyGoal(goals.weeklyIntent, new Date().getDay(), null)
+        const todayAvgAcc = goals.todaySessions > 0 ? goals.todayAccuracySum / goals.todaySessions : 0
+        const completed = checkGoalCompletion(goal, goals.todaySessions, goals.todayMinutesMs, todayAvgAcc)
+        return (
+          <Link
+            to="/goals"
+            className="block rounded-lg border border-zinc-800 bg-zinc-950 px-4 py-3 hover:border-zinc-700"
+          >
+            <div className="flex items-center justify-between">
+              <div className="text-xs font-medium text-zinc-400">
+                Today's goal — {intentLabel(goals.weeklyIntent)}
+              </div>
+              {completed ? (
+                <span className="text-[11px] font-medium text-green-400">Done</span>
+              ) : null}
+            </div>
+            <div className="mt-1 text-sm text-zinc-200">
+              {goals.todaySessions}/{goal.targetSessions} sessions · {Math.round(goals.todayMinutesMs / 60_000)}/{goal.targetMinutes} min
+            </div>
+          </Link>
+        )
+      })() : null}
 
       <section className="grid gap-4 md:grid-cols-3">
         <ModeCard mode="focus" description="Calm practice. Minimal HUD by default." highlight={highlightMode === 'focus'} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom'
 import { AppShell } from '@app/shell'
-import { DailySetPage, ExerciseListPage, HomePage, ModeHubPage, OnboardingPage, RunPage, SettingsPage } from '@features'
+import { DailySetPage, ExerciseListPage, GoalsPage, HomePage, ModeHubPage, OnboardingPage, RunPage, SettingsPage } from '@features'
 import { loadProfileAsync, loadRuns } from '@lib'
 
 function useNeedsOnboarding() {
@@ -63,6 +63,7 @@ export default function App() {
 
         <Route path="welcome" element={<OnboardingPage />} />
         <Route path="daily" element={<DailySetPage />} />
+        <Route path="goals" element={<GoalsPage />} />
 
         <Route path="focus" element={<ModeHubPage mode="focus" />} />
         <Route path="focus/exercises" element={<ExerciseListPage mode="focus" />} />

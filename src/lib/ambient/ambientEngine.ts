@@ -317,13 +317,21 @@ export class AmbientEngineV2 {
     if (this.nextEvolutionAtMs == null) this.planNextEvolution()
   }
 
-  private pickInitialSoundscape(params: { mode: Mode; profile: AmbientProfile }) {
+  private pickInitialSoundscape(params: {
+    mode: Mode
+    profile: AmbientProfile
+    avoidLayerIds?: Partial<Record<AmbientLayerName, string>>
+  }) {
     const layers = layersForMode(params.mode)
     const stemsByLayer: Partial<Record<AmbientLayerName, AmbientStem>> = {}
 
     for (const layer of layers) {
-      const candidates = this.stemsFor({ mode: params.mode, profile: params.profile, layer })
+      const candidatesRaw = this.stemsFor({ mode: params.mode, profile: params.profile, layer })
       if (!this.history) continue
+
+      const avoidId = params.avoidLayerIds?.[layer]
+      const candidates =
+        avoidId && candidatesRaw.length > 1 ? candidatesRaw.filter((c) => c.id !== avoidId) : candidatesRaw
 
       const picked = pickWeighted(
         candidates.filter((c) => !this.history!.wasLayerUsedRecently(layer, c.id, 5)),
@@ -347,6 +355,10 @@ export class AmbientEngineV2 {
   }) {
     if (!this.history || this.activeMode !== params.mode) this.history = new AmbientHistory(params.mode)
 
+    const dominantLayer: AmbientLayerName = params.mode === 'competitive' ? 'mid_presence' : 'mid_texture'
+    const lastDominant = this.history.mostRecentDominantId()
+    const avoidLayerIds: Partial<Record<AmbientLayerName, string>> = lastDominant ? { [dominantLayer]: lastDominant } : {}
+
     // Choose initial stems.
     // We try a few times to avoid repeating the most recent soundscape across app starts,
     // but we always allow a fallback if the library is small.
@@ -356,7 +368,11 @@ export class AmbientEngineV2 {
     let repeatedLast = false
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      const candidate = this.pickInitialSoundscape({ mode: params.mode, profile: params.profile })
+      const candidate = this.pickInitialSoundscape({
+        mode: params.mode,
+        profile: params.profile,
+        avoidLayerIds,
+      })
       const candidateIds: SoundscapeLayers = {}
       for (const [layer, stem] of Object.entries(candidate) as Array<[AmbientLayerName, AmbientStem]>) {
         candidateIds[layer] = stem.id
@@ -365,7 +381,10 @@ export class AmbientEngineV2 {
       stemsByLayer = candidate
       activeIds = candidateIds
 
-      if (!this.history.wasSoundscapeUsedRecently(params.profile, candidateIds, 1)) {
+      const repeatsSoundscape = this.history.wasSoundscapeUsedRecently(params.profile, candidateIds, 1)
+      const repeatsDominant = this.history.wasDominantUsedRecently(candidateIds, 1)
+
+      if (!repeatsSoundscape && !repeatsDominant) {
         repeatedLast = false
         break
       }

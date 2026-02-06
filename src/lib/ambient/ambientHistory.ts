@@ -127,6 +127,14 @@ export class AmbientHistory {
     return layers.mid_texture ?? layers.mid_presence ?? null
   }
 
+  mostRecentDominantId() {
+    const persistedV2 = loadPersistedV2(this.mode)
+    if (persistedV2.recentDominant.length) return persistedV2.recentDominant[0]?.id ?? null
+
+    const persistedV1 = loadPersistedV1(this.mode)
+    return persistedV1.recentDominant[0] ?? null
+  }
+
   wasSoundscapeUsedRecently(profile: string, layers: SoundscapeLayers, n = 50) {
     const persistedV2 = loadPersistedV2(this.mode)
     const id = this.soundscapeId(profile, layers)

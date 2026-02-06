@@ -1,4 +1,410 @@
 {
   "version": 1,
-  "stems": []
+  "stems": [
+    {
+      "id": "focus_soft_low_bed_l01",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_low_bed_l02",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_low_bed_l03",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_low_bed_l04",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "low_bed",
+      "path": "/audio/ambient/focus/focus_soft/low_bed/focus_soft_low_bed_l04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.003
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m01",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.015
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m02",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.012
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m03",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.014
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m04",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.016
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m05",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m05_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.015
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_mid_texture_m06",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "mid_texture",
+      "path": "/audio/ambient/focus/focus_soft/mid_texture/focus_soft_mid_texture_m06_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -32.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.015
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_air_a01",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.0,
+      "features": {
+        "brightness": 0.999,
+        "density": 0.999,
+        "movement": 0.07
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_air_a02",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.0,
+      "features": {
+        "brightness": 0.995,
+        "density": 0.999,
+        "movement": 0.067
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_air_a03",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.0,
+      "features": {
+        "brightness": 0.996,
+        "density": 0.999,
+        "movement": 0.068
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_air_a04",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "air",
+      "path": "/audio/ambient/focus/focus_soft/air/focus_soft_air_a04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -33.0,
+      "features": {
+        "brightness": 0.998,
+        "density": 0.999,
+        "movement": 0.069
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_room_r01",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_room_r02",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "focus_soft_room_r03",
+      "mode": "focus",
+      "profile": "focus_soft",
+      "layer": "room",
+      "path": "/audio/ambient/focus/focus_soft/room/focus_soft_room_r03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -34.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_low_bed_l01",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "low_bed",
+      "path": "/audio/ambient/competitive/competitive_clean/low_bed/comp_clean_low_bed_l01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.005
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_low_bed_l02",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "low_bed",
+      "path": "/audio/ambient/competitive/competitive_clean/low_bed/comp_clean_low_bed_l02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.005
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_low_bed_l03",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "low_bed",
+      "path": "/audio/ambient/competitive/competitive_clean/low_bed/comp_clean_low_bed_l03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.5,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.004
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_mid_presence_p01",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "mid_presence",
+      "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.029
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_mid_presence_p02",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "mid_presence",
+      "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.027
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_mid_presence_p03",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "mid_presence",
+      "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.029
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_mid_presence_p04",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "mid_presence",
+      "path": "/audio/ambient/competitive/competitive_clean/mid_presence/comp_clean_mid_presence_p04_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.0,
+      "features": {
+        "brightness": 0.0,
+        "density": 1.0,
+        "movement": 0.024
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_air_a01",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "air",
+      "path": "/audio/ambient/competitive/competitive_clean/air/comp_clean_air_a01_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.8,
+      "features": {
+        "brightness": 1.0,
+        "density": 1.0,
+        "movement": 0.091
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_air_a02",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "air",
+      "path": "/audio/ambient/competitive/competitive_clean/air/comp_clean_air_a02_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.8,
+      "features": {
+        "brightness": 1.0,
+        "density": 1.0,
+        "movement": 0.088
+      },
+      "tags": []
+    },
+    {
+      "id": "comp_clean_air_a03",
+      "mode": "competitive",
+      "profile": "competitive_clean",
+      "layer": "air",
+      "path": "/audio/ambient/competitive/competitive_clean/air/comp_clean_air_a03_v1.wav",
+      "length_sec": 10,
+      "lufs_i": -31.8,
+      "features": {
+        "brightness": 1.0,
+        "density": 0.999,
+        "movement": 0.096
+      },
+      "tags": []
+    }
+  ]
 }

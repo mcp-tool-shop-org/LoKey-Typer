@@ -214,7 +214,7 @@ export class AmbientEngineV2 {
   }
 
   private computeEnabled(prefs: Preferences) {
-    return Boolean(getEffectiveAmbientEnabled(prefs))
+    return Boolean(prefs.soundEnabled) && Boolean(getEffectiveAmbientEnabled(prefs))
   }
 
   private applyVolumes(seconds: number) {

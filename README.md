@@ -21,6 +21,7 @@ Phase 1 includes:
 - `npm run validate:content` — schema + structural validation for all content packs
 - `npm run smoke:rotation` — novelty/rotation smoke test (duplicates + template day-to-day change rate)
 - `npm run qa:ambient:assets` — checks `public/audio/ambient/**` for expected ambient WAV layer filenames
+- `npm run qa:sound-design` — sound design manifesto acceptance gates (engine constants + stem metadata)
 - `npm run qa:phase3:novelty` — simulates 14 days of daily sets and reports duplicate rate
 - `npm run qa:phase3:recommendation` — recommendation sanity simulation (novelty + weak-tag bias)
 
@@ -38,6 +39,9 @@ See `modular.md` for the repository modularity contracts (public APIs, import bo
 - `modular.md` — architecture + import boundary contracts (treat as “law”)
 - `personalization_engine.md` — Phase 3 plan for recommendations/daily sets (rules + metrics)
 - `docs/sound-design.md` — ambient sound design + audit framework (Phase 3.4)
+- `docs/sound-design-manifesto.md` — formal sound design manifesto + numeric acceptance tests + science-safe marketing copy
+- `docs/audio-review-checklist.md` — required manual audio review checklist for new stems
+- `docs/sound-philosophy.md` — short public-facing sound philosophy (marketing-safe)
 
 ## Contributing
 

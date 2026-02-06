@@ -291,7 +291,7 @@ export class AmbientMixer {
       // Gain drift is subtle.
       const gainDepth = params.mode === 'competitive' ? 0.10 : 0.07
       const targetGain = clamp(lg.gain.gain.value * (1 + (params.rand() * 2 - 1) * gainDepth), 0, 2)
-      setTarget(lg.gain.gain, g.ctx, targetGain, params.mode === 'competitive' ? 25 : 60)
+      setTarget(lg.gain.gain, g.ctx, targetGain, params.mode === 'competitive' ? 30 : 60)
 
       // Filter drift by layer.
       const baseCutoff = layer === 'air' ? 9000 : layer === 'low_bed' ? 1500 : 6500

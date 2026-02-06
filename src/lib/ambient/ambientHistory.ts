@@ -4,13 +4,22 @@ export type AmbientLayerName = 'low_bed' | 'mid_texture' | 'mid_presence' | 'air
 
 export type SoundscapeLayers = Partial<Record<AmbientLayerName, string>>
 
-type PersistedHistory = {
+type HistoryEntry = { id: string; atMs: number }
+
+type PersistedHistoryV2 = {
+  // Most recent first
+  recentSoundscapes: HistoryEntry[]
+  recentDominant: HistoryEntry[]
+}
+
+type PersistedHistoryV1 = {
   // Most recent first
   recentSoundscapes: string[]
   recentDominant: string[]
 }
 
-const KEY_PREFIX = 'lkt_ambient_history_v1'
+const KEY_PREFIX_V1 = 'lkt_ambient_history_v1'
+const KEY_PREFIX_V2 = 'lkt_ambient_history_v2'
 
 function safeParse<T>(raw: string | null): T | null {
   if (!raw) return null
@@ -21,14 +30,44 @@ function safeParse<T>(raw: string | null): T | null {
   }
 }
 
-function keyForMode(mode: Mode) {
-  return `${KEY_PREFIX}|${mode}`
+function keyForModeV1(mode: Mode) {
+  return `${KEY_PREFIX_V1}|${mode}`
 }
 
-function loadPersisted(mode: Mode): PersistedHistory {
+function keyForModeV2(mode: Mode) {
+  return `${KEY_PREFIX_V2}|${mode}`
+}
+
+function normalizeEntry(x: unknown): HistoryEntry | null {
+  const e = x as Partial<HistoryEntry> | null
+  if (!e) return null
+  if (typeof e.id !== 'string' || e.id.length === 0) return null
+  if (typeof e.atMs !== 'number' || !Number.isFinite(e.atMs) || e.atMs <= 0) return null
+  return { id: e.id, atMs: e.atMs }
+}
+
+function loadPersistedV2(mode: Mode): PersistedHistoryV2 {
   try {
     if (typeof localStorage === 'undefined') return { recentSoundscapes: [], recentDominant: [] }
-    const parsed = safeParse<PersistedHistory>(localStorage.getItem(keyForMode(mode)))
+    const parsed = safeParse<PersistedHistoryV2>(localStorage.getItem(keyForModeV2(mode)))
+    if (!parsed) return { recentSoundscapes: [], recentDominant: [] }
+    return {
+      recentSoundscapes: Array.isArray(parsed.recentSoundscapes)
+        ? parsed.recentSoundscapes.map(normalizeEntry).filter((e): e is HistoryEntry => e != null)
+        : [],
+      recentDominant: Array.isArray(parsed.recentDominant)
+        ? parsed.recentDominant.map(normalizeEntry).filter((e): e is HistoryEntry => e != null)
+        : [],
+    }
+  } catch {
+    return { recentSoundscapes: [], recentDominant: [] }
+  }
+}
+
+function loadPersistedV1(mode: Mode): PersistedHistoryV1 {
+  try {
+    if (typeof localStorage === 'undefined') return { recentSoundscapes: [], recentDominant: [] }
+    const parsed = safeParse<PersistedHistoryV1>(localStorage.getItem(keyForModeV1(mode)))
     if (!parsed) return { recentSoundscapes: [], recentDominant: [] }
     return {
       recentSoundscapes: Array.isArray(parsed.recentSoundscapes)
@@ -43,10 +82,10 @@ function loadPersisted(mode: Mode): PersistedHistory {
   }
 }
 
-function savePersisted(mode: Mode, next: PersistedHistory) {
+function savePersistedV2(mode: Mode, next: PersistedHistoryV2) {
   try {
     if (typeof localStorage === 'undefined') return
-    localStorage.setItem(keyForMode(mode), JSON.stringify(next))
+    localStorage.setItem(keyForModeV2(mode), JSON.stringify(next))
   } catch {
     // ignore
   }
@@ -89,29 +128,44 @@ export class AmbientHistory {
   }
 
   wasSoundscapeUsedRecently(profile: string, layers: SoundscapeLayers, n = 50) {
-    const persisted = loadPersisted(this.mode)
+    const persistedV2 = loadPersistedV2(this.mode)
     const id = this.soundscapeId(profile, layers)
-    return persisted.recentSoundscapes.slice(0, n).includes(id)
+    if (persistedV2.recentSoundscapes.length) return persistedV2.recentSoundscapes.slice(0, n).some((e) => e.id === id)
+
+    const persistedV1 = loadPersistedV1(this.mode)
+    return persistedV1.recentSoundscapes.slice(0, n).includes(id)
+  }
+
+  wasSoundscapeUsedWithinMs(profile: string, layers: SoundscapeLayers, windowMs: number) {
+    const persisted = loadPersistedV2(this.mode)
+    const id = this.soundscapeId(profile, layers)
+    const cutoff = Date.now() - Math.max(0, windowMs)
+    return persisted.recentSoundscapes.some((e) => e.id === id && e.atMs >= cutoff)
   }
 
   wasDominantUsedRecently(layers: SoundscapeLayers, n = 10) {
-    const persisted = loadPersisted(this.mode)
+    const persistedV2 = loadPersistedV2(this.mode)
     const dom = this.dominantStemId(layers)
     if (!dom) return false
-    return persisted.recentDominant.slice(0, n).includes(dom)
+    if (persistedV2.recentDominant.length) return persistedV2.recentDominant.slice(0, n).some((e) => e.id === dom)
+
+    const persistedV1 = loadPersistedV1(this.mode)
+    return persistedV1.recentDominant.slice(0, n).includes(dom)
   }
 
   noteSoundscape(profile: string, layers: SoundscapeLayers) {
-    const persisted = loadPersisted(this.mode)
     const id = this.soundscapeId(profile, layers)
     const dom = this.dominantStemId(layers)
 
-    const nextSoundscapes = [id, ...persisted.recentSoundscapes.filter((s) => s !== id)].slice(0, 50)
+    const nowMs = Date.now()
+    const persisted = loadPersistedV2(this.mode)
+
+    const nextSoundscapes = [{ id, atMs: nowMs }, ...persisted.recentSoundscapes.filter((e) => e.id !== id)].slice(0, 200)
     const nextDominant =
       dom == null
         ? persisted.recentDominant
-        : [dom, ...persisted.recentDominant.filter((s) => s !== dom)].slice(0, 10)
+        : [{ id: dom, atMs: nowMs }, ...persisted.recentDominant.filter((e) => e.id !== dom)].slice(0, 50)
 
-    savePersisted(this.mode, { recentSoundscapes: nextSoundscapes, recentDominant: nextDominant })
+    savePersistedV2(this.mode, { recentSoundscapes: nextSoundscapes, recentDominant: nextDominant })
   }
 }

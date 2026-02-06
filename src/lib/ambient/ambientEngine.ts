@@ -323,8 +323,8 @@ export class AmbientEngineV2 {
       activeIds[layer] = stem.id
     }
 
-    // Cross-session no-repeat best effort: if we accidentally picked a recent full soundscape, we’ll let macro evolution swap quickly.
-    if (this.history.wasSoundscapeUsedRecently(params.profile, activeIds, 50)) {
+    // Cross-session no-repeat: if we accidentally picked a recent full soundscape, we’ll let macro evolution swap quickly.
+    if (this.history.wasSoundscapeUsedWithinMs(params.profile, activeIds, 30 * 60_000)) {
       this.logDebug('Picked recently-used soundscape; will evolve soon', activeIds)
       this.nextEvolutionAtMs = Date.now() + 15_000
     } else {
@@ -337,7 +337,7 @@ export class AmbientEngineV2 {
       stemsByLayer,
       rand: this.rand,
       micro: {
-        gainTc: params.mode === 'competitive' ? 25 : 60,
+        gainTc: params.mode === 'competitive' ? 30 : 60,
         filterTc: params.mode === 'competitive' ? 30 : 90,
         panTc: params.mode === 'competitive' ? 40 : 120,
       },
@@ -386,7 +386,7 @@ export class AmbientEngineV2 {
       fadeSeconds: 12 + this.rand() * 13,
       rand: this.rand,
       micro: {
-        gainTc: params.mode === 'competitive' ? 25 : 60,
+        gainTc: params.mode === 'competitive' ? 30 : 60,
         filterTc: params.mode === 'competitive' ? 30 : 90,
         panTc: params.mode === 'competitive' ? 40 : 120,
       },

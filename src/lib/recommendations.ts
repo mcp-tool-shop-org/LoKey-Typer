@@ -1,6 +1,7 @@
 import type { Exercise, Mode } from '@content'
 import { loadExercisesByMode } from '@content'
-import type { UserSkillModel } from './storage'
+import type { RunResult, UserSkillModel } from './storage'
+import { computeAdaptiveProfile, scoreExerciseForProfile, adjustDifficultyBand } from './adaptiveEngine'
 
 function xmur3(str: string) {
   let h = 1779033703 ^ str.length
@@ -37,8 +38,9 @@ export type RecommendationContext = {
   seed?: string
   skill?: Pick<
     UserSkillModel,
-    'ema' | 'total_runs' | 'weak_tags' | 'weakness_by_tag' | 'by_mode' | 'recent_exercise_ids_by_mode'
+    'ema' | 'total_runs' | 'weak_tags' | 'weakness_by_tag' | 'by_mode' | 'recent_exercise_ids_by_mode' | 'errors_by_class' | 'performance_by_length'
   >
+  recentRuns?: Pick<RunResult, 'wpm' | 'accuracy'>[]
 }
 
 export type Recommendation = {
@@ -106,9 +108,16 @@ export function getNextRecommendations(
     .filter((ex) => !recent.has(ex.id))
     .filter((ex) => (prefs.screenReaderMode ? isSrSafe(ex) : true))
 
-  const bandCenter = bandCenterFromSkill(ctx.skill, ctx.mode)
+  // Adaptive difficulty band: uses recent runs for dynamic adjustment
+  const bandCenter = ctx.skill && ctx.recentRuns
+    ? adjustDifficultyBand(ctx.skill, ctx.mode, ctx.recentRuns)
+    : bandCenterFromSkill(ctx.skill, ctx.mode)
+
   const weakTags = ctx.skill?.weak_tags ?? []
   const weakness = ctx.skill?.weakness_by_tag ?? {}
+
+  // Adaptive profile for exercise scoring
+  const adaptiveProfile = ctx.skill ? computeAdaptiveProfile(ctx.skill) : null
 
   const used = new Set<string>()
   const out: Recommendation[] = []
@@ -129,6 +138,11 @@ export function getNextRecommendations(
 
     // Prefer templates slightly for replayability.
     if (ex.type === 'template') w *= 1.1
+
+    // Adaptive scoring: punctuation targeting, length matching, difficulty calibration
+    if (adaptiveProfile) {
+      w *= scoreExerciseForProfile(ex, adaptiveProfile)
+    }
 
     return w
   }

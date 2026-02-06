@@ -158,3 +158,10 @@ export {
   type PackUnlockRule,
   type PackUnlockStatus,
 } from '../progressionEngine'
+
+export {
+  computeAdaptiveProfile,
+  scoreExerciseForProfile,
+  adjustDifficultyBand,
+  type AdaptiveProfile,
+} from '../adaptiveEngine'

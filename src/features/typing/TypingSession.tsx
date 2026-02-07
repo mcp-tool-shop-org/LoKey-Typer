@@ -388,6 +388,13 @@ export function TypingSession(props: {
             setInputFocused(false)
           }}
           onKeyDown={(e) => {
+            // Escape exits the session
+            if (e.key === 'Escape') {
+              e.preventDefault()
+              props.onExit()
+              return
+            }
+
             if (isComplete) return
 
             if (startedAtMs == null && (e.key.length === 1 || e.key === 'Enter')) {
@@ -494,7 +501,7 @@ export function TypingSession(props: {
           ) : (
             <div className="flex items-center gap-1.5">
               <Icon name="keyboard" size={14} className="shrink-0 text-zinc-500" />
-              Punctuation and newlines are supported. Backspace is allowed (counted).
+              Punctuation and newlines are supported. Backspace is allowed (counted). Press Esc to exit.
             </div>
           )}
         </div>

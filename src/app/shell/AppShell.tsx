@@ -33,6 +33,12 @@ export function AppShell() {
 
   return (
     <div className="min-h-full">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-zinc-800 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-200"
+      >
+        Skip to content
+      </a>
       <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <Link to="/" className="flex items-center gap-2.5 transition hover:opacity-80">
@@ -77,7 +83,7 @@ export function AppShell() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-6 py-16">
+      <main id="main-content" className="mx-auto max-w-5xl px-6 py-16">
         <Outlet />
       </main>
 

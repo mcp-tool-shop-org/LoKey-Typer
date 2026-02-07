@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { findExercise } from '@content'
 import type { Exercise } from '@content'
@@ -165,6 +165,14 @@ export function DailySetPage() {
   }, [isFinished, phase])
 
   const [sessionKey, setSessionKey] = useState(0)
+  const phaseRef = useRef<HTMLDivElement>(null)
+
+  // Scroll phase content into view on transitions
+  useEffect(() => {
+    if (phase === 'transition' || phase === 'summary') {
+      phaseRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }, [phase])
 
   // ---- Current exercise ----
 
@@ -414,7 +422,7 @@ export function DailySetPage() {
         const nextItem = daily.items[nextIndex]
         const nextExercise = nextItem ? findExercise(nextItem.exerciseId) : null
         return (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center animate-fade-in">
+          <div ref={phaseRef} className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center animate-fade-in">
             <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
             <h2 className="text-lg font-semibold text-zinc-200">Nice!</h2>
             {nextItem && nextExercise ? (
@@ -436,7 +444,7 @@ export function DailySetPage() {
         const totalMs = items.reduce((s, r) => s + r.durationMs, 0)
 
         return (
-          <div className="mx-auto max-w-3xl space-y-10 animate-fade-in">
+          <div ref={phaseRef} className="mx-auto max-w-3xl space-y-10 animate-fade-in">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
               <Icon name="trophy" size={28} className="text-zinc-500" />

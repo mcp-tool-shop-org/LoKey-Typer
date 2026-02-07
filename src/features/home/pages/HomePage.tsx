@@ -26,7 +26,7 @@ function computeDaysPracticed(runs: ReturnType<typeof loadRuns>) {
 
 function StatCard({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-950 px-5 py-4 text-center transition-transform duration-200 hover:-translate-y-0.5">
+    <div className="rounded-2xl bg-zinc-900/40 px-5 py-4 text-center transition-transform duration-200 hover:-translate-y-0.5">
       <Icon name={icon} size={18} className="mx-auto text-zinc-500" />
       <div className="mt-1.5 text-lg font-semibold tabular-nums text-zinc-50">{value}</div>
       <div className="mt-0.5 text-xs font-medium text-zinc-500">{label}</div>
@@ -91,7 +91,7 @@ export function HomePage() {
           <StatCard value={`${daysPracticed}`} label="Days practiced" icon={STAT_ICONS[3]} />
         </section>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-3xl border border-zinc-800 bg-zinc-950 px-6 py-8 text-center sm:px-8 sm:py-12">
+        <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-8 text-center sm:px-8 sm:py-12">
           <Icon name="keyboard" size={28} className="text-zinc-500" />
           <p className="text-sm text-zinc-400">
             Your stats will appear here after your first session.

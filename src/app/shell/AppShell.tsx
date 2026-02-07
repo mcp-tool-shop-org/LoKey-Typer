@@ -39,7 +39,7 @@ export function AppShell() {
       >
         Skip to content
       </a>
-      <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
+      <header className="border-b border-zinc-800/50 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 overflow-x-auto px-4 py-4 sm:px-6 sm:py-5">
           <Link to="/" className="flex shrink-0 items-center gap-2.5 transition duration-200 hover:opacity-80">
             <Icon name="logo-mark" size={22} className="text-zinc-400" />
@@ -55,7 +55,7 @@ export function AppShell() {
             <NavItem to="/competitive" label="Competitive" />
 
             {/* Divider */}
-            <div className="mx-0.5 h-5 w-px bg-zinc-800" />
+            <div className="mx-0.5 h-5 w-px bg-zinc-800/50" />
 
             {/* Skip to random ambient track */}
             <button

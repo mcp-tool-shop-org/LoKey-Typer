@@ -130,7 +130,7 @@ export function ModePage({ mode }: { mode: Mode }) {
 
       {/* Error banner */}
       {startError ? (
-        <div className="flex items-center gap-3 rounded-2xl border border-rose-800 bg-rose-950/30 px-5 py-4 text-sm text-rose-400">
+        <div className="flex items-center gap-3 rounded-2xl bg-rose-950/40 px-5 py-4 text-sm text-rose-400">
           <Icon name="info" size={16} className="shrink-0" />
           {startError}
         </div>
@@ -138,7 +138,7 @@ export function ModePage({ mode }: { mode: Mode }) {
 
       {/* Competitive: inline sprint config */}
       {mode === 'competitive' ? (
-        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+        <div className="rounded-2xl bg-zinc-900/40 p-6">
           <div className="flex flex-col items-center space-y-4">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-50">

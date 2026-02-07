@@ -71,7 +71,7 @@ function formatMs(ms: number) {
 
 function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
-    <div className="min-w-[5.5rem] rounded-2xl border border-zinc-800 bg-zinc-950 p-4 transition-transform duration-200 hover:-translate-y-0.5">
+    <div className="min-w-[5.5rem] rounded-2xl bg-zinc-900/40 p-4 transition-transform duration-200 hover:-translate-y-0.5">
       <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
         {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
         {label}
@@ -353,7 +353,7 @@ export function TypingSession(props: {
         </div>
       )}
 
-      <div className="rounded-3xl border border-zinc-800 bg-zinc-950 p-5">
+      <div className="rounded-3xl bg-zinc-900/50 p-5">
         <TypingOverlay
           target={targetText}
           typed={typed}
@@ -362,7 +362,7 @@ export function TypingSession(props: {
         />
       </div>
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+      <div className="rounded-2xl bg-zinc-900/30 p-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-zinc-200">Type here</div>
           <button
@@ -508,7 +508,7 @@ export function TypingSession(props: {
       </div>
 
       {props.mode === 'competitive' ? (
-        <div className="flex items-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">
+        <div className="flex items-center gap-2 rounded-2xl bg-zinc-900/30 p-4 text-xs text-zinc-400">
           <Icon name="info" size={14} className="shrink-0 text-zinc-500" />
           Personal bests require ≥ 95% accuracy.
         </div>

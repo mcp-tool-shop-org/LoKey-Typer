@@ -158,6 +158,15 @@ export class AmbientPlayerV3 {
     }
   }
 
+  /** Skip to a new random track with a crossfade. */
+  async skipTrack(): Promise<void> {
+    if (!this.started) return
+    if (!this.shouldPlay()) return
+    this.preloadedTrack = null
+    this.preloadedBuffer = null
+    await this.rotate()
+  }
+
   /** Duck volume briefly when user is actively typing. */
   noteTypingActivity(): void {
     if (!this.pauseOnTyping) return

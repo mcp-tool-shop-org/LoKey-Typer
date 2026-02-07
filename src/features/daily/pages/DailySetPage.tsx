@@ -234,7 +234,7 @@ export function DailySetPage() {
   // ---- Render ----
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-10">
       {/* CTA — same position as every other tab (idle only) */}
       {phase === 'idle' ? (
         <div className="text-center">
@@ -246,21 +246,10 @@ export function DailySetPage() {
             <Icon name="play" size={20} className="text-zinc-400" />
             {currentIndex > 0 ? 'Continue' : 'Begin'}
           </button>
-          <div className="mt-3 text-xs text-zinc-500">
+          <div className="mt-4 text-xs text-zinc-500">
             {daily.items.length} exercises • {sessionLabel(sessionType)}
           </div>
-        </div>
-      ) : null}
-
-      {/* Header — shown in idle only */}
-      {phase === 'idle' ? (
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h1 className="text-xl font-semibold tracking-tight text-zinc-50">Today's Set</h1>
-            <p className="mt-1 text-sm text-zinc-400">A quiet session, ready when you are.</p>
-          </div>
-
-          <div className="flex flex-wrap gap-2">
+          <div className="mt-4 flex flex-wrap justify-center gap-2">
             {(
               [
                 { key: 'reset' as const, label: sessionLabel('reset') },
@@ -272,10 +261,10 @@ export function DailySetPage() {
                 key={t.key}
                 to={`/daily?type=${t.key}`}
                 className={
-                  'rounded-md border px-3 py-2 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                  'rounded-md border px-3 py-1.5 text-xs font-semibold outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                   (sessionType === t.key
                     ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
-                    : 'border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900')
+                    : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200')
                 }
               >
                 {t.label}
@@ -305,8 +294,8 @@ export function DailySetPage() {
       {phase === 'idle' ? (
         <>
           {/* Stats cards */}
-          <div className="grid gap-3 sm:grid-cols-2">
-            <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="flex items-start gap-3 rounded-xl border border-zinc-800/80 bg-zinc-950 p-6 text-sm text-zinc-300">
               <Icon name="stat-days" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Days practiced</div>
@@ -314,7 +303,7 @@ export function DailySetPage() {
                 <div className="mt-1 text-xs text-zinc-500">No penalties. Missed days are just days.</div>
               </div>
             </div>
-            <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-5 text-sm text-zinc-300">
+            <div className="flex items-start gap-3 rounded-xl border border-zinc-800/80 bg-zinc-950 p-6 text-sm text-zinc-300">
               <Icon name="stat-streak" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Best week</div>
@@ -325,7 +314,7 @@ export function DailySetPage() {
           </div>
 
           {/* Exercise preview list */}
-          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-8">
             <div className="text-sm font-semibold text-zinc-50">Today's exercises</div>
 
             <div className="mt-4 grid gap-2">
@@ -402,7 +391,7 @@ export function DailySetPage() {
         const nextItem = daily.items[nextIndex]
         const nextExercise = nextItem ? findExercise(nextItem.exerciseId) : null
         return (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-12 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800/80 bg-zinc-950 px-8 py-16 text-center">
             <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
             <div className="text-lg font-semibold text-zinc-200">Nice!</div>
             {nextItem && nextExercise ? (
@@ -424,9 +413,9 @@ export function DailySetPage() {
         const totalMs = items.reduce((s, r) => s + r.durationMs, 0)
 
         return (
-          <div className="space-y-6">
+          <div className="mx-auto max-w-3xl space-y-10">
             {/* Summary header */}
-            <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-10 text-center">
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-950 px-8 py-12 text-center">
               <div className="text-xl font-semibold text-zinc-100">Daily Set Complete!</div>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
@@ -447,7 +436,7 @@ export function DailySetPage() {
             </div>
 
             {/* Per-exercise results */}
-            <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-6">
+            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-8">
               <div className="text-sm font-semibold text-zinc-200">Exercise breakdown</div>
               <div className="mt-4 grid gap-2">
                 {daily.items.map((it, idx) => {

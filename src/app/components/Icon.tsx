@@ -178,6 +178,7 @@ const ICONS: Record<string, string> = {
   <line x1="6.5" y1="12.0" x2="4.5" y2="12.0" />
   <line x1="9.2" y1="7.2" x2="8.2" y2="5.5" />
   <line x1="14.8" y1="7.2" x2="15.8" y2="5.5" />`,
+  'wrench': `<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76Z" />`,
   'shuffle': `<path d="M18 4 L22 8 L18 12" />
   <path d="M2 20 C6 20 10 4 14 4 L22 4" />
   <path d="M18 12 L22 16 L18 20" />
@@ -307,6 +308,7 @@ export type IconName =
   | 'trending-up'
   | 'trophy'
   | 'type-text'
+  | 'wrench'
   | 'x-close'
   | 'zap'
 

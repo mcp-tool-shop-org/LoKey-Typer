@@ -6,10 +6,12 @@ import { usePreferences } from './PreferencesProvider'
 
 type AmbientContextValue = {
   noteTypingActivity: () => void
+  skipTrack: () => void
 }
 
 const AmbientContext = createContext<AmbientContextValue>({
   noteTypingActivity: () => {},
+  skipTrack: () => {},
 })
 
 export function AmbientProvider({ children }: { children: React.ReactNode }) {
@@ -54,8 +56,12 @@ export function AmbientProvider({ children }: { children: React.ReactNode }) {
     ambientPlayer.noteTypingActivity()
   }, [])
 
+  const skipTrack = useCallback(() => {
+    void ambientPlayer.skipTrack()
+  }, [])
+
   return (
-    <AmbientContext.Provider value={{ noteTypingActivity }}>
+    <AmbientContext.Provider value={{ noteTypingActivity, skipTrack }}>
       {children}
     </AmbientContext.Provider>
   )

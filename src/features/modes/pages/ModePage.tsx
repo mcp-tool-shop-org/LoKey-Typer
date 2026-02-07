@@ -1,12 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import type { Mode } from '@content'
 import {
   getOrCreateUserId,
   getPoolStatus,
   loadSkillModel,
-  modeLabel,
-  modeToPath,
   pickNextExercise,
   saveLastMode,
   topCompetitiveRuns,
@@ -14,27 +12,13 @@ import {
   type SprintDurationMs,
 } from '@lib'
 import { usePreferences } from '@app'
-import { Icon, type IconName } from '@app/components/Icon'
+import { Icon } from '@app/components/Icon'
 import { TypingSession } from '@features/typing'
-
-const MODE_ICON: Record<Mode, IconName> = {
-  focus: 'mode-focus',
-  real_life: 'mode-real-life',
-  competitive: 'mode-competitive',
-}
-
-const MODE_DESCRIPTION: Record<Mode, string> = {
-  focus: 'Calm practice, minimal HUD.',
-  real_life: 'Emails, texts, and real-world scenarios.',
-  competitive: 'Timed sprints, PBs, and leaderboard.',
-}
 
 export function ModePage({ mode }: { mode: Mode }) {
   const [search, setSearch] = useSearchParams()
   const { prefs, setPrefs } = usePreferences()
   const userId = useMemo(() => getOrCreateUserId(), [])
-  const label = modeLabel(mode)
-  const modePath = modeToPath(mode)
 
   // Session state
   const [session, setSession] = useState<ContentEngineResult | null>(null)
@@ -90,7 +74,7 @@ export function ModePage({ mode }: { mode: Mode }) {
     const showCompetitiveHud = mode === 'competitive'
 
     return (
-      <div className="space-y-6">
+      <div className="mx-auto max-w-3xl space-y-10">
         <TypingSession
           key={`${session.exercise.id}-${sessionKey}`}
           mode={mode}
@@ -123,7 +107,7 @@ export function ModePage({ mode }: { mode: Mode }) {
   const top3 = mode === 'competitive' ? topCompetitiveRuns({ durationMs: sprintDurationMs, limit: 3 }) : []
 
   return (
-    <div className="space-y-6">
+    <div className="mx-auto max-w-3xl space-y-10">
       {/* CTA — same position as every other tab */}
       <div className="text-center">
         <button
@@ -134,36 +118,18 @@ export function ModePage({ mode }: { mode: Mode }) {
           <Icon name="play" size={20} className="text-zinc-400" />
           Start typing
         </button>
-        <div className="mt-3 text-xs text-zinc-500">
+        <div className="mt-4 text-xs text-zinc-500">
           {pool.remaining > 0
             ? `${pool.remaining} of ${pool.total} exercises remaining`
             : `Pool cycled — ${pool.total} exercises, fresh variants`}
         </div>
       </div>
 
-      {/* Header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <Icon name={MODE_ICON[mode]} size={20} className="shrink-0 text-zinc-400" />
-            <h1 className="text-xl font-semibold tracking-tight text-zinc-50">{label}</h1>
-          </div>
-          <p className="mt-1 text-sm text-zinc-400">{MODE_DESCRIPTION[mode]}</p>
-        </div>
-        <Link
-          to={`/${modePath}/settings`}
-          className="rounded-md border border-zinc-800 bg-zinc-950 p-2.5 text-zinc-400 transition hover:bg-zinc-900 hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-          aria-label="Settings"
-        >
-          <Icon name="settings" size={18} />
-        </Link>
-      </div>
-
       {/* Competitive: inline sprint config */}
       {mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5">
-          <div className="space-y-4">
-            <div>
+        <div className="rounded-xl border border-zinc-800/80 bg-zinc-950 p-6">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-50">
                 <Icon name="timer" size={15} className="shrink-0 text-zinc-500" />
                 Sprint duration
@@ -198,8 +164,8 @@ export function ModePage({ mode }: { mode: Mode }) {
             </label>
 
             {top3.length > 0 ? (
-              <div className="text-xs text-zinc-400">
-                <div className="flex items-center gap-1.5">
+              <div className="w-48 text-xs text-zinc-400">
+                <div className="flex items-center justify-center gap-1.5">
                   <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
                   Top runs ({sprintDurationMs / 1000}s)
                 </div>

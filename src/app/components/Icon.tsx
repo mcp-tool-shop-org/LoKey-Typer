@@ -73,8 +73,8 @@ const ICONS: Record<string, string> = {
   <circle cx="12" cy="12" r="3" />`,
   'filter': `<path d="M3 5 L21 5 L14 13 L14 19 L10 21 L10 13 Z" />`,
   'ghost': `<path d="M7 21 L7 10 C7 7.2 9.2 4 12 4 C14.8 4 17 7.2 17 10 L17 21 L15 18 L13 21 L11 18 L9 21 Z" />
-  <circle cx="10" cy="10" r="1" />
-  <circle cx="14" cy="10" r="1" />`,
+  <circle cx="10" cy="10" r="1" fill="currentColor" stroke="none" />
+  <circle cx="14" cy="10" r="1" fill="currentColor" stroke="none" />`,
   'grid': `<rect x="3" y="3" width="8" height="8" rx="1.5" />
   <rect x="13" y="3" width="8" height="8" rx="1.5" />
   <rect x="3" y="13" width="8" height="8" rx="1.5" />
@@ -88,7 +88,7 @@ const ICONS: Record<string, string> = {
   <path d="M6 12 L6 19 C6 19.5 6.5 20 7 20 L10 20 L10 15 L14 15 L14 20 L17 20 C17.5 20 18 19.5 18 19 L18 12" />`,
   'info': `<circle cx="12" cy="12" r="9" />
   <line x1="12" y1="16" x2="12" y2="12" />
-  <circle cx="12" cy="8" r="0.5" />`,
+  <circle cx="12" cy="8" r="1" fill="currentColor" stroke="none" />`,
   'keyboard': `<rect x="2" y="6" width="20" height="12" rx="2" />
   <rect x="5" y="9" width="2" height="2" rx="0.5" />
   <rect x="8" y="9" width="2" height="2" rx="0.5" />
@@ -116,11 +116,11 @@ const ICONS: Record<string, string> = {
   <line x1="12" y1="17" x2="12" y2="21" />
   <line x1="3" y1="12" x2="7" y2="12" />
   <line x1="17" y1="12" x2="21" y2="12" />`,
-  'list': `<circle cx="5" cy="7" r="1" />
+  'list': `<circle cx="5" cy="7" r="1" fill="currentColor" stroke="none" />
   <line x1="9" y1="7" x2="20" y2="7" />
-  <circle cx="5" cy="12" r="1" />
+  <circle cx="5" cy="12" r="1" fill="currentColor" stroke="none" />
   <line x1="9" y1="12" x2="20" y2="12" />
-  <circle cx="5" cy="17" r="1" />
+  <circle cx="5" cy="17" r="1" fill="currentColor" stroke="none" />
   <line x1="9" y1="17" x2="20" y2="17" />`,
   'logo-mark': `<rect x="5" y="5" width="14" height="14" rx="3.5" />
   <circle cx="12" cy="12" r="2" />`,
@@ -166,7 +166,7 @@ const ICONS: Record<string, string> = {
   <line x1="6" y1="12" x2="18" y2="12" />`,
   'question': `<circle cx="12" cy="12" r="9" />
   <path d="M9.5 9.5 C9.5 7.5 11 6.5 12 6.5 C13 6.5 14.5 7.5 14.5 9 C14.5 10.5 13 11 12 11.5 L12 13" />
-  <circle cx="12" cy="16" r="0.5" />`,
+  <circle cx="12" cy="16" r="1" fill="currentColor" stroke="none" />`,
   'refresh': `<path d="M4 12 A8 8 0 1 1 7.03 18.36" />
   <polyline points="4,16 4,12 8,12" />`,
   'search': `<circle cx="10" cy="10" r="6" />
@@ -197,14 +197,14 @@ const ICONS: Record<string, string> = {
   <line x1="3" y1="10" x2="21" y2="10" />
   <line x1="8" y1="3" x2="8" y2="7" />
   <line x1="16" y1="3" x2="16" y2="7" />
-  <circle cx="6.5" cy="13.0" r="0.7" />
-  <circle cx="10.0" cy="13.0" r="0.7" />
-  <circle cx="13.5" cy="13.0" r="0.7" />
-  <circle cx="17.0" cy="13.0" r="0.7" />
-  <circle cx="6.5" cy="16.5" r="0.7" />
-  <circle cx="10.0" cy="16.5" r="0.7" />
-  <circle cx="13.5" cy="16.5" r="0.7" />
-  <circle cx="17.0" cy="16.5" r="0.7" />`,
+  <circle cx="6.5" cy="13.0" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="10.0" cy="13.0" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="13.5" cy="13.0" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="17.0" cy="13.0" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="6.5" cy="16.5" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="10.0" cy="16.5" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="13.5" cy="16.5" r="0.8" fill="currentColor" stroke="none" />
+  <circle cx="17.0" cy="16.5" r="0.8" fill="currentColor" stroke="none" />`,
   'stat-sessions': `<rect x="6" y="3" width="14" height="14" rx="2" />
   <path d="M4 8 L4 19 C4 20.1 4.9 21 6 21 L16 21" />`,
   'stat-speed': `<path d="M4 18 A10 10 0 0 1 20 18" />

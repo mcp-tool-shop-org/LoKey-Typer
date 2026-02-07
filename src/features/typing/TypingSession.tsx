@@ -71,7 +71,7 @@ function formatMs(ms: number) {
 
 function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
-    <div className="min-w-[5.5rem] rounded-xl border border-zinc-800 bg-zinc-950 p-4">
+    <div className="min-w-[5.5rem] rounded-xl border border-zinc-800 bg-zinc-950 p-4 transition-transform duration-200 hover:-translate-y-0.5">
       <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
         {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
         {label}
@@ -315,7 +315,7 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={props.onRestart}
-            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none transition duration-150 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="refresh" size={14} className="shrink-0" />
             Restart
@@ -323,7 +323,7 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={props.onExit}
-            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none transition duration-150 hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="x-close" size={14} className="shrink-0" />
             Exit
@@ -368,7 +368,7 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
-            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 outline-none transition hover:bg-zinc-900 active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 outline-none transition duration-150 hover:bg-zinc-900 active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="cursor" size={12} className="shrink-0" />
             Focus
@@ -467,7 +467,7 @@ export function TypingSession(props: {
             }
           }}
           spellCheck={false}
-          className="mt-3 min-h-24 w-full resize-y rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="mt-3 min-h-24 w-full resize-y rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none transition-colors duration-200 focus:border-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           placeholder="Start typing…"
         />
 

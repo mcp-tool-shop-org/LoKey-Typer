@@ -26,7 +26,7 @@ function computeDaysPracticed(runs: ReturnType<typeof loadRuns>) {
 
 function StatCard({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 text-center">
+    <div className="rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 text-center transition-transform duration-200 hover:-translate-y-0.5">
       <Icon name={icon} size={18} className="mx-auto text-zinc-500" />
       <div className="mt-1.5 text-lg font-semibold tabular-nums text-zinc-50">{value}</div>
       <div className="mt-0.5 text-xs font-medium text-zinc-500">{label}</div>
@@ -63,7 +63,7 @@ export function HomePage() {
         <button
           type="button"
           onClick={handleStart}
-          className="inline-flex items-center gap-2.5 rounded-lg border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition hover:bg-zinc-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="inline-flex items-center gap-2.5 rounded-lg border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           <Icon name="play" size={20} className="text-zinc-400" />
           Start typing
@@ -75,7 +75,7 @@ export function HomePage() {
           <button
             type="button"
             onClick={cycleMode}
-            className="rounded text-zinc-400 underline underline-offset-2 outline-none transition hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="rounded text-zinc-400 underline underline-offset-2 outline-none transition duration-150 hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             change
           </button>

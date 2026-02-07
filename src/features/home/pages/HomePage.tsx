@@ -26,10 +26,10 @@ function computeDaysPracticed(runs: ReturnType<typeof loadRuns>) {
 
 function StatCard({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <div className="rounded-xl border border-zinc-800/80 bg-zinc-950 px-5 py-4 text-center">
+    <div className="rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 text-center">
       <Icon name={icon} size={18} className="mx-auto text-zinc-500" />
       <div className="mt-1.5 text-lg font-semibold tabular-nums text-zinc-50">{value}</div>
-      <div className="mt-0.5 text-[11px] font-medium text-zinc-500">{label}</div>
+      <div className="mt-0.5 text-xs font-medium text-zinc-500">{label}</div>
     </div>
   )
 }

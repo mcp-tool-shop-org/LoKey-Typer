@@ -33,7 +33,7 @@ export function AppShell() {
 
   return (
     <div className="min-h-full">
-      <header className="border-b border-zinc-800/60 bg-zinc-950/80 backdrop-blur">
+      <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <Link to="/" className="flex items-center gap-2.5 transition hover:opacity-80">
             <Icon name="logo-mark" size={22} className="text-zinc-400" />

@@ -127,7 +127,7 @@ export function ModePage({ mode }: { mode: Mode }) {
 
       {/* Competitive: inline sprint config */}
       {mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800/80 bg-zinc-950 p-6">
+        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
           <div className="flex flex-col items-center space-y-4">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-50">

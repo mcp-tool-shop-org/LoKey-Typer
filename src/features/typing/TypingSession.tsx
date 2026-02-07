@@ -72,7 +72,7 @@ function formatMs(ms: number) {
 function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-      <div className="flex items-center gap-1.5 text-[11px] font-medium text-zinc-400">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
         {icon ? <Icon name={icon} size={13} className="shrink-0 text-zinc-500" /> : null}
         {label}
       </div>

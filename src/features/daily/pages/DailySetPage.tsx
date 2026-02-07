@@ -295,7 +295,7 @@ export function DailySetPage() {
         <>
           {/* Stats cards */}
           <div className="grid gap-4 sm:grid-cols-2">
-            <div className="flex items-start gap-3 rounded-xl border border-zinc-800/80 bg-zinc-950 p-6 text-sm text-zinc-300">
+            <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-6 text-sm text-zinc-300">
               <Icon name="stat-days" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Days practiced</div>
@@ -303,7 +303,7 @@ export function DailySetPage() {
                 <div className="mt-1 text-xs text-zinc-500">No penalties. Missed days are just days.</div>
               </div>
             </div>
-            <div className="flex items-start gap-3 rounded-xl border border-zinc-800/80 bg-zinc-950 p-6 text-sm text-zinc-300">
+            <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 p-6 text-sm text-zinc-300">
               <Icon name="stat-streak" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Best week</div>
@@ -314,7 +314,7 @@ export function DailySetPage() {
           </div>
 
           {/* Exercise preview list */}
-          <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-8">
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
             <div className="text-sm font-semibold text-zinc-50">Today's exercises</div>
 
             <div className="mt-4 grid gap-2">
@@ -328,7 +328,7 @@ export function DailySetPage() {
                     className={
                       'flex items-center gap-3 rounded-lg border px-4 py-3 ' +
                       (done
-                        ? 'border-zinc-700 bg-zinc-900/50 text-zinc-500'
+                        ? 'border-zinc-700 bg-zinc-900 text-zinc-500'
                         : 'border-zinc-800 bg-zinc-950 text-zinc-300')
                     }
                   >
@@ -391,7 +391,7 @@ export function DailySetPage() {
         const nextItem = daily.items[nextIndex]
         const nextExercise = nextItem ? findExercise(nextItem.exerciseId) : null
         return (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800/80 bg-zinc-950 px-8 py-16 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center">
             <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
             <div className="text-lg font-semibold text-zinc-200">Nice!</div>
             {nextItem && nextExercise ? (
@@ -415,7 +415,7 @@ export function DailySetPage() {
         return (
           <div className="mx-auto max-w-3xl space-y-10">
             {/* Summary header */}
-            <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800/80 bg-zinc-950 px-8 py-12 text-center">
+            <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
               <div className="text-xl font-semibold text-zinc-100">Daily Set Complete!</div>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
@@ -436,7 +436,7 @@ export function DailySetPage() {
             </div>
 
             {/* Per-exercise results */}
-            <div className="rounded-2xl border border-zinc-800/80 bg-zinc-950 p-8">
+            <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
               <div className="text-sm font-semibold text-zinc-200">Exercise breakdown</div>
               <div className="mt-4 grid gap-2">
                 {daily.items.map((it, idx) => {

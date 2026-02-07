@@ -80,7 +80,7 @@ export function TypingOverlay({
           p.kind === 'correct'
             ? 'text-zinc-50'
             : p.kind === 'incorrect'
-              ? 'text-rose-300 underline decoration-current decoration-2 underline-offset-2'
+              ? 'text-rose-400 underline decoration-current decoration-2 underline-offset-2'
               : 'text-zinc-600'
 
         return (

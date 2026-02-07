@@ -47,7 +47,7 @@ export function AppShell() {
             <div className="hidden text-xs text-zinc-500 sm:block">·</div>
             <div className="hidden text-xs text-zinc-500 sm:block">Speed • Accuracy • Consistency</div>
           </Link>
-          <nav className="flex items-center gap-2.5">
+          <nav aria-label="Main navigation" className="flex items-center gap-2.5">
             <NavItem to="/" label="Home" />
             <NavItem to="/daily" label="Daily" />
             <NavItem to="/focus" label="Focus" />

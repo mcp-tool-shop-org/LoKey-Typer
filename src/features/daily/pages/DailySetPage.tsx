@@ -243,6 +243,17 @@ export function DailySetPage() {
 
   return (
     <div className="mx-auto max-w-3xl space-y-10">
+      {/* Screen reader phase announcement */}
+      <div className="sr-only" aria-live="polite" aria-atomic="true">
+        {phase === 'typing' && currentExercise
+          ? `Exercise ${currentIndex + 1} of ${daily.items.length}: ${currentExercise.title}`
+          : phase === 'transition'
+            ? `Exercise complete. ${currentIndex} of ${daily.items.length} done.`
+            : phase === 'summary'
+              ? 'Daily set complete.'
+              : null}
+      </div>
+
       {/* CTA — same position as every other tab (idle only) */}
       {phase === 'idle' ? (
         <div className="text-center">
@@ -289,7 +300,14 @@ export function DailySetPage() {
             <span>Exercise {currentIndex + 1} of {daily.items.length}</span>
             <span>{sessionLabel(sessionType)}</span>
           </div>
-          <div className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800">
+          <div
+            className="h-1.5 w-full overflow-hidden rounded-full bg-zinc-800"
+            role="progressbar"
+            aria-valuenow={currentIndex + (phase === 'transition' ? 1 : 0)}
+            aria-valuemin={0}
+            aria-valuemax={daily.items.length}
+            aria-label="Exercise progress"
+          >
             <div
               className="h-full rounded-full bg-zinc-500 transition-all duration-500"
               style={{ width: `${((currentIndex + (phase === 'transition' ? 1 : 0)) / daily.items.length) * 100}%` }}

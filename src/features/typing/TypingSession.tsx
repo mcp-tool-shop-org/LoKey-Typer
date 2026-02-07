@@ -76,7 +76,7 @@ function Stat({ label, value, icon }: { label: string; value: string; icon?: Ico
         {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
         {label}
       </div>
-      <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{value}</div>
+      <div className="mt-1 text-lg font-semibold leading-tight text-zinc-50 tabular-nums">{value}</div>
     </div>
   )
 }
@@ -304,9 +304,9 @@ export function TypingSession(props: {
     <div className="space-y-5" style={containerStyle}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="text-xs font-medium text-zinc-400">{props.exercise.pack}</div>
+          <div className="text-xs font-medium text-zinc-500">{props.exercise.pack}</div>
           <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-50">{props.exercise.title}</h1>
-          <div className="mt-1 text-sm text-zinc-400">
+          <div className="mt-1 text-sm text-zinc-500">
             Difficulty {props.exercise.difficulty} • Est. {props.exercise.estimated_seconds}s
           </div>
         </div>
@@ -471,7 +471,7 @@ export function TypingSession(props: {
           placeholder="Start typing…"
         />
 
-        <div id={helpTextId} className="mt-3 text-xs text-zinc-400" aria-live="polite" aria-atomic="true">
+        <div id={helpTextId} className="mt-3 text-xs leading-relaxed text-zinc-400" aria-live="polite" aria-atomic="true">
           {isComplete ? (
             <div className="space-y-2 animate-fade-in">
               <div className={`flex items-center gap-1.5 font-medium ${feedback.isNewPb ? 'text-zinc-50' : 'text-zinc-200'}`}>

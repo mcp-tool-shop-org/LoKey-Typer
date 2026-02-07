@@ -28,7 +28,7 @@ function StatCard({ value, label, icon }: { value: string; label: string; icon: 
   return (
     <div className="rounded-2xl bg-zinc-900/40 px-5 py-4 text-center transition-transform duration-200 hover:-translate-y-0.5">
       <Icon name={icon} size={18} className="mx-auto text-zinc-500" />
-      <div className="mt-1.5 text-lg font-semibold tabular-nums text-zinc-50">{value}</div>
+      <div className="mt-1.5 text-lg font-semibold leading-tight tabular-nums text-zinc-50">{value}</div>
       <div className="mt-0.5 text-xs font-medium text-zinc-500">{label}</div>
     </div>
   )
@@ -68,7 +68,7 @@ export function HomePage() {
           <Icon name="play" size={20} className="text-slate-400" />
           Start typing
         </button>
-        <div className="mt-4 text-xs text-zinc-500">
+        <div className="mt-4 text-xs text-zinc-500/80">
           Starting in{' '}
           <span className="font-medium text-zinc-300">{modeLabel(selectedMode)}</span>
           {' · '}

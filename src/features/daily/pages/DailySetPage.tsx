@@ -265,7 +265,7 @@ export function DailySetPage() {
             <Icon name="play" size={20} className="text-slate-400" />
             {currentIndex > 0 ? 'Continue' : 'Begin'}
           </button>
-          <div className="mt-4 text-xs text-zinc-500">
+          <div className="mt-4 text-xs text-zinc-500/80">
             {daily.items.length} exercises • {sessionLabel(sessionType)}
           </div>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
@@ -325,16 +325,16 @@ export function DailySetPage() {
               <Icon name="stat-days" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Days practiced</div>
-                <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{daysPracticed.size}</div>
-                <div className="mt-1 text-xs text-zinc-500">Every day you show up counts.</div>
+                <div className="mt-1 text-lg font-semibold leading-tight text-zinc-50 tabular-nums">{daysPracticed.size}</div>
+                <div className="mt-1 text-xs leading-relaxed text-zinc-500">Every day you show up counts.</div>
               </div>
             </div>
             <div className="flex items-start gap-3 rounded-2xl bg-zinc-900/40 p-6 text-sm text-zinc-300">
               <Icon name="stat-streak" size={20} className="mt-0.5 shrink-0 text-zinc-500" />
               <div>
                 <div className="text-xs font-medium text-zinc-400">Best week</div>
-                <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{bestWeek}/7 days</div>
-                <div className="mt-1 text-xs text-zinc-500">Most days typed in any 7-day window.</div>
+                <div className="mt-1 text-lg font-semibold leading-tight text-zinc-50 tabular-nums">{bestWeek}/7 days</div>
+                <div className="mt-1 text-xs leading-relaxed text-zinc-500">Most days typed in any 7-day window.</div>
               </div>
             </div>
           </div>
@@ -370,7 +370,7 @@ export function DailySetPage() {
                         <Icon name={kindIcon(it.kind)} size={14} className="shrink-0 text-zinc-500" />
                         {kindLabel(it.kind)}
                       </div>
-                      <div className="mt-0.5 truncate text-sm font-semibold text-zinc-200">{ex.title}</div>
+                      <div className="mt-0.5 truncate text-sm font-semibold tracking-tight text-zinc-200">{ex.title}</div>
                     </div>
                     {done ? (
                       <div className="text-xs tabular-nums text-zinc-500">
@@ -470,17 +470,17 @@ export function DailySetPage() {
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
                   <div className="text-xs font-medium text-zinc-400">Avg WPM</div>
-                  <div className="mt-1 text-2xl font-semibold tabular-nums text-zinc-100">{avgWpm}</div>
+                  <div className="mt-1 text-2xl font-semibold leading-tight tabular-nums text-zinc-100">{avgWpm}</div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-zinc-400">Avg Accuracy</div>
-                  <div className="mt-1 text-2xl font-semibold tabular-nums text-zinc-100">
+                  <div className="mt-1 text-2xl font-semibold leading-tight tabular-nums text-zinc-100">
                     {(avgAccuracy * 100).toFixed(1)}%
                   </div>
                 </div>
                 <div>
                   <div className="text-xs font-medium text-zinc-400">Total Time</div>
-                  <div className="mt-1 text-2xl font-semibold tabular-nums text-zinc-100">{formatDuration(totalMs)}</div>
+                  <div className="mt-1 text-2xl font-semibold leading-tight tabular-nums text-zinc-100">{formatDuration(totalMs)}</div>
                 </div>
               </div>
             </div>

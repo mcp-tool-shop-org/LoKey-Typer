@@ -99,7 +99,7 @@ export function TypingSession(props: {
   const [startedAtMs, setStartedAtMs] = useState<number | null>(null)
   const [nowMs, setNowMs] = useState(() => Date.now())
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
-  const [inputFocused, setInputFocused] = useState(false)
+  const [, setInputFocused] = useState(false)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)

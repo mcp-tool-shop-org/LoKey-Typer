@@ -96,9 +96,9 @@ export function ModePage({ mode }: { mode: Mode }) {
           <button
             type="button"
             onClick={handleRestart}
-            className="inline-flex items-center gap-2 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-2 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
-            <Icon name="play" size={16} className="shrink-0 text-zinc-400" />
+            <Icon name="play" size={16} className="shrink-0 text-slate-400" />
             Next exercise
           </button>
         </div>
@@ -116,9 +116,9 @@ export function ModePage({ mode }: { mode: Mode }) {
         <button
           type="button"
           onClick={startSession}
-          className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
-          <Icon name="play" size={20} className="text-zinc-400" />
+          <Icon name="play" size={20} className="text-slate-400" />
           Start typing
         </button>
         <div className="mt-4 text-xs text-zinc-500">
@@ -152,9 +152,9 @@ export function ModePage({ mode }: { mode: Mode }) {
                     type="button"
                     onClick={() => setPrefs({ ...prefs, competitiveSprintDurationMs: d as SprintDurationMs })}
                     className={
-                      'min-h-10 rounded-full border px-4 py-2.5 text-sm font-semibold outline-none transition duration-150 active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                      'min-h-10 rounded-full border px-4 py-2.5 text-sm font-semibold outline-none transition duration-150 active:scale-95 focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                       (sprintDurationMs === d
-                        ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
+                        ? 'border-slate-600/70 bg-zinc-900 text-zinc-50'
                         : 'border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900')
                     }
                   >
@@ -164,7 +164,7 @@ export function ModePage({ mode }: { mode: Mode }) {
               </div>
             </div>
 
-            <label className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-300 transition duration-150 hover:bg-zinc-900 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-400/50 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-zinc-950">
+            <label className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-sm text-zinc-300 transition duration-150 hover:bg-zinc-900 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-slate-400/50 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-zinc-950">
               <input
                 type="checkbox"
                 checked={ghostEnabled}

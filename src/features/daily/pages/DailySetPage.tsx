@@ -260,9 +260,9 @@ export function DailySetPage() {
           <button
             type="button"
             onClick={handleBegin}
-            className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
-            <Icon name="play" size={20} className="text-zinc-400" />
+            <Icon name="play" size={20} className="text-slate-400" />
             {currentIndex > 0 ? 'Continue' : 'Begin'}
           </button>
           <div className="mt-4 text-xs text-zinc-500">
@@ -280,9 +280,9 @@ export function DailySetPage() {
                 key={t.key}
                 to={`/daily?type=${t.key}`}
                 className={
-                  'no-underline rounded-full border px-4 py-2 text-xs font-semibold outline-none transition duration-150 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                  'no-underline rounded-full border px-4 py-2 text-xs font-semibold outline-none transition duration-150 focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                   (sessionType === t.key
-                    ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
+                    ? 'border-slate-600/70 bg-zinc-900 text-zinc-50'
                     : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200')
                 }
               >
@@ -309,7 +309,7 @@ export function DailySetPage() {
             aria-label="Exercise progress"
           >
             <div
-              className="h-full rounded-full bg-zinc-500 transition-all duration-500"
+              className="h-full rounded-full bg-slate-500/80 transition-all duration-500"
               style={{ width: `${((currentIndex + (phase === 'transition' ? 1 : 0)) / daily.items.length) * 100}%` }}
             />
           </div>
@@ -360,7 +360,7 @@ export function DailySetPage() {
                   >
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-zinc-700 text-xs font-semibold text-zinc-400">
                       {done ? (
-                        <Icon name="checkmark-circle" size={14} className="text-zinc-500" />
+                        <Icon name="checkmark-circle" size={14} className="text-slate-500" />
                       ) : (
                         idx + 1
                       )}
@@ -401,7 +401,7 @@ export function DailySetPage() {
               // Skip this exercise and advance
               handleComplete({ wpm: 0, accuracy: 0, durationMs: 0 })
             }}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             Skip to next
           </button>
@@ -441,7 +441,7 @@ export function DailySetPage() {
         const nextExercise = nextItem ? findExercise(nextItem.exerciseId) : null
         return (
           <div ref={phaseRef} className="flex flex-col items-center gap-4 rounded-3xl bg-zinc-900/40 px-6 py-10 text-center animate-fade-in sm:px-8 sm:py-16">
-            <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
+            <Icon name="checkmark-circle" size={32} className="text-slate-500" />
             <h2 className="text-lg font-semibold text-zinc-200">Nice!</h2>
             {nextItem && nextExercise ? (
               <div className="text-sm text-zinc-400">
@@ -465,7 +465,7 @@ export function DailySetPage() {
           <div ref={phaseRef} className="mx-auto max-w-3xl space-y-14 animate-fade-in">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-8 text-center sm:px-8 sm:py-12">
-              <Icon name="trophy" size={28} className="text-zinc-500" />
+              <Icon name="trophy" size={28} className="text-slate-400" />
               <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
@@ -523,7 +523,7 @@ export function DailySetPage() {
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="inline-flex items-center gap-2 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+                className="inline-flex items-center gap-2 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
               >
                 Back to Home
               </button>

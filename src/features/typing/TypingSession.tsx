@@ -466,9 +466,9 @@ export function TypingSession(props: {
 
         <div id={helpTextId} className="mt-3 text-xs text-zinc-400" aria-live="polite" aria-atomic="true">
           {isComplete ? (
-            <div className="space-y-2">
-              <div className="flex items-center gap-1.5 font-medium text-zinc-200">
-                <Icon name="checkmark-circle" size={14} className="shrink-0 text-zinc-400" />
+            <div className="space-y-2 animate-fade-in">
+              <div className={`flex items-center gap-1.5 font-medium ${feedback.isNewPb ? 'text-zinc-50' : 'text-zinc-200'}`}>
+                <Icon name={feedback.isNewPb ? 'personal-best' : 'checkmark-circle'} size={14} className={`shrink-0 ${feedback.isNewPb ? 'text-zinc-300' : 'text-zinc-400'}`} />
                 {feedback.primary}
               </div>
               {feedback.secondary ? <div className="text-zinc-300">{feedback.secondary}</div> : null}

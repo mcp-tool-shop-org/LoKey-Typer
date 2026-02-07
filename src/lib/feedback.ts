@@ -16,6 +16,7 @@ export type MicroFeedbackInputs = {
 export type MicroFeedback = {
   primary: string
   secondary?: string
+  isNewPb: boolean
 }
 
 function fmt1(n: number) {
@@ -70,5 +71,7 @@ export function buildFeedback(i: MicroFeedbackInputs): MicroFeedback {
   const secondaryRaw = tone === 'competitive' ? competitiveSecondary(i) : calmSecondary(i)
   const secondary = secondaryRaw.trim().length > 0 ? secondaryRaw : undefined
 
-  return { primary, secondary }
+  const isNewPb = i.is_personal_best_wpm || i.is_personal_best_accuracy
+
+  return { primary, secondary, isNewPb }
 }

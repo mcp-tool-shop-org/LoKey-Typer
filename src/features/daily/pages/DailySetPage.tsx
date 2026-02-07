@@ -439,6 +439,7 @@ export function DailySetPage() {
           <div className="mx-auto max-w-3xl space-y-10 animate-fade-in">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
+              <Icon name="trophy" size={28} className="text-zinc-500" />
               <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>

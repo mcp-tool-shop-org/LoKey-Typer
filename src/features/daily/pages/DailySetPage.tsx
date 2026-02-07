@@ -414,7 +414,7 @@ export function DailySetPage() {
         const nextItem = daily.items[nextIndex]
         const nextExercise = nextItem ? findExercise(nextItem.exerciseId) : null
         return (
-          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center">
+          <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center animate-fade-in">
             <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
             <h2 className="text-lg font-semibold text-zinc-200">Nice!</h2>
             {nextItem && nextExercise ? (
@@ -436,7 +436,7 @@ export function DailySetPage() {
         const totalMs = items.reduce((s, r) => s + r.durationMs, 0)
 
         return (
-          <div className="mx-auto max-w-3xl space-y-10">
+          <div className="mx-auto max-w-3xl space-y-10 animate-fade-in">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
               <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>

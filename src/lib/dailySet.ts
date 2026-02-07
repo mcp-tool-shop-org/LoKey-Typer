@@ -60,6 +60,22 @@ export type DailySet = {
   items: DailySetItem[]
 }
 
+export type DailyItemResult = {
+  wpm: number
+  accuracy: number
+  durationMs: number
+  completedAt: number
+}
+
+export type DailyProgress = {
+  dateKey: string
+  userId: string
+  sessionType: DailySessionType
+  completedItems: DailyItemResult[]
+  startedAt: number
+  finishedAt?: number
+}
+
 function todayKey() {
   return new Date().toISOString().slice(0, 10)
 }
@@ -354,4 +370,30 @@ export function generateDailySet(params: {
 
   setCachedDailySet(out)
   return out
+}
+
+// --- Daily progress persistence ---
+
+const DAILY_PROGRESS_KEY = 'lkt_daily_progress'
+
+export function loadDailyProgress(dateKey: string, userId: string): DailyProgress | null {
+  try {
+    if (typeof localStorage === 'undefined') return null
+    const raw = localStorage.getItem(DAILY_PROGRESS_KEY)
+    const parsed = safeParse<DailyProgress>(raw)
+    if (!parsed || parsed.dateKey !== dateKey || parsed.userId !== userId) return null
+    if (!Array.isArray(parsed.completedItems)) return null
+    return parsed
+  } catch {
+    return null
+  }
+}
+
+export function saveDailyProgress(progress: DailyProgress): void {
+  try {
+    if (typeof localStorage === 'undefined') return
+    localStorage.setItem(DAILY_PROGRESS_KEY, JSON.stringify(progress))
+  } catch {
+    // ignore
+  }
 }

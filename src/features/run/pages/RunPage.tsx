@@ -4,7 +4,6 @@ import { findExercise, type Mode } from '@content'
 import {
   getOrCreateUserId,
   isTemplateExercise,
-  modeToPath,
   renderTemplateExercise,
   topCompetitiveRuns,
   type SprintDurationMs,
@@ -86,11 +85,11 @@ export function RunPage({ mode }: { mode: Mode }) {
             </div>
             <button
               type="button"
-              onClick={() => navigate(`/${modeToPath(mode)}`)}
+              onClick={() => navigate('/daily')}
               className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-900"
             >
               <Icon name="arrow-left" size={14} className="shrink-0" />
-              Mode
+              Daily
             </button>
           </div>
           <div className="mt-3 text-xs text-zinc-400">
@@ -125,7 +124,7 @@ export function RunPage({ mode }: { mode: Mode }) {
         sprintDurationMs={mode === 'competitive' ? (sprintDurationMs as SprintDurationMs) : undefined}
         showCompetitiveHud={showCompetitiveHud}
         ghostEnabled={ghost}
-        onExit={() => navigate(`/${modeToPath(mode)}`)}
+        onExit={() => navigate('/daily')}
         onRestart={() => navigate(0)}
       />
     </div>

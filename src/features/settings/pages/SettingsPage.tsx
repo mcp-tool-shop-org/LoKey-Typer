@@ -1,7 +1,14 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
-import { getEffectiveAmbientEnabled, isAmbientLockedOff, modeLabel, resetPreferencesToDefaults, type SprintDurationMs } from '@lib'
+import {
+  getEffectiveAmbientEnabled,
+  isAmbientLockedOff,
+  modeLabel,
+  resetPreferencesToDefaults,
+  type SprintDurationMs,
+} from '@lib'
+import { AMBIENT_CATEGORIES, AMBIENT_CATEGORY_LABELS, type AmbientCategory } from '@lib-internal/ambientManifest'
 import { usePreferences } from '@app'
 import { Icon, type IconName } from '@app/components/Icon'
 
@@ -26,13 +33,9 @@ export function SettingsPage({ mode }: { mode: Mode }) {
   const ambientEnabledEffective = getEffectiveAmbientEnabled(prefs)
 
   const ambientDescription = (() => {
-    const p = prefs.ambientProfile
-    if (p === 'random') return 'Varies each session. Keeps things fresh.'
-    if (p === 'focus_soft') return 'Quiet, steady background for long focus.'
-    if (p === 'focus_warm') return 'Softer bed with warmth and minimal presence.'
-    if (p === 'competitive_clean') return 'Clearer presence for fast, precise sessions.'
-    if (p === 'nature_air') return 'Airy texture with gentle movement, no beat.'
-    return 'No ambient sound.'
+    const c = prefs.ambientCategory
+    if (c === 'all') return 'Random soundscapes from the full library.'
+    return AMBIENT_CATEGORY_LABELS[c as AmbientCategory] ?? 'Filtered to one category.'
   })()
 
   useEffect(() => {
@@ -119,24 +122,24 @@ export function SettingsPage({ mode }: { mode: Mode }) {
               ) : null}
 
               <label className="flex items-center gap-2">
-                <span className="text-xs text-zinc-400">Soundscape</span>
+                <span className="text-xs text-zinc-400">Category</span>
                 <select
-                  value={prefs.ambientProfile}
+                  value={prefs.ambientCategory}
                   disabled={!ambientEnabledEffective}
                   onChange={(e) =>
                     setPrefs({
                       ...prefs,
-                      ambientProfile: e.target.value as typeof prefs.ambientProfile,
+                      ambientCategory: e.target.value as typeof prefs.ambientCategory,
                     })
                   }
                   className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-100 outline-none focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
                 >
-                  <option value="random">Random (recommended)</option>
-                  <option value="focus_soft">Soft Focus</option>
-                  <option value="focus_warm">Warm Silence</option>
-                  <option value="competitive_clean">Clean Drive</option>
-                  <option value="nature_air">Open Air</option>
-                  <option value="off">Off</option>
+                  <option value="all">All (random)</option>
+                  {AMBIENT_CATEGORIES.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {AMBIENT_CATEGORY_LABELS[cat]}
+                    </option>
+                  ))}
                 </select>
               </label>
 

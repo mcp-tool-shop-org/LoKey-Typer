@@ -1,5 +1,6 @@
 import type { Mode } from '@content'
 import { enforceAccessibilityLocks } from './effectivePrefs'
+import { AMBIENT_CATEGORIES, type AmbientCategory } from './ambientManifest'
 
 export type SprintDurationMs = 30_000 | 60_000 | 120_000
 
@@ -8,7 +9,7 @@ export type Preferences = {
   volume: number // 0..1
   bellOnCompletion: boolean
   ambientEnabled: boolean
-  ambientProfile: 'off' | 'random' | 'focus_soft' | 'focus_warm' | 'competitive_clean' | 'nature_air'
+  ambientCategory: AmbientCategory | 'all'
   ambientVolume: number // 0..1
   ambientPauseOnTyping: boolean
   fontScale: 0.9 | 1 | 1.1
@@ -110,8 +111,8 @@ const DEFAULT_PREFS: Preferences = {
   volume: 0.5,
   bellOnCompletion: true,
   ambientEnabled: true,
-  ambientProfile: 'random',
-  ambientVolume: 0.35,
+  ambientCategory: 'all',
+  ambientVolume: 0.5,
   ambientPauseOnTyping: false,
   fontScale: 1,
   screenReaderMode: false,
@@ -149,9 +150,9 @@ export function sanitizePreferences(input: Partial<Preferences> | null | undefin
   merged.ambientVolume = clamp(Number(merged.ambientVolume), 0, 1)
   if (!Number.isFinite(merged.ambientVolume)) merged.ambientVolume = DEFAULT_PREFS.ambientVolume
 
-  const ap = merged.ambientProfile
-  if (ap !== 'off' && ap !== 'random' && ap !== 'focus_soft' && ap !== 'focus_warm' && ap !== 'competitive_clean' && ap !== 'nature_air') {
-    merged.ambientProfile = DEFAULT_PREFS.ambientProfile
+  const ac = merged.ambientCategory
+  if (ac !== 'all' && !(AMBIENT_CATEGORIES as string[]).includes(ac)) {
+    merged.ambientCategory = DEFAULT_PREFS.ambientCategory
   }
 
   if (merged.competitiveSprintDurationMs !== 30_000 && merged.competitiveSprintDurationMs !== 60_000 && merged.competitiveSprintDurationMs !== 120_000) {
@@ -422,7 +423,7 @@ export function loadRecents(): RecentHistory {
 export function pushRecent(mode: Mode, exerciseId: string) {
   const recents = loadRecents()
   const existing = recents.byMode[mode] ?? []
-  const next = [exerciseId, ...existing.filter((id) => id !== exerciseId)].slice(0, 30)
+  const next = [exerciseId, ...existing.filter((id) => id !== exerciseId)].slice(0, 200)
   recents.byMode[mode] = next
   localStorage.setItem(KEY_RECENTS, JSON.stringify(recents))
 }

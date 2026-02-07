@@ -1,24 +1,17 @@
 import { useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import {
   loadRuns,
   loadSkillModel,
   modeLabel,
   modeToPath,
-  pickQuickstartExercise,
   preferredQuickstartMode,
   saveLastMode,
 } from '@lib'
 import { Icon, type IconName } from '@app/components/Icon'
 
 const MODES: Mode[] = ['focus', 'real_life', 'competitive']
-
-const MODE_META: Record<Mode, { description: string; icon: IconName }> = {
-  focus: { description: 'Calm practice, minimal HUD.', icon: 'mode-focus' },
-  real_life: { description: 'Emails, texts, and real-world scenarios.', icon: 'mode-real-life' },
-  competitive: { description: 'Timed sprints, PBs, and leaderboard.', icon: 'mode-competitive' },
-}
 
 const STAT_ICONS: IconName[] = ['stat-speed', 'stat-accuracy', 'stat-sessions', 'stat-days']
 
@@ -51,10 +44,8 @@ export function HomePage() {
 
   function handleStart() {
     saveLastMode(selectedMode)
-    const ex = pickQuickstartExercise(selectedMode)
-    const qs = new URLSearchParams({ variant: 'short' })
-    if (selectedMode === 'competitive') qs.set('duration', 'auto')
-    navigate(`/${modeToPath(selectedMode)}/run/${ex.id}?${qs.toString()}`)
+    // Include a unique timestamp so ModePage detects re-navigation to the same mode
+    navigate(`/${modeToPath(selectedMode)}?autostart=${Date.now()}`)
   }
 
   function cycleMode() {
@@ -66,18 +57,17 @@ export function HomePage() {
 
   return (
     <div className="space-y-6">
-      {/* Hero + CTA */}
-      <section className="rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-10 text-center sm:py-14">
-        <p className="text-sm font-medium text-zinc-400">Calm practice. Real progress.</p>
+      {/* CTA — same position as every other tab */}
+      <div className="text-center">
         <button
           type="button"
           onClick={handleStart}
-          className="mt-6 inline-flex items-center gap-2.5 rounded-lg bg-zinc-50 px-8 py-3 text-base font-semibold text-zinc-950 transition hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="inline-flex items-center gap-2.5 rounded-lg border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
-          <Icon name="play" size={18} className="text-zinc-700" />
+          <Icon name="play" size={20} className="text-zinc-400" />
           Start typing
         </button>
-        <div className="mt-4 text-xs text-zinc-500">
+        <div className="mt-3 text-xs text-zinc-500">
           Starting in{' '}
           <span className="font-medium text-zinc-300">{modeLabel(selectedMode)}</span>
           {' · '}
@@ -89,7 +79,7 @@ export function HomePage() {
             change
           </button>
         </div>
-      </section>
+      </div>
 
       {/* Stats Row */}
       {hasHistory ? (
@@ -101,51 +91,9 @@ export function HomePage() {
         </section>
       ) : (
         <p className="text-center text-sm text-zinc-500">
-          Pick a mode below and start your first session.
+          Pick a mode from the nav above and start your first session.
         </p>
       )}
-
-      {/* Mode Quick-Links */}
-      <section className="grid gap-3 sm:grid-cols-3">
-        {MODES.map((mode) => {
-          const meta = MODE_META[mode]
-          return (
-            <Link
-              key={mode}
-              to={`/${modeToPath(mode)}`}
-              className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 transition hover:border-zinc-700 hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-            >
-              <Icon name={meta.icon} size={20} className="mt-0.5 shrink-0 text-zinc-500" />
-              <div>
-                <div className="text-sm font-semibold text-zinc-50">
-                  {modeLabel(mode)}
-                  {mode === 'competitive' ? (
-                    <span className="ml-1.5 text-[11px] font-medium text-zinc-500">(opt-in)</span>
-                  ) : null}
-                </div>
-                <div className="mt-0.5 text-xs text-zinc-400">{meta.description}</div>
-              </div>
-            </Link>
-          )
-        })}
-      </section>
-
-      {/* Daily Set Teaser */}
-      {hasHistory ? (
-        <Link
-          to="/daily"
-          className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-5 py-4 transition hover:border-zinc-700 hover:bg-zinc-900 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-        >
-          <div className="flex items-center gap-3">
-            <Icon name="calendar" size={18} className="shrink-0 text-zinc-500" />
-            <div>
-              <div className="text-sm font-semibold text-zinc-50">Today's set</div>
-              <div className="mt-0.5 text-xs text-zinc-500">A curated session, ready when you are.</div>
-            </div>
-          </div>
-          <Icon name="chevron-right" size={16} className="shrink-0 text-zinc-600" />
-        </Link>
-      ) : null}
     </div>
   )
 }

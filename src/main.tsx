@@ -2,13 +2,15 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import './index.css'
-import { App, PreferencesProvider } from '@app'
+import { AmbientProvider, App, PreferencesProvider } from '@app'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <PreferencesProvider>
-        <App />
+        <AmbientProvider>
+          <App />
+        </AmbientProvider>
       </PreferencesProvider>
     </BrowserRouter>
   </StrictMode>,

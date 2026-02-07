@@ -178,6 +178,10 @@ const ICONS: Record<string, string> = {
   <line x1="6.5" y1="12.0" x2="4.5" y2="12.0" />
   <line x1="9.2" y1="7.2" x2="8.2" y2="5.5" />
   <line x1="14.8" y1="7.2" x2="15.8" y2="5.5" />`,
+  'shuffle': `<path d="M18 4 L22 8 L18 12" />
+  <path d="M2 20 C6 20 10 4 14 4 L22 4" />
+  <path d="M18 12 L22 16 L18 20" />
+  <path d="M2 4 C6 4 10 20 14 20 L22 20" />`,
   'sound-off': `<path d="M6 9 L2 9 L2 15 L6 15 L11 19 L11 5 Z" />
   <line x1="16" y1="9" x2="22" y2="15" />
   <line x1="22" y1="9" x2="16" y2="15" />`,
@@ -289,6 +293,7 @@ export type IconName =
   | 'refresh'
   | 'search'
   | 'settings'
+  | 'shuffle'
   | 'sound-off'
   | 'sound-on'
   | 'star'

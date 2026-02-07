@@ -1,6 +1,5 @@
 export * from './home'
 export * from './daily'
-export * from './exercises'
 export * from './modes'
 export * from './run'
 export * from './settings'

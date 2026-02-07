@@ -1,1 +1,1 @@
-export { ModeHubPage } from './pages/ModeHubPage'
+export { ModePage } from './pages/ModePage'

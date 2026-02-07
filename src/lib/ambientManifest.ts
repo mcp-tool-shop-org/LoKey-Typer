@@ -1,71 +1,97 @@
-import type { Mode } from '@content'
+export type AmbientCategory =
+  | 'rain'
+  | 'campfire'
+  | 'forest'
+  | 'ocean'
+  | 'binaural'
+  | 'singing_bowls'
+  | 'wind'
+  | 'cafe'
+  | 'night'
+  | 'white_noise'
+  | 'other'
 
-export type AmbientLayerName = 'low_bed' | 'mid_texture' | 'mid_presence' | 'air' | 'room'
+export const AMBIENT_CATEGORIES: AmbientCategory[] = [
+  'rain',
+  'campfire',
+  'forest',
+  'ocean',
+  'binaural',
+  'singing_bowls',
+  'wind',
+  'cafe',
+  'night',
+  'white_noise',
+  'other',
+]
 
-export type AmbientStemFeatures = {
-  brightness?: number
-  density?: number
-  movement?: number
+export const AMBIENT_CATEGORY_LABELS: Record<AmbientCategory, string> = {
+  rain: 'Rain',
+  campfire: 'Campfire',
+  forest: 'Forest',
+  ocean: 'Ocean',
+  binaural: 'Binaural Beats',
+  singing_bowls: 'Singing Bowls',
+  wind: 'Wind',
+  cafe: 'Café',
+  night: 'Night',
+  white_noise: 'White Noise',
+  other: 'Other',
 }
 
-export type AmbientStem = {
+export type AmbientTrack = {
   id: string
-  mode: Mode
-  profile: string
-  layer: AmbientLayerName
+  title: string
+  category: AmbientCategory
+  tags: string[]
   path: string
-  length_sec?: number
+  duration_sec: number
   lufs_i?: number
-  tags?: string[]
-  features?: AmbientStemFeatures
 }
 
-export type AmbientManifest = {
+export type AmbientManifestV3 = {
   version: number
-  stems: AmbientStem[]
+  tracks: AmbientTrack[]
 }
 
-function isMode(x: unknown): x is Mode {
-  return x === 'focus' || x === 'real_life' || x === 'competitive'
+function isCategory(x: unknown): x is AmbientCategory {
+  return typeof x === 'string' && (AMBIENT_CATEGORIES as string[]).includes(x)
 }
 
-function isLayer(x: unknown): x is AmbientLayerName {
-  return x === 'low_bed' || x === 'mid_texture' || x === 'mid_presence' || x === 'air' || x === 'room'
-}
-
-export async function fetchAmbientManifest(url = '/audio/ambient/manifest.json'): Promise<AmbientManifest | null> {
+export async function fetchAmbientManifest(
+  url = '/audio/ambient/manifest.json',
+): Promise<AmbientManifestV3 | null> {
   try {
     const res = await fetch(url, { cache: 'no-cache' })
     if (!res.ok) return null
     const raw = (await res.json()) as unknown
 
-    const m = raw as Partial<AmbientManifest> | null
-    const version = m?.version
-    if (!m || !Array.isArray(m.stems) || typeof version !== 'number' || !Number.isFinite(version)) return null
+    const m = raw as Partial<AmbientManifestV3> | null
+    if (!m || typeof m.version !== 'number' || !Number.isFinite(m.version)) return null
+    if (!Array.isArray(m.tracks)) return null
 
-    const stems: AmbientStem[] = []
-    for (const s0 of m.stems) {
-      const s = s0 as Partial<AmbientStem> | null
-      if (!s) continue
-      if (typeof s.id !== 'string' || s.id.length === 0) continue
-      if (!isMode(s.mode)) continue
-      if (typeof s.profile !== 'string' || s.profile.length === 0) continue
-      if (!isLayer(s.layer)) continue
-      if (typeof s.path !== 'string' || s.path.length === 0) continue
-      stems.push({
-        id: s.id,
-        mode: s.mode,
-        profile: s.profile,
-        layer: s.layer,
-        path: s.path,
-        length_sec: Number.isFinite(s.length_sec) ? s.length_sec : undefined,
-        lufs_i: Number.isFinite(s.lufs_i) ? s.lufs_i : undefined,
-        tags: Array.isArray(s.tags) ? s.tags.filter((t): t is string => typeof t === 'string') : undefined,
-        features: s.features,
+    const tracks: AmbientTrack[] = []
+    for (const t0 of m.tracks) {
+      const t = t0 as Partial<AmbientTrack> | null
+      if (!t) continue
+      if (typeof t.id !== 'string' || t.id.length === 0) continue
+      if (typeof t.title !== 'string') continue
+      if (!isCategory(t.category)) continue
+      if (typeof t.path !== 'string' || t.path.length === 0) continue
+      if (typeof t.duration_sec !== 'number' || !Number.isFinite(t.duration_sec)) continue
+
+      tracks.push({
+        id: t.id,
+        title: t.title,
+        category: t.category,
+        tags: Array.isArray(t.tags) ? t.tags.filter((s): s is string => typeof s === 'string') : [],
+        path: t.path,
+        duration_sec: t.duration_sec,
+        lufs_i: Number.isFinite(t.lufs_i) ? t.lufs_i : undefined,
       })
     }
 
-    return { version, stems }
+    return { version: m.version, tracks }
   } catch {
     return null
   }

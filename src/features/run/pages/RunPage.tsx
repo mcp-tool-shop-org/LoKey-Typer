@@ -85,7 +85,7 @@ export function RunPage({ mode }: { mode: Mode }) {
   return (
     <div className="space-y-6">
       {mode === 'competitive' ? (
-        <div className="rounded-2xl bg-zinc-900/40 p-4 text-sm text-zinc-300">
+        <div className="rounded-2xl bg-zinc-900/40 p-5 text-sm text-zinc-300">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Icon name="timer" size={14} className="shrink-0 text-zinc-400" />

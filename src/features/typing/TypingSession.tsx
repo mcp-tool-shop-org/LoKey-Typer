@@ -467,11 +467,11 @@ export function TypingSession(props: {
             }
           }}
           spellCheck={false}
-          className="mt-3 min-h-24 w-full resize-y rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none transition-colors duration-200 focus:border-zinc-500/70 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="mt-4 min-h-24 w-full resize-y rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none transition-colors duration-200 focus:border-zinc-500/70 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           placeholder="Start typing…"
         />
 
-        <div id={helpTextId} className="mt-3 text-xs leading-relaxed text-zinc-400" aria-live="polite" aria-atomic="true">
+        <div id={helpTextId} className="mt-4 text-xs leading-relaxed text-zinc-400" aria-live="polite" aria-atomic="true">
           {isComplete ? (
             <div className="space-y-2 animate-fade-in">
               <div className={`flex items-center gap-1.5 font-medium ${feedback.isNewPb ? 'text-zinc-50' : 'text-zinc-200'}`}>
@@ -508,7 +508,7 @@ export function TypingSession(props: {
       </div>
 
       {props.mode === 'competitive' ? (
-        <div className="flex items-center gap-2 rounded-2xl bg-zinc-900/30 p-4 text-xs text-zinc-400">
+        <div className="flex items-center gap-2 rounded-2xl bg-zinc-900/30 p-5 text-xs text-zinc-400">
           <Icon name="info" size={14} className="shrink-0 text-zinc-500" />
           Personal bests require ≥ 95% accuracy.
         </div>

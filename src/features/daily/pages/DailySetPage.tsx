@@ -265,7 +265,7 @@ export function DailySetPage() {
             <Icon name="play" size={20} className="text-slate-400 transition-transform duration-150 group-hover:translate-x-0.5" />
             {currentIndex > 0 ? 'Continue' : 'Begin'}
           </button>
-          <div className="mt-4 text-xs text-zinc-500/80">
+          <div className="mt-3 text-xs text-zinc-500/80">
             {daily.items.length} exercises • {sessionLabel(sessionType)}
           </div>
           <div className="mt-4 flex flex-wrap justify-center gap-2">
@@ -340,10 +340,10 @@ export function DailySetPage() {
           </div>
 
           {/* Exercise preview list */}
-          <div className="rounded-3xl bg-zinc-900/40 p-4 sm:p-8">
+          <div className="rounded-3xl bg-zinc-900/40 p-5 sm:p-8">
             <h2 className="text-sm font-semibold text-zinc-50">Today's exercises</h2>
 
-            <div className="mt-4 grid gap-1.5">
+            <div className="mt-5 grid gap-1.5">
               {daily.items.map((it, idx) => {
                 const ex = findExercise(it.exerciseId)
                 if (!ex) return null
@@ -464,7 +464,7 @@ export function DailySetPage() {
         return (
           <div ref={phaseRef} className="mx-auto max-w-3xl space-y-14 animate-fade-in">
             {/* Summary header */}
-            <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-8 text-center sm:px-8 sm:py-12">
+            <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-10 text-center sm:px-8 sm:py-14">
               <Icon name="trophy" size={28} className="text-slate-400" />
               <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
@@ -486,9 +486,9 @@ export function DailySetPage() {
             </div>
 
             {/* Per-exercise results */}
-            <div className="rounded-3xl bg-zinc-900/40 p-4 sm:p-8">
+            <div className="rounded-3xl bg-zinc-900/40 p-5 sm:p-8">
               <h2 className="text-sm font-semibold text-zinc-200">Exercise breakdown</h2>
-              <div className="mt-4 grid gap-1.5">
+              <div className="mt-5 grid gap-1.5">
                 {daily.items.map((it, idx) => {
                   const ex = findExercise(it.exerciseId)
                   const result = items[idx]

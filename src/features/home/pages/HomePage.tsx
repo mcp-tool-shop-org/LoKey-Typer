@@ -26,7 +26,7 @@ function computeDaysPracticed(runs: ReturnType<typeof loadRuns>) {
 
 function StatCard({ value, label, icon }: { value: string; label: string; icon: IconName }) {
   return (
-    <div className="rounded-2xl bg-zinc-900/40 px-5 py-4 text-center transition-transform duration-200 hover:-translate-y-0.5">
+    <div className="rounded-2xl bg-zinc-900/40 px-5 py-4 text-center transition-transform duration-200 ease-out hover:-translate-y-0.5">
       <Icon name={icon} size={18} className="mx-auto text-zinc-500" />
       <div className="mt-1.5 text-lg font-semibold leading-tight tabular-nums text-zinc-50">{value}</div>
       <div className="mt-0.5 text-xs font-medium text-zinc-500">{label}</div>
@@ -63,9 +63,9 @@ export function HomePage() {
         <button
           type="button"
           onClick={handleStart}
-          className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="group inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition-all duration-150 hover:bg-zinc-700 hover:border-zinc-600 hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
-          <Icon name="play" size={20} className="text-slate-400" />
+          <Icon name="play" size={20} className="text-slate-400 transition-transform duration-150 group-hover:translate-x-0.5" />
           Start typing
         </button>
         <div className="mt-4 text-xs text-zinc-500/80">

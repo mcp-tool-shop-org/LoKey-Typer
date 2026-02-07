@@ -71,7 +71,7 @@ function formatMs(ms: number) {
 
 function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
-    <div className="min-w-[5.5rem] rounded-2xl bg-zinc-900/40 p-4 transition-transform duration-200 hover:-translate-y-0.5">
+    <div className="min-w-[5.5rem] rounded-2xl bg-zinc-900/40 p-4 transition-transform duration-200 ease-out hover:-translate-y-0.5">
       <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
         {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
         {label}

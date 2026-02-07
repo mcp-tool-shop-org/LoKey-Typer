@@ -130,7 +130,7 @@ export function ModePage({ mode }: { mode: Mode }) {
 
       {/* Error banner */}
       {startError ? (
-        <div className="flex items-center gap-3 rounded-xl border border-rose-900/50 bg-rose-950/30 px-5 py-4 text-sm text-rose-400">
+        <div className="flex items-center gap-3 rounded-xl border border-rose-800 bg-rose-950/30 px-5 py-4 text-sm text-rose-400">
           <Icon name="info" size={16} className="shrink-0" />
           {startError}
         </div>
@@ -197,7 +197,7 @@ export function ModePage({ mode }: { mode: Mode }) {
                   })}
                 </div>
               ) : (
-                <div className="mt-2 text-center text-zinc-600">
+                <div className="mt-2 text-center text-zinc-500">
                   No runs yet — complete a sprint to set a record.
                 </div>
               )}

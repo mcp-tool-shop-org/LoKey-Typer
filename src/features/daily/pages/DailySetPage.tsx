@@ -362,7 +362,7 @@ export function DailySetPage() {
       {/* ---- TYPING PHASE: missing exercise fallback ---- */}
       {phase === 'typing' && currentItem && !currentExercise ? (
         <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
-          <Icon name="search" size={28} className="text-zinc-600" />
+          <Icon name="search" size={28} className="text-zinc-500" />
           <div>
             <div className="text-sm font-semibold text-zinc-200">Exercise unavailable</div>
             <div className="mt-1 text-xs text-zinc-500">

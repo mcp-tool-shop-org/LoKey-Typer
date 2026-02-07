@@ -66,7 +66,7 @@ export function AppShell() {
             <button
               type="button"
               onClick={handleMuteToggle}
-              className={`${ICON_BTN} ${prefs.ambientEnabled ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-zinc-600 hover:bg-zinc-900 hover:text-zinc-400'}`}
+              className={`${ICON_BTN} ${prefs.ambientEnabled ? 'text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200' : 'text-zinc-500 hover:bg-zinc-900 hover:text-zinc-300'}`}
               aria-label={prefs.ambientEnabled ? 'Mute ambient' : 'Unmute ambient'}
               title={prefs.ambientEnabled ? 'Mute ambient' : 'Unmute ambient'}
             >

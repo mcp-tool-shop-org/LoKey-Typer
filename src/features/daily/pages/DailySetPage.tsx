@@ -352,10 +352,10 @@ export function DailySetPage() {
                   <div
                     key={`${daily.dateKey}-${idx}`}
                     className={
-                      'flex items-center gap-3 rounded-lg px-4 py-3 transition duration-150 ' +
+                      'flex items-center gap-3 rounded-xl px-5 py-3.5 transition-all duration-200 ' +
                       (done
-                        ? 'bg-zinc-800/50 text-zinc-500'
-                        : 'bg-zinc-900/30 text-zinc-300 hover:bg-zinc-900/50')
+                        ? 'bg-zinc-800/30 text-zinc-500'
+                        : 'bg-zinc-900/30 text-zinc-300 hover:bg-zinc-800/40 hover:scale-[1.005] active:scale-[0.995]')
                     }
                   >
                     <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-zinc-700 text-xs font-semibold text-zinc-400">
@@ -496,7 +496,7 @@ export function DailySetPage() {
                   return (
                     <div
                       key={`summary-${idx}`}
-                      className="flex items-center gap-3 rounded-lg bg-zinc-900/30 px-4 py-3"
+                      className="flex items-center gap-3 rounded-xl bg-zinc-900/30 px-5 py-3.5 transition-all duration-200 hover:bg-zinc-800/40"
                     >
                       <div className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-zinc-700 text-xs font-semibold text-zinc-400">
                         {idx + 1}

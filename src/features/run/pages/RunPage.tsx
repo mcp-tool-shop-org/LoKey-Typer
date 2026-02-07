@@ -114,7 +114,7 @@ export function RunPage({ mode }: { mode: Mode }) {
               {topCompetitiveRuns({ durationMs: sprintDurationMs ?? 60_000, limit: 3 }).map((r, i) => {
                 const medalIcon = i === 0 ? 'medal-gold' as const : i === 1 ? 'medal-silver' as const : 'medal-bronze' as const
                 return (
-                  <div key={`${r.timestamp}-${i}`} className="flex items-center justify-between">
+                  <div key={`${r.timestamp}-${i}`} className="flex items-center justify-between rounded-lg px-2 py-1 transition-colors duration-200 hover:bg-zinc-800/40">
                     <div className="flex items-center gap-1.5 text-zinc-500">
                       <Icon name={medalIcon} size={14} className="shrink-0" />
                       #{i + 1}

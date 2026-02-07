@@ -61,7 +61,7 @@ export function TypingOverlay({
           return (
             <span
               key={`c-${idx}`}
-              className="inline-block w-[2px] -mb-1 h-[1.2em] align-middle bg-zinc-300/70"
+              className="inline-block w-[2px] -mb-1 h-[1.2em] align-middle bg-zinc-300/70 cursor-blink"
             />
           )
         }

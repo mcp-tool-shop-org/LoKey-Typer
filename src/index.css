@@ -19,6 +19,15 @@ body {
 
 /* Links are styled per-component — no global underline rule. */
 
+/* Typing cursor blink — CSS-only, zero JS overhead */
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+.cursor-blink {
+  animation: cursor-blink 1s step-end infinite;
+}
+
 /* Respect user motion preferences (WCAG 2.3.3) */
 @media (prefers-reduced-motion: reduce) {
   *,

@@ -297,7 +297,10 @@ export class AmbientPlayerV3 {
     const ctx = getAudioContext()
     if (!ctx) return null
 
-    const buf = await fetchDecode(ctx, track.path)
+    const resolvedPath = track.path.startsWith('/')
+      ? `${import.meta.env.BASE_URL}${track.path.slice(1)}`
+      : track.path
+    const buf = await fetchDecode(ctx, resolvedPath)
     if (buf) this.bufferCache.set(track.path, buf)
     return buf
   }

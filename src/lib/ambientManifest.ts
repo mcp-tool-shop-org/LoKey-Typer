@@ -59,7 +59,7 @@ function isCategory(x: unknown): x is AmbientCategory {
 }
 
 export async function fetchAmbientManifest(
-  url = '/audio/ambient/manifest.json',
+  url = `${import.meta.env.BASE_URL}audio/ambient/manifest.json`,
 ): Promise<AmbientManifestV3 | null> {
   try {
     const res = await fetch(url, { cache: 'no-cache' })

@@ -15,12 +15,14 @@ export type AudioSettings = {
 
 type BufferMap = Partial<Record<string, AudioBuffer>>
 
+const base = import.meta.env.BASE_URL
+
 const SAMPLE_URLS = {
-  key: ['/audio/key_1.wav', '/audio/key_2.wav', '/audio/key_3.wav', '/audio/key_4.wav'],
-  spacebar: ['/audio/spacebar.wav'],
-  backspace: ['/audio/backspace.wav'],
-  return_bell: ['/audio/return_bell.wav'],
-  error: ['/audio/error.wav'],
+  key: [`${base}audio/key_1.wav`, `${base}audio/key_2.wav`, `${base}audio/key_3.wav`, `${base}audio/key_4.wav`],
+  spacebar: [`${base}audio/spacebar.wav`],
+  backspace: [`${base}audio/backspace.wav`],
+  return_bell: [`${base}audio/return_bell.wav`],
+  error: [`${base}audio/error.wav`],
 } as const
 
 export class TypewriterAudio {

@@ -56,7 +56,7 @@ async function fetchDecode(ctx: AudioContext, url: string): Promise<AudioBuffer 
 // AmbientPlayerV3
 // ---------------------------------------------------------------------------
 
-const MAX_VOLUME = 0.5
+const MAX_VOLUME = 0.7
 const CROSSFADE_SEC_MIN = 6
 const CROSSFADE_SEC_MAX = 8
 const ROTATION_MIN_MS = 5 * 60_000
@@ -99,11 +99,18 @@ export class AmbientPlayerV3 {
 
   /** Call once on first user gesture. Loads manifest, picks track, starts. */
   async start(): Promise<void> {
-    if (this.started) return
+    if (this.started) {
+      console.log('[ambient] start() skipped — already started')
+      return
+    }
     this.started = true
+    console.log('[ambient] start() — resuming audio context')
 
     await resumeAudioContext()
     await this.ensureManifestLoaded()
+
+    const tracks = this.getFilteredTracks()
+    console.log('[ambient] manifest loaded, %d tracks, enabled=%s, shouldPlay=%s', tracks.length, this.enabled, this.shouldPlay())
 
     if (!this.shouldPlay()) return
 
@@ -210,12 +217,12 @@ export class AmbientPlayerV3 {
   }
 
   private effectiveVolume(): number {
-    // Exponential curve for perceptual volume control.
-    // Linear sliders feel wrong because human hearing is logarithmic —
-    // the bottom half of the slider barely changes perceived loudness.
-    // x^3 gives much finer control at the quiet end.
+    // Quadratic curve for perceptual volume control.
+    // Human hearing is logarithmic, so a linear slider feels wrong.
+    // x^2 gives finer control at the quiet end while still being audible
+    // at typical default levels (0.35–0.5).
     const linear = clamp(this.desiredVolume, 0, 1)
-    return clamp(linear * linear * linear * MAX_VOLUME, 0, MAX_VOLUME)
+    return clamp(linear * linear * MAX_VOLUME, 0, MAX_VOLUME)
   }
 
   private ensureMasterGain(): { ctx: AudioContext; master: GainNode } | null {
@@ -261,14 +268,24 @@ export class AmbientPlayerV3 {
     const candidates = this.getFilteredTracks()
     if (candidates.length === 0) return null
 
+    const currentId = this.currentSlot?.track.id ?? null
+
     // Prefer tracks not played recently (cross-session + session).
+    // History window is capped at half the catalog so fresh tracks remain available.
+    const historyWindow = Math.min(Math.floor(candidates.length / 2), 20)
     const fresh = candidates.filter(
       (t) =>
-        !this.history.wasPlayedRecently(t.id, Math.min(50, candidates.length - 1)) &&
+        t.id !== currentId &&
+        !this.history.wasPlayedRecently(t.id, historyWindow) &&
         !this.sessionPlayed.includes(t.id),
     )
 
-    const pool = fresh.length > 0 ? fresh : candidates
+    // Fallback: anything except the currently playing track.
+    const fallback = candidates.length > 1
+      ? candidates.filter((t) => t.id !== currentId)
+      : candidates
+
+    const pool = fresh.length > 0 ? fresh : fallback
     const idx = Math.floor(Math.random() * pool.length)
     return pool[idx] ?? null
   }
@@ -325,13 +342,13 @@ export class AmbientPlayerV3 {
   private async playRandomTrack(): Promise<void> {
     await this.ensureManifestLoaded()
     const track = this.pickRandomTrack()
-    if (!track) return
+    if (!track) { console.warn('[ambient] no track picked'); return }
 
     const buf = await this.getBuffer(track)
-    if (!buf) return
+    if (!buf) { console.warn('[ambient] failed to decode buffer for %s', track.path); return }
 
     const slot = this.createSlot(track, buf, 1)
-    if (!slot) return
+    if (!slot) { console.warn('[ambient] failed to create slot'); return }
 
     // If something was already playing, stop it cleanly.
     if (this.currentSlot) {
@@ -342,6 +359,7 @@ export class AmbientPlayerV3 {
     this.sessionPlayed.push(track.id)
     this.history.noteTrackPlayed(track.id)
     this.applyMasterVolume(1.0)
+    console.log('[ambient] playing: %s (%s) vol=%f', track.title, track.path, this.effectiveVolume())
 
     // Preload next track.
     void this.preloadNext()

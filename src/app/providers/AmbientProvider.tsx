@@ -30,26 +30,31 @@ export function AmbientProvider({ children }: { children: React.ReactNode }) {
     })
   }, [prefs])
 
-  // One-time user gesture unlock: first click or keypress starts ambient.
+  // One-time user gesture unlock: first click, tap, or keypress starts ambient.
   useEffect(() => {
     if (startedRef.current) return
 
     const unlock = async () => {
       if (startedRef.current) return
       startedRef.current = true
+      console.log('[ambient] unlock triggered — user gesture received')
+      // Resume audio context inside the user gesture, then start ambient.
       await resumeAudioContext()
       await ambientPlayer.start()
+      cleanup()
+    }
+
+    const cleanup = () => {
       window.removeEventListener('click', unlock)
       window.removeEventListener('keydown', unlock)
+      window.removeEventListener('touchstart', unlock)
     }
 
     window.addEventListener('click', unlock)
     window.addEventListener('keydown', unlock)
+    window.addEventListener('touchstart', unlock)
 
-    return () => {
-      window.removeEventListener('click', unlock)
-      window.removeEventListener('keydown', unlock)
-    }
+    return cleanup
   }, [])
 
   const noteTypingActivity = useCallback(() => {

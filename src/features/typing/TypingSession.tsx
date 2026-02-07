@@ -301,7 +301,7 @@ export function TypingSession(props: {
   const helpTextId = `typing-help-${props.exercise.id}`
 
   return (
-    <div className="space-y-6" style={containerStyle}>
+    <div className="space-y-5" style={containerStyle}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <div className="text-xs font-medium text-zinc-400">{props.exercise.pack}</div>
@@ -332,20 +332,20 @@ export function TypingSession(props: {
       </div>
 
       {props.showCompetitiveHud ? (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} icon="timer" />
           <Stat label="WPM" value={`${Math.round(live.wpm)}`} icon="stat-speed" />
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
           <Stat label="Errors" value={`${live.errors}`} icon="zap" />
         </div>
       ) : minimalHud ? (
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-3">
           <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
           <Stat label="Progress" value={`${typed.length}/${targetText.length}`} icon="bar-chart" />
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
           <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} icon="stat-speed" />
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />

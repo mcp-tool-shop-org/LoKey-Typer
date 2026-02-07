@@ -56,7 +56,7 @@ export function HomePage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl space-y-10">
+    <div className="mx-auto max-w-3xl space-y-14">
       <h1 className="sr-only">LoKey Typer — Home</h1>
       {/* CTA — same position as every other tab */}
       <div className="text-center">
@@ -84,7 +84,7 @@ export function HomePage() {
 
       {/* Stats Row */}
       {hasHistory ? (
-        <section aria-label="Your typing stats" className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <section aria-label="Your typing stats" className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <StatCard value={`${Math.round(skill.ema.wpm)}`} label="Avg WPM" icon={STAT_ICONS[0]} />
           <StatCard value={`${Math.round(skill.ema.accuracy * 100)}%`} label="Accuracy" icon={STAT_ICONS[1]} />
           <StatCard value={`${skill.total_runs}`} label="Sessions" icon={STAT_ICONS[2]} />

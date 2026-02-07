@@ -77,7 +77,7 @@ export function ModePage({ mode }: { mode: Mode }) {
     const showCompetitiveHud = mode === 'competitive'
 
     return (
-      <div className="mx-auto max-w-3xl space-y-10">
+      <div className="mx-auto max-w-3xl space-y-14">
         <TypingSession
           key={`${session.exercise.id}-${sessionKey}`}
           mode={mode}

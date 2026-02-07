@@ -242,7 +242,7 @@ export function DailySetPage() {
   // ---- Render ----
 
   return (
-    <div className="mx-auto max-w-3xl space-y-10">
+    <div className="mx-auto max-w-3xl space-y-14">
       {/* Screen reader phase announcement */}
       <div className="sr-only" aria-live="polite" aria-atomic="true">
         {phase === 'typing' && currentExercise
@@ -343,7 +343,7 @@ export function DailySetPage() {
           <div className="rounded-3xl bg-zinc-900/40 p-4 sm:p-8">
             <h2 className="text-sm font-semibold text-zinc-50">Today's exercises</h2>
 
-            <div className="mt-4 grid gap-2">
+            <div className="mt-4 grid gap-1.5">
               {daily.items.map((it, idx) => {
                 const ex = findExercise(it.exerciseId)
                 if (!ex) return null
@@ -462,7 +462,7 @@ export function DailySetPage() {
         const totalMs = items.reduce((s, r) => s + r.durationMs, 0)
 
         return (
-          <div ref={phaseRef} className="mx-auto max-w-3xl space-y-10 animate-fade-in">
+          <div ref={phaseRef} className="mx-auto max-w-3xl space-y-14 animate-fade-in">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-8 text-center sm:px-8 sm:py-12">
               <Icon name="trophy" size={28} className="text-zinc-500" />
@@ -488,7 +488,7 @@ export function DailySetPage() {
             {/* Per-exercise results */}
             <div className="rounded-3xl bg-zinc-900/40 p-4 sm:p-8">
               <h2 className="text-sm font-semibold text-zinc-200">Exercise breakdown</h2>
-              <div className="mt-4 grid gap-2">
+              <div className="mt-4 grid gap-1.5">
                 {daily.items.map((it, idx) => {
                   const ex = findExercise(it.exerciseId)
                   const result = items[idx]

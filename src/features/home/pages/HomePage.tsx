@@ -63,7 +63,7 @@ export function HomePage() {
         <button
           type="button"
           onClick={handleStart}
-          className="inline-flex items-center gap-2.5 rounded-xl border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           <Icon name="play" size={20} className="text-zinc-400" />
           Start typing
@@ -75,7 +75,7 @@ export function HomePage() {
           <button
             type="button"
             onClick={cycleMode}
-            className="rounded text-zinc-400 underline underline-offset-2 outline-none transition duration-150 hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="rounded text-zinc-400 underline underline-offset-2 outline-none transition duration-150 hover:text-zinc-200 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             change
           </button>

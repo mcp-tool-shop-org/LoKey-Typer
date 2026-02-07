@@ -10,7 +10,7 @@ function NavItem({ to, label }: { to: string; label: string }) {
       end={to === '/'}
       className={({ isActive }) =>
         [
-          'rounded-lg px-2 py-1.5 text-xs font-medium transition duration-150 outline-none sm:px-3 sm:py-2 sm:text-sm focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
+          'rounded-lg px-2 py-1.5 text-xs font-medium transition duration-150 outline-none sm:px-3 sm:py-2 sm:text-sm focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
           isActive ? 'bg-zinc-800/60 text-zinc-200' : 'text-zinc-400 hover:text-zinc-200 hover:bg-zinc-900/50',
         ].join(' ')
       }
@@ -21,7 +21,7 @@ function NavItem({ to, label }: { to: string; label: string }) {
 }
 
 const ICON_BTN =
-  'rounded-lg p-2 transition duration-150 outline-none active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
+  'rounded-lg p-2 transition duration-150 outline-none active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
 
 export function AppShell() {
   const { prefs, patchPrefs } = usePreferences()
@@ -35,7 +35,7 @@ export function AppShell() {
     <div className="min-h-full">
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-zinc-800 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-200"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-zinc-800 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-zinc-400/50"
       >
         Skip to content
       </a>

@@ -86,7 +86,7 @@ export function RunPage({ mode }: { mode: Mode }) {
             <button
               type="button"
               onClick={() => navigate('/daily')}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 hover:bg-zinc-900"
+              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
             >
               <Icon name="arrow-left" size={14} className="shrink-0" />
               Daily

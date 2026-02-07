@@ -21,7 +21,7 @@ function NavItem({ to, label }: { to: string; label: string }) {
 }
 
 const ICON_BTN =
-  'rounded-md p-2 transition outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
+  'rounded-md p-2 transition outline-none active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950'
 
 export function AppShell() {
   const { prefs, patchPrefs } = usePreferences()

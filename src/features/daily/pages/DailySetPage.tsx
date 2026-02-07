@@ -241,7 +241,7 @@ export function DailySetPage() {
           <button
             type="button"
             onClick={handleBegin}
-            className="inline-flex items-center gap-2.5 rounded-lg border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-2.5 rounded-lg border border-zinc-700 bg-zinc-800 px-10 py-3.5 text-base font-semibold text-zinc-300 transition hover:bg-zinc-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="play" size={20} className="text-zinc-400" />
             {currentIndex > 0 ? 'Continue' : 'Begin'}
@@ -261,7 +261,7 @@ export function DailySetPage() {
                 key={t.key}
                 to={`/daily?type=${t.key}`}
                 className={
-                  'rounded-md border px-3 py-1.5 text-xs font-semibold outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                  'no-underline rounded-md border px-3 py-1.5 text-xs font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                   (sessionType === t.key
                     ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
                     : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200')
@@ -473,7 +473,7 @@ export function DailySetPage() {
               <button
                 type="button"
                 onClick={() => navigate('/')}
-                className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-6 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+                className="inline-flex items-center gap-2 rounded-lg border border-zinc-700 bg-zinc-800 px-6 py-3 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
               >
                 Back to Home
               </button>

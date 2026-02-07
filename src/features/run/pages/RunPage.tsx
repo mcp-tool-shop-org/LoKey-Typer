@@ -60,7 +60,7 @@ export function RunPage({ mode }: { mode: Mode }) {
 
   if (!exercise) {
     return (
-      <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-8 text-center sm:px-8 sm:py-12">
+      <div className="flex flex-col items-center gap-4 rounded-3xl border border-zinc-800 bg-zinc-950 px-6 py-8 text-center sm:px-8 sm:py-12">
         <Icon name="search" size={28} className="text-zinc-500" />
         <div>
           <h1 className="text-sm font-semibold text-zinc-50">Exercise not found</h1>
@@ -71,7 +71,7 @@ export function RunPage({ mode }: { mode: Mode }) {
         <button
           type="button"
           onClick={() => navigate(-1)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700 bg-zinc-800 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           <Icon name="arrow-left" size={14} className="shrink-0" />
           Go back
@@ -85,7 +85,7 @@ export function RunPage({ mode }: { mode: Mode }) {
   return (
     <div className="space-y-6">
       {mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
+        <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
               <Icon name="timer" size={14} className="shrink-0 text-zinc-400" />
@@ -99,7 +99,7 @@ export function RunPage({ mode }: { mode: Mode }) {
             <button
               type="button"
               onClick={() => navigate('/daily')}
-              className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none transition duration-150 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-800 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none transition duration-150 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
             >
               <Icon name="arrow-left" size={14} className="shrink-0" />
               Daily

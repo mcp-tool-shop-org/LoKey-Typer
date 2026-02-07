@@ -1,122 +1,110 @@
 # LoKey Typer
 
-Vite + React + TypeScript typing app with a calm, adult-focused default experience and an opt-in Competitive mode.
+A calm typing practice app with ambient soundscapes, personalized daily sets, and no accounts required.
 
-Phase 1 includes:
+## What it is
 
-- Modes: Focus, Real-Life, Competitive
-- Curated local content packs (static JSON)
-- Typing engine with accuracy/WPM metrics + end-of-run feedback
-- Local-only persistence (preferences, recents, run history, personal bests)
-- Optional low-latency mechanical typewriter audio (sample files optional; synth fallback)
+LoKey Typer is a typing practice app built for adults who want quiet, focused sessions without gamification, leaderboards, or distractions.
 
-## Scripts
+All data stays on your device. No accounts. No cloud. No tracking.
 
-- `npm run dev` — start the dev server
-- `npm run build` — typecheck + production build
-- `npm run typecheck` — TypeScript build-only typecheck
-- `npm run preview` — preview the production build locally
-- `npm run lint` — run ESLint
-- `npm run gen:phase2-content` — regenerate deterministic Phase 2 packs + extras JSON
-- `npm run validate:content` — schema + structural validation for all content packs
-- `npm run smoke:rotation` — novelty/rotation smoke test (duplicates + template day-to-day change rate)
-- `npm run qa:ambient:assets` — checks `public/audio/ambient/**` for expected ambient WAV layer filenames
-- `npm run qa:sound-design` — sound design manifesto acceptance gates (engine constants + stem metadata)
-- `npm run qa:phase3:novelty` — simulates 14 days of daily sets and reports duplicate rate
-- `npm run qa:phase3:recommendation` — recommendation sanity simulation (novelty + weak-tag bias)
+## Practice modes
 
-## Code structure
+- **Focus** — Calm, curated exercises for building rhythm and accuracy
+- **Real-Life** — Practice with emails, code snippets, and everyday text
+- **Competitive** — Timed sprints with personal bests
+- **Daily Set** — A fresh set of exercises generated each day, adapted to your recent sessions
 
-- `src/app` — app wiring (router, shell/layout, global providers)
-- `src/features` — feature-owned UI (pages + feature components)
-- `src/lib` — shared domain logic (storage, typing metrics, audio/ambient, etc.)
-- `src/content` — content types + content pack loading
+## Features
 
-See `modular.md` for the repository modularity contracts (public APIs, import boundaries, effective prefs rules, and content gateway guarantees).
+- Ambient soundscapes designed for sustained focus (42 tracks, non-rhythmic)
+- Mechanical typewriter keystroke audio (optional)
+- Personalized daily exercises based on recent sessions
+- Full offline support after first load
+- Accessible: screen reader mode, reduced motion, sound-optional
 
-## Docs
+## Install
 
-- `modular.md` — architecture + import boundary contracts (treat as “law”)
-- `personalization_engine.md` — Phase 3 plan for recommendations/daily sets (rules + metrics)
-- `docs/sound-design.md` — ambient sound design + audit framework (Phase 3.4)
-- `docs/sound-design-manifesto.md` — formal sound design manifesto + numeric acceptance tests + science-safe marketing copy
-- `docs/audio-review-checklist.md` — required manual audio review checklist for new stems
-- `docs/sound-philosophy.md` — short public-facing sound philosophy (marketing-safe)
-- `docs/accessibility-commitment.md` — short accessibility commitment (public-facing)
-- `docs/how-personalization-works.md` — plain-language explanation (≤300 words)
+**Microsoft Store** (recommended):
+[Get it from the Microsoft Store](https://apps.microsoft.com/detail/9NRVWM08HQC4)
 
-## Contributing
+**Browser PWA:**
+Visit the [web app](https://mcp-tool-shop-org.github.io/LoKey-Typer/) in Edge or Chrome, then click the install icon in the address bar.
 
-- Read `modular.md` before adding new modules or refactoring imports.
-- Keep these checks green: `npm run lint` and `npm run build`.
+## Privacy
 
-### Import aliases
+LoKey Typer collects no data. All preferences, run history, and personal bests are stored locally in your browser. See the full [privacy policy](https://mcp-tool-shop-org.github.io/LoKey-Typer/privacy.html).
 
-To keep imports stable as the repo grows (and to avoid Windows casing/path edge-cases), the app uses these aliases:
+## License
 
-- `@app` / `@app/*` → `src/app` (public entrypoint is `src/app/index.ts`)
-- `@features` / `@features/*` → `src/features` (public entrypoint is `src/features/index.ts`)
-- `@content` / `@content/*` → `src/content` (public entrypoint is `src/content/index.ts`)
-- `@lib` / `@lib/*` → `src/lib/public` (public lib surface; entrypoint is `src/lib/public/index.ts`)
+MIT. See [LICENSE](LICENSE).
 
-Lib internals are available only via:
+---
 
-- `@lib-internal/*` → `src/lib/*`
+## Development
 
-Notes:
-
-- Feature modules are expected to import from public entrypoints (`@lib`, `@content`, `@app`). ESLint enforces that features don’t reach into internals.
-- `@lib-internal/*` is intentionally unstable and is restricted to app wiring/providers.
-
-App wiring can also import app-level exports from the public entrypoint:
-
-- `@app` → `src/app/index.ts`
-
-## Run locally
+### Run locally
 
 ```bash
 npm ci
 npm run dev
 ```
 
-If you’re iterating on deps locally:
-
-```bash
-npm install
-npm run dev
-```
-
-Build + preview:
+### Build
 
 ```bash
 npm run build
 npm run preview
 ```
 
-## Routes
+### Scripts
+
+- `npm run dev` — dev server
+- `npm run build` — typecheck + production build
+- `npm run typecheck` — TypeScript build-only typecheck
+- `npm run lint` — ESLint
+- `npm run preview` — preview production build locally
+- `npm run validate:content` — schema + structural validation for all content packs
+- `npm run gen:phase2-content` — regenerate Phase 2 packs
+- `npm run smoke:rotation` — novelty/rotation smoke test
+- `npm run qa:ambient:assets` — ambient WAV asset checks
+- `npm run qa:sound-design` — sound design acceptance gates
+- `npm run qa:phase3:novelty` — daily set novelty simulation
+- `npm run qa:phase3:recommendation` — recommendation sanity simulation
+
+### Code structure
+
+- `src/app` — app wiring (router, shell/layout, global providers)
+- `src/features` — feature-owned UI (pages + feature components)
+- `src/lib` — shared domain logic (storage, typing metrics, audio/ambient, etc.)
+- `src/content` — content types + content pack loading
+
+See `modular.md` for architecture contracts and import boundaries.
+
+### Import aliases
+
+- `@app` → `src/app`
+- `@features` → `src/features`
+- `@content` → `src/content`
+- `@lib` → `src/lib/public` (public API surface)
+- `@lib-internal` → `src/lib` (restricted to app wiring/providers)
+
+### Routes
 
 - `/` — Home
 - `/daily` — Daily Set
-- `/focus` — Focus mode hub
-- `/real-life` — Real-Life mode hub
-- `/competitive` — Competitive mode hub
-
-Each mode supports:
-
+- `/focus` — Focus mode
+- `/real-life` — Real-Life mode
+- `/competitive` — Competitive mode
 - `/<mode>/exercises` — exercise list
-- `/<mode>/settings` — mode/global settings
+- `/<mode>/settings` — settings
 - `/<mode>/run/:exerciseId` — run an exercise
 
-Notes:
+### Docs
 
-- Legacy routes `/practice` and `/arcade` redirect into the new mode structure.
-- Competitive runs support query params like `?duration=60000` and `?ghost=1`.
-
-## Windows MSIX packaging note
-
-This app is configured as a PWA (via `vite-plugin-pwa`). On Windows you can:
-
-- Install it as a PWA from a Chromium-based browser (Edge/Chrome) once hosted (even locally for testing).
-- Package it into an MSIX using the Windows **MSIX Packaging Tool** (capture the installed PWA as an app), depending on your distribution needs.
-
-If you prefer an MSIX-first workflow, you can also use PWA-to-MSIX tooling (outside this repo) to generate an MSIX from the PWA manifest/build output.
+- `modular.md` — architecture + import boundary contracts
+- `docs/sound-design.md` — ambient sound design framework
+- `docs/sound-design-manifesto.md` — sound design manifesto + acceptance tests
+- `docs/sound-philosophy.md` — public-facing sound philosophy
+- `docs/accessibility-commitment.md` — accessibility commitment
+- `docs/how-personalization-works.md` — personalization explainer

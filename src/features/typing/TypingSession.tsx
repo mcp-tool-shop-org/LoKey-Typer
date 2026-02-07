@@ -501,7 +501,7 @@ export function TypingSession(props: {
           ) : (
             <div className="flex items-center gap-1.5">
               <Icon name="keyboard" size={14} className="shrink-0 text-zinc-500" />
-              Punctuation and newlines are supported. Backspace is allowed (counted). Press Esc to exit.
+              All characters supported. Backspace allowed (counted). Esc to exit.
             </div>
           )}
         </div>
@@ -510,7 +510,7 @@ export function TypingSession(props: {
       {props.mode === 'competitive' ? (
         <div className="flex items-center gap-2 rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">
           <Icon name="info" size={14} className="shrink-0 text-zinc-500" />
-          PB updates require accuracy ≥ 95%.
+          Personal bests require ≥ 95% accuracy.
         </div>
       ) : null}
     </div>

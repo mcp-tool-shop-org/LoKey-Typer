@@ -97,7 +97,7 @@ export function HomePage() {
             Your stats will appear here after your first session.
           </p>
           <p className="text-xs text-zinc-500">
-            Hit <span className="font-medium text-zinc-300">Start typing</span> above or pick a mode from the nav.
+            Press <span className="font-medium text-zinc-300">Start typing</span> above to begin.
           </p>
         </div>
       )}

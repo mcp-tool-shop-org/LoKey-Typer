@@ -22,7 +22,7 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="text-3xl">⌨️</div>
             <h1 className="text-lg font-semibold text-zinc-100">Something went wrong</h1>
             <p className="text-sm text-zinc-400">
-              An unexpected error occurred. Refreshing the page should fix it.
+              Something unexpected happened. A refresh should fix it.
             </p>
             <button
               type="button"

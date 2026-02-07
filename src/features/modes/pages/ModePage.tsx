@@ -123,8 +123,8 @@ export function ModePage({ mode }: { mode: Mode }) {
         </button>
         <div className="mt-4 text-xs text-zinc-500">
           {pool.remaining > 0
-            ? `${pool.remaining} of ${pool.total} exercises remaining`
-            : `Pool cycled — ${pool.total} exercises, fresh variants`}
+            ? `${pool.remaining} of ${pool.total} exercises left`
+            : `All ${pool.total} exercises done — starting fresh`}
         </div>
       </div>
 
@@ -172,7 +172,7 @@ export function ModePage({ mode }: { mode: Mode }) {
                 className="accent-zinc-400"
               />
               <Icon name="ghost" size={14} className="shrink-0 text-zinc-500" />
-              Ghost comparison (PB)
+              Race your best
             </label>
 
             <div className="w-full max-w-48 text-xs text-zinc-400">
@@ -198,7 +198,7 @@ export function ModePage({ mode }: { mode: Mode }) {
                 </div>
               ) : (
                 <div className="mt-2 text-center text-zinc-500">
-                  No runs yet — complete a sprint to set a record.
+                  No runs yet — finish a sprint to get on the board.
                 </div>
               )}
             </div>

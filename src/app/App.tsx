@@ -10,7 +10,7 @@ function NotFoundPage() {
       <div>
         <h1 className="text-sm font-semibold text-zinc-50">Page not found</h1>
         <p className="mt-1 text-sm text-zinc-500">
-          This page doesn't exist. It may have been moved or removed.
+          Nothing here. It may have been moved or removed.
         </p>
       </div>
       <Link

@@ -261,7 +261,7 @@ export function DailySetPage() {
                 key={t.key}
                 to={`/daily?type=${t.key}`}
                 className={
-                  'no-underline rounded-md border px-3 py-1.5 text-xs font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                  'no-underline rounded-md border px-4 py-2 text-xs font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                   (sessionType === t.key
                     ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
                     : 'border-zinc-800 bg-zinc-950 text-zinc-400 hover:bg-zinc-900 hover:text-zinc-200')

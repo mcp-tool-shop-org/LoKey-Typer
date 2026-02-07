@@ -368,7 +368,7 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
-            className="inline-flex items-center gap-1 rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-md border border-zinc-800 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 outline-none transition hover:bg-zinc-900 active:scale-95 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="cursor" size={12} className="shrink-0" />
             Focus

@@ -152,7 +152,7 @@ export function ModePage({ mode }: { mode: Mode }) {
                     type="button"
                     onClick={() => setPrefs({ ...prefs, competitiveSprintDurationMs: d as SprintDurationMs })}
                     className={
-                      'rounded-md border px-3 py-2 text-sm font-semibold outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
+                      'min-h-10 rounded-md border px-4 py-2.5 text-sm font-semibold outline-none transition focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950 ' +
                       (sprintDurationMs === d
                         ? 'border-zinc-600 bg-zinc-900 text-zinc-50'
                         : 'border-zinc-800 bg-zinc-950 text-zinc-200 hover:bg-zinc-900')
@@ -164,11 +164,12 @@ export function ModePage({ mode }: { mode: Mode }) {
               </div>
             </div>
 
-            <label className="flex items-center gap-2 text-sm text-zinc-300">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-zinc-300 transition hover:bg-zinc-900">
               <input
                 type="checkbox"
                 checked={ghostEnabled}
                 onChange={(e) => setPrefs({ ...prefs, competitiveGhostEnabled: e.target.checked })}
+                className="accent-zinc-400"
               />
               <Icon name="ghost" size={14} className="shrink-0 text-zinc-500" />
               Ghost comparison (PB)

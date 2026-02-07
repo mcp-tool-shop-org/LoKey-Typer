@@ -131,7 +131,7 @@ export function ModePage({ mode }: { mode: Mode }) {
           <div className="flex flex-col items-center space-y-4">
             <div className="flex flex-col items-center">
               <div className="flex items-center gap-2 text-sm font-semibold text-zinc-50">
-                <Icon name="timer" size={15} className="shrink-0 text-zinc-500" />
+                <Icon name="timer" size={14} className="shrink-0 text-zinc-500" />
                 Sprint duration
               </div>
               <div className="mt-2 flex gap-2">
@@ -166,7 +166,7 @@ export function ModePage({ mode }: { mode: Mode }) {
             {top3.length > 0 ? (
               <div className="w-48 text-xs text-zinc-400">
                 <div className="flex items-center justify-center gap-1.5">
-                  <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
+                  <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
                   Top runs ({sprintDurationMs / 1000}s)
                 </div>
                 <div className="mt-2 grid gap-1">

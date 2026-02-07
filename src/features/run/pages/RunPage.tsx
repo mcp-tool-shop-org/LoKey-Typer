@@ -75,10 +75,10 @@ export function RunPage({ mode }: { mode: Mode }) {
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-sm text-zinc-300">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Icon name="timer" size={15} className="shrink-0 text-zinc-400" />
+              <Icon name="timer" size={14} className="shrink-0 text-zinc-400" />
               Sprint: <span className="text-zinc-50">{(sprintDurationMs ?? 60_000) / 1000}s</span>
               {ghost ? (
-                <span className="ml-1 flex items-center gap-1 text-zinc-400">
+                <span className="ml-1 flex items-center gap-1.5 text-zinc-400">
                   <Icon name="ghost" size={14} className="shrink-0" /> Ghost comparison
                 </span>
               ) : null}
@@ -94,7 +94,7 @@ export function RunPage({ mode }: { mode: Mode }) {
           </div>
           <div className="mt-3 text-xs text-zinc-400">
             <div className="flex items-center gap-1.5">
-              <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
+              <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
               Leaderboard (local) — top WPM for this duration:
             </div>
             <div className="mt-2 grid gap-1">

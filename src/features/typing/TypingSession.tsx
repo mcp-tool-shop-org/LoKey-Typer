@@ -73,7 +73,7 @@ function Stat({ label, value, icon }: { label: string; value: string; icon?: Ico
   return (
     <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
       <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
-        {icon ? <Icon name={icon} size={13} className="shrink-0 text-zinc-500" /> : null}
+        {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
         {label}
       </div>
       <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{value}</div>
@@ -474,7 +474,7 @@ export function TypingSession(props: {
               {feedback.secondary ? <div className="text-zinc-300">{feedback.secondary}</div> : null}
               {props.mode === 'competitive' && pb ? (
                 <div className="flex items-center gap-1.5">
-                  <Icon name="trophy" size={13} className="shrink-0 text-zinc-500" />
+                  <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
                   PB: <span className="text-zinc-200">{Math.round(pb.wpm)} WPM</span> at{' '}
                   <span className="text-zinc-200">{Math.round(pb.accuracy * 1000) / 10}%</span>
                   {live.accuracy >= 0.95 ? (
@@ -493,7 +493,7 @@ export function TypingSession(props: {
             </div>
           ) : (
             <div className="flex items-center gap-1.5">
-              <Icon name="keyboard" size={13} className="shrink-0 text-zinc-500" />
+              <Icon name="keyboard" size={14} className="shrink-0 text-zinc-500" />
               Punctuation and newlines are supported. Backspace is allowed (counted).
             </div>
           )}

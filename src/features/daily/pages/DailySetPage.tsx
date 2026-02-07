@@ -315,7 +315,7 @@ export function DailySetPage() {
 
           {/* Exercise preview list */}
           <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
-            <div className="text-sm font-semibold text-zinc-50">Today's exercises</div>
+            <h2 className="text-sm font-semibold text-zinc-50">Today's exercises</h2>
 
             <div className="mt-4 grid gap-2">
               {daily.items.map((it, idx) => {
@@ -393,7 +393,7 @@ export function DailySetPage() {
         return (
           <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-16 text-center">
             <Icon name="checkmark-circle" size={32} className="text-zinc-500" />
-            <div className="text-lg font-semibold text-zinc-200">Nice!</div>
+            <h2 className="text-lg font-semibold text-zinc-200">Nice!</h2>
             {nextItem && nextExercise ? (
               <div className="text-sm text-zinc-400">
                 Next up: <span className="font-medium text-zinc-300">{kindLabel(nextItem.kind)}</span>
@@ -416,7 +416,7 @@ export function DailySetPage() {
           <div className="mx-auto max-w-3xl space-y-10">
             {/* Summary header */}
             <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
-              <div className="text-xl font-semibold text-zinc-100">Daily Set Complete!</div>
+              <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>
               <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
                   <div className="text-xs font-medium text-zinc-400">Avg WPM</div>
@@ -437,7 +437,7 @@ export function DailySetPage() {
 
             {/* Per-exercise results */}
             <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-8">
-              <div className="text-sm font-semibold text-zinc-200">Exercise breakdown</div>
+              <h2 className="text-sm font-semibold text-zinc-200">Exercise breakdown</h2>
               <div className="mt-4 grid gap-2">
                 {daily.items.map((it, idx) => {
                   const ex = findExercise(it.exerciseId)

@@ -61,7 +61,7 @@ export function RunPage({ mode }: { mode: Mode }) {
   if (!exercise) {
     return (
       <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
-        <div className="text-sm font-semibold text-zinc-50">Exercise not found</div>
+        <h1 className="text-sm font-semibold text-zinc-50">Exercise not found</h1>
         <div className="mt-2 text-sm text-zinc-400">ID: {exerciseId}</div>
       </div>
     )

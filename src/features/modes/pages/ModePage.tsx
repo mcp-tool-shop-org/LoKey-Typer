@@ -175,7 +175,7 @@ export function ModePage({ mode }: { mode: Mode }) {
               Ghost comparison (PB)
             </label>
 
-            <div className="w-48 text-xs text-zinc-400">
+            <div className="w-full max-w-48 text-xs text-zinc-400">
               <div className="flex items-center justify-center gap-1.5">
                 <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
                 Top runs ({sprintDurationMs / 1000}s)

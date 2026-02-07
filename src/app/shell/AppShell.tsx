@@ -10,7 +10,7 @@ function NavItem({ to, label }: { to: string; label: string }) {
       end={to === '/'}
       className={({ isActive }) =>
         [
-          'rounded-md px-3 py-2 text-sm font-medium transition outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
+          'rounded-md px-2 py-1.5 text-xs font-medium transition outline-none sm:px-3 sm:py-2 sm:text-sm focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
           isActive ? 'bg-zinc-800 text-zinc-50' : 'text-zinc-300 hover:bg-zinc-900 hover:text-zinc-50',
         ].join(' ')
       }
@@ -40,14 +40,14 @@ export function AppShell() {
         Skip to content
       </a>
       <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
-          <Link to="/" className="flex items-center gap-2.5 transition hover:opacity-80">
+        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 overflow-x-auto px-4 py-4 sm:px-6 sm:py-5">
+          <Link to="/" className="flex shrink-0 items-center gap-2.5 transition hover:opacity-80">
             <Icon name="logo-mark" size={22} className="text-zinc-400" />
-            <div className="text-base font-semibold tracking-tight text-zinc-50">LoKey Typer</div>
-            <div className="hidden text-xs text-zinc-500 sm:block">·</div>
-            <div className="hidden text-xs text-zinc-500 sm:block">Speed • Accuracy • Consistency</div>
+            <div className="hidden text-base font-semibold tracking-tight text-zinc-50 sm:block">LoKey Typer</div>
+            <div className="hidden text-xs text-zinc-500 md:block">·</div>
+            <div className="hidden text-xs text-zinc-500 md:block">Speed • Accuracy • Consistency</div>
           </Link>
-          <nav aria-label="Main navigation" className="flex items-center gap-2.5">
+          <nav aria-label="Main navigation" className="flex shrink-0 items-center gap-1 sm:gap-2.5">
             <NavItem to="/" label="Home" />
             <NavItem to="/daily" label="Daily" />
             <NavItem to="/focus" label="Focus" />
@@ -83,7 +83,7 @@ export function AppShell() {
         </div>
       </header>
 
-      <main id="main-content" className="mx-auto max-w-5xl px-6 py-16">
+      <main id="main-content" className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-16">
         <Outlet />
       </main>
 

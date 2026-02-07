@@ -5,7 +5,7 @@ import { Icon } from '@app/components/Icon'
 
 function NotFoundPage() {
   return (
-    <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center animate-fade-in">
+    <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-8 text-center animate-fade-in sm:px-8 sm:py-12">
       <Icon name="search" size={28} className="text-zinc-500" />
       <div>
         <h1 className="text-sm font-semibold text-zinc-50">Page not found</h1>

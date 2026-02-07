@@ -91,7 +91,7 @@ export function HomePage() {
           <StatCard value={`${daysPracticed}`} label="Days practiced" icon={STAT_ICONS[3]} />
         </section>
       ) : (
-        <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-6 py-8 text-center sm:px-8 sm:py-12">
           <Icon name="keyboard" size={28} className="text-zinc-500" />
           <p className="text-sm text-zinc-400">
             Your stats will appear here after your first session.

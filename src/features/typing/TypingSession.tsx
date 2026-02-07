@@ -332,7 +332,7 @@ export function TypingSession(props: {
       </div>
 
       {props.showCompetitiveHud ? (
-        <div className="grid gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} icon="timer" />
           <Stat label="WPM" value={`${Math.round(live.wpm)}`} icon="stat-speed" />
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
@@ -345,7 +345,7 @@ export function TypingSession(props: {
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
           <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} icon="stat-speed" />
           <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
@@ -491,7 +491,7 @@ export function TypingSession(props: {
                   ) : null}
                 </div>
               ) : null}
-              <div className="grid gap-2 sm:grid-cols-4">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                 <div className="flex items-center gap-1"><Icon name="stat-speed" size={12} className="text-zinc-500" /> WPM: {Math.round(live.wpm)}</div>
                 <div className="flex items-center gap-1"><Icon name="stat-accuracy" size={12} className="text-zinc-500" /> Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
                 <div className="flex items-center gap-1"><Icon name="zap" size={12} className="text-zinc-500" /> Errors: {live.errors}</div>

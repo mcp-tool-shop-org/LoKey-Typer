@@ -60,9 +60,22 @@ export function RunPage({ mode }: { mode: Mode }) {
 
   if (!exercise) {
     return (
-      <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
-        <h1 className="text-sm font-semibold text-zinc-50">Exercise not found</h1>
-        <div className="mt-2 text-sm text-zinc-400">ID: {exerciseId}</div>
+      <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
+        <Icon name="search" size={28} className="text-zinc-600" />
+        <div>
+          <h1 className="text-sm font-semibold text-zinc-50">Exercise not found</h1>
+          <div className="mt-1 text-sm text-zinc-500">
+            The exercise <span className="font-mono text-zinc-400">{exerciseId}</span> doesn't exist or was removed.
+          </div>
+        </div>
+        <button
+          type="button"
+          onClick={() => navigate(-1)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+        >
+          <Icon name="arrow-left" size={14} className="shrink-0" />
+          Go back
+        </button>
       </div>
     )
   }

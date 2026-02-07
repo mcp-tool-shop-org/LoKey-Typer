@@ -23,6 +23,7 @@ export function ModePage({ mode }: { mode: Mode }) {
   // Session state
   const [session, setSession] = useState<ContentEngineResult | null>(null)
   const [sessionKey, setSessionKey] = useState(0)
+  const [startError, setStartError] = useState<string | null>(null)
   // Tracks the autostart value we last handled (to detect re-navigation to same route).
   const handledAutostart = useRef<string | null>(null)
 
@@ -35,6 +36,7 @@ export function ModePage({ mode }: { mode: Mode }) {
 
   const startSession = useCallback(() => {
     try {
+      setStartError(null)
       const skill = loadSkillModel()
       const result = pickNextExercise({ mode, userId, skill, prefs })
       saveLastMode(mode)
@@ -42,6 +44,7 @@ export function ModePage({ mode }: { mode: Mode }) {
       setSessionKey((k) => k + 1)
     } catch (err) {
       console.error('[ModePage] startSession failed:', err)
+      setStartError('Couldn\u2019t load an exercise. Try refreshing the page.')
     }
   }, [mode, userId, prefs])
 
@@ -125,6 +128,14 @@ export function ModePage({ mode }: { mode: Mode }) {
         </div>
       </div>
 
+      {/* Error banner */}
+      {startError ? (
+        <div className="flex items-center gap-3 rounded-xl border border-rose-900/50 bg-rose-950/30 px-5 py-4 text-sm text-rose-400">
+          <Icon name="info" size={16} className="shrink-0" />
+          {startError}
+        </div>
+      ) : null}
+
       {/* Competitive: inline sprint config */}
       {mode === 'competitive' ? (
         <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-6">
@@ -163,12 +174,12 @@ export function ModePage({ mode }: { mode: Mode }) {
               Ghost comparison (PB)
             </label>
 
-            {top3.length > 0 ? (
-              <div className="w-48 text-xs text-zinc-400">
-                <div className="flex items-center justify-center gap-1.5">
-                  <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
-                  Top runs ({sprintDurationMs / 1000}s)
-                </div>
+            <div className="w-48 text-xs text-zinc-400">
+              <div className="flex items-center justify-center gap-1.5">
+                <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
+                Top runs ({sprintDurationMs / 1000}s)
+              </div>
+              {top3.length > 0 ? (
                 <div className="mt-2 grid gap-1">
                   {top3.map((r, i) => {
                     const medalIcon = i === 0 ? 'medal-gold' as const : i === 1 ? 'medal-silver' as const : 'medal-bronze' as const
@@ -184,8 +195,12 @@ export function ModePage({ mode }: { mode: Mode }) {
                     )
                   })}
                 </div>
-              </div>
-            ) : null}
+              ) : (
+                <div className="mt-2 text-center text-zinc-600">
+                  No runs yet — complete a sprint to set a record.
+                </div>
+              )}
+            </div>
           </div>
         </div>
       ) : null}

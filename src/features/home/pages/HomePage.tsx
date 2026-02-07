@@ -90,9 +90,15 @@ export function HomePage() {
           <StatCard value={`${daysPracticed}`} label="Days practiced" icon={STAT_ICONS[3]} />
         </section>
       ) : (
-        <p className="text-center text-sm text-zinc-500">
-          Pick a mode from the nav above and start your first session.
-        </p>
+        <div className="flex flex-col items-center gap-3 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
+          <Icon name="keyboard" size={28} className="text-zinc-600" />
+          <p className="text-sm text-zinc-400">
+            Your stats will appear here after your first session.
+          </p>
+          <p className="text-xs text-zinc-500">
+            Hit <span className="font-medium text-zinc-300">Start typing</span> above or pick a mode from the nav.
+          </p>
+        </div>
       )}
     </div>
   )

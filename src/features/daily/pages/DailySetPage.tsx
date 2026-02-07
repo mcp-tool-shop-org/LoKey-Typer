@@ -359,6 +359,29 @@ export function DailySetPage() {
         </>
       ) : null}
 
+      {/* ---- TYPING PHASE: missing exercise fallback ---- */}
+      {phase === 'typing' && currentItem && !currentExercise ? (
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-zinc-800 bg-zinc-950 px-8 py-12 text-center">
+          <Icon name="search" size={28} className="text-zinc-600" />
+          <div>
+            <div className="text-sm font-semibold text-zinc-200">Exercise unavailable</div>
+            <div className="mt-1 text-xs text-zinc-500">
+              Couldn't load exercise <span className="font-mono text-zinc-400">{currentItem.exerciseId}</span>.
+            </div>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              // Skip this exercise and advance
+              handleComplete({ wpm: 0, accuracy: 0, durationMs: 0 })
+            }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700 bg-zinc-800 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition hover:bg-zinc-700 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          >
+            Skip to next
+          </button>
+        </div>
+      ) : null}
+
       {/* ---- TYPING PHASE ---- */}
       {phase === 'typing' && currentExercise && currentItem ? (
         <div className="space-y-4">

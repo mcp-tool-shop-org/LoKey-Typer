@@ -164,7 +164,7 @@ export function ModePage({ mode }: { mode: Mode }) {
               </div>
             </div>
 
-            <label className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-zinc-300 transition duration-150 hover:bg-zinc-900">
+            <label className="flex cursor-pointer items-center gap-2 rounded-md px-3 py-2 text-sm text-zinc-300 transition duration-150 hover:bg-zinc-900 has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-zinc-200 has-[:focus-visible]:ring-offset-2 has-[:focus-visible]:ring-offset-zinc-950">
               <input
                 type="checkbox"
                 checked={ghostEnabled}

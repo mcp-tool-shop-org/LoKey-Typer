@@ -1,7 +1,7 @@
 import { type CSSProperties, useEffect, useMemo, useRef, useState } from 'react'
 import type { Exercise, Mode } from '@content'
+import { Icon, type IconName } from '@app/components/Icon'
 import {
-  ambientEngine,
   appendRun,
   bestAccuracyForExercise,
   bestWpmForExercise,
@@ -18,6 +18,7 @@ import {
   typewriterAudio,
   updateSkillModelFromRun,
 } from '@lib'
+import { useAmbient } from '@app'
 import { TypingOverlay } from './TypingOverlay'
 
 function fnv1a32Hex(input: string) {
@@ -68,11 +69,14 @@ function formatMs(ms: number) {
   return `${minutes}:${String(seconds).padStart(2, '0')}`
 }
 
-function Stat({ label, value }: { label: string; value: string }) {
+function Stat({ label, value, icon }: { label: string; value: string; icon?: IconName }) {
   return (
-    <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4">
-      <div className="text-[11px] font-medium text-zinc-400">{label}</div>
-      <div className="mt-1 text-lg font-semibold text-zinc-50 tabular-nums">{value}</div>
+    <div className="min-w-[5.5rem] rounded-2xl bg-zinc-900/40 p-4 transition-transform duration-200 ease-out hover:-translate-y-0.5">
+      <div className="flex items-center gap-1.5 text-xs font-medium text-zinc-400">
+        {icon ? <Icon name={icon} size={14} className="shrink-0 text-zinc-500" /> : null}
+        {label}
+      </div>
+      <div className="mt-1 text-lg font-semibold leading-tight text-zinc-50 tabular-nums">{value}</div>
     </div>
   )
 }
@@ -87,6 +91,7 @@ export function TypingSession(props: {
   ghostEnabled?: boolean
   onExit: () => void
   onRestart: () => void
+  onComplete?: (result: { wpm: number; accuracy: number; durationMs: number }) => void
 }) {
   const { targetText } = props
   const [typed, setTyped] = useState('')
@@ -94,12 +99,19 @@ export function TypingSession(props: {
   const [startedAtMs, setStartedAtMs] = useState<number | null>(null)
   const [nowMs, setNowMs] = useState(() => Date.now())
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
-  const [inputFocused, setInputFocused] = useState(false)
+  const [, setInputFocused] = useState(false)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
 
   const timeLimitMs = props.sprintDurationMs
+
+  // Auto-focus textarea when session mounts.
+  useEffect(() => {
+    // Small delay lets the DOM settle after React render.
+    const id = window.setTimeout(() => inputRef.current?.focus(), 50)
+    return () => window.clearTimeout(id)
+  }, [])
 
   useEffect(() => {
     const t = window.setInterval(() => {
@@ -132,29 +144,7 @@ export function TypingSession(props: {
 
   const isComplete = endedAtMs != null
 
-  // Phase 3: Ambient soundtrack system (mode-aware, accessible, fail-safe).
-  useEffect(() => {
-    const sessionActive = startedAtMs != null && !isComplete
-    const sessionPaused = !inputFocused
-    ambientEngine.update({
-      mode: props.mode,
-      prefs: props.prefs,
-      sessionActive,
-      sessionPaused,
-      exerciseRemainingMs: remainingMs,
-    })
-
-    return () => {
-      // On unmount, ensure we fade down quickly.
-      ambientEngine.update({
-        mode: props.mode,
-        prefs: props.prefs,
-        sessionActive: false,
-        sessionPaused: true,
-        exerciseRemainingMs: null,
-      })
-    }
-  }, [inputFocused, isComplete, props.mode, props.prefs, startedAtMs, remainingMs])
+  const { noteTypingActivity } = useAmbient()
 
   useEffect(() => {
     if (!isComplete || endedAtMs == null) return
@@ -212,6 +202,12 @@ export function TypingSession(props: {
         modeGain: props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85,
       })
     }
+
+    props.onComplete?.({
+      wpm: run.wpm,
+      accuracy: run.accuracy,
+      durationMs: run.duration_ms,
+    })
   }, [
     isComplete,
     endedAtMs,
@@ -225,6 +221,7 @@ export function TypingSession(props: {
     props.prefs.bellOnCompletion,
     props.prefs.soundEnabled,
     props.prefs.volume,
+    props.onComplete,
     startedAtMs,
     typed,
     targetText,
@@ -304,12 +301,12 @@ export function TypingSession(props: {
   const helpTextId = `typing-help-${props.exercise.id}`
 
   return (
-    <div className="space-y-6" style={containerStyle}>
+    <div className="space-y-5" style={containerStyle}>
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <div className="text-xs font-medium text-zinc-400">{props.exercise.pack}</div>
+          <div className="text-xs font-medium text-zinc-500">{props.exercise.pack}</div>
           <h1 className="mt-1 text-xl font-semibold tracking-tight text-zinc-50">{props.exercise.title}</h1>
-          <div className="mt-1 text-sm text-zinc-400">
+          <div className="mt-1 text-sm text-zinc-500">
             Difficulty {props.exercise.difficulty} • Est. {props.exercise.estimated_seconds}s
           </div>
         </div>
@@ -318,43 +315,45 @@ export function TypingSession(props: {
           <button
             type="button"
             onClick={props.onRestart}
-            className="rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none transition duration-150 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="refresh" size={14} className="shrink-0" />
             Restart
           </button>
           <button
             type="button"
             onClick={props.onExit}
-            className="rounded-md bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none hover:bg-white focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-lg bg-zinc-50 px-3 py-2 text-sm font-semibold text-zinc-950 outline-none transition duration-150 hover:bg-white focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="x-close" size={14} className="shrink-0" />
             Exit
           </button>
         </div>
       </div>
 
       {props.showCompetitiveHud ? (
-        <div className="grid gap-3 sm:grid-cols-4">
-          <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} />
-          <Stat label="WPM" value={`${Math.round(live.wpm)}`} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
-          <Stat label="Errors" value={`${live.errors}`} />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Stat label="Remaining" value={timeLimitMs ? formatMs(remainingMs ?? 0) : '—'} icon="timer" />
+          <Stat label="WPM" value={`${Math.round(live.wpm)}`} icon="stat-speed" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
+          <Stat label="Errors" value={`${live.errors}`} icon="zap" />
         </div>
       ) : minimalHud ? (
-        <div className="grid gap-3 sm:grid-cols-3">
-          <Stat label="Time" value={formatMs(elapsedMs)} />
-          <Stat label="Progress" value={`${typed.length}/${targetText.length}`} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
+        <div className="grid gap-4 sm:grid-cols-3">
+          <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
+          <Stat label="Progress" value={`${typed.length}/${targetText.length}`} icon="bar-chart" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
         </div>
       ) : (
-        <div className="grid gap-3 sm:grid-cols-4">
-          <Stat label="Time" value={formatMs(elapsedMs)} />
-          <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} />
-          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} />
-          <Stat label="Backspaces" value={`${backspaces}`} />
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          <Stat label="Time" value={formatMs(elapsedMs)} icon="clock" />
+          <Stat label="WPM" value={showLiveWpm ? `${Math.round(live.wpm)}` : 'Hidden'} icon="stat-speed" />
+          <Stat label="Accuracy" value={`${Math.round(live.accuracy * 1000) / 10}%`} icon="stat-accuracy" />
+          <Stat label="Backspaces" value={`${backspaces}`} icon="backspace" />
         </div>
       )}
 
-      <div className="rounded-2xl border border-zinc-800 bg-zinc-950 p-5">
+      <div className="rounded-3xl bg-zinc-900/50 p-5">
         <TypingOverlay
           target={targetText}
           typed={typed}
@@ -363,14 +362,15 @@ export function TypingSession(props: {
         />
       </div>
 
-      <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-5">
+      <div className="rounded-2xl bg-zinc-900/30 p-5">
         <div className="flex items-center justify-between">
           <div className="text-sm font-medium text-zinc-200">Type here</div>
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
-            className="rounded-md border border-zinc-800 bg-zinc-950 px-2 py-1 text-xs text-zinc-300 outline-none hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-zinc-200 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-1.5 text-xs text-zinc-300 outline-none transition duration-150 hover:bg-zinc-900 active:scale-95 focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
+            <Icon name="cursor" size={12} className="shrink-0" />
             Focus
           </button>
         </div>
@@ -383,15 +383,18 @@ export function TypingSession(props: {
           onFocus={() => {
             setInputFocused(true)
             typewriterAudio.ensureReady().then(() => typewriterAudio.resume())
-            ambientEngine.ensureReady()
-            ambientEngine.userGestureUnlock().catch(() => {
-              // ignore
-            })
           }}
           onBlur={() => {
             setInputFocused(false)
           }}
           onKeyDown={(e) => {
+            // Escape exits the session
+            if (e.key === 'Escape') {
+              e.preventDefault()
+              props.onExit()
+              return
+            }
+
             if (isComplete) return
 
             if (startedAtMs == null && (e.key.length === 1 || e.key === 'Enter')) {
@@ -401,7 +404,7 @@ export function TypingSession(props: {
             // ignore modifiers
             if (e.ctrlKey || e.metaKey || e.altKey) return
 
-            ambientEngine.noteTypingActivity()
+            noteTypingActivity()
 
             const modeGain = props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85
 
@@ -455,7 +458,7 @@ export function TypingSession(props: {
             const next = e.target.value
             setTyped(next)
 
-            if (next.length !== typed.length) ambientEngine.noteTypingActivity()
+            if (next.length !== typed.length) noteTypingActivity()
 
             if (startedAtMs == null && next.length > 0) setStartedAtMs(Date.now())
 
@@ -464,17 +467,21 @@ export function TypingSession(props: {
             }
           }}
           spellCheck={false}
-          className="mt-3 min-h-24 w-full resize-y rounded-md border border-zinc-700 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none focus:border-zinc-500 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+          className="mt-4 min-h-24 w-full resize-y rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-2 font-mono text-sm text-zinc-100 outline-none transition-colors duration-200 focus:border-zinc-500/70 focus-visible:ring-2 focus-visible:ring-zinc-200/30 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           placeholder="Start typing…"
         />
 
-        <div id={helpTextId} className="mt-3 text-xs text-zinc-400" aria-live="polite" aria-atomic="true">
+        <div id={helpTextId} className="mt-4 text-xs leading-relaxed text-zinc-400" aria-live="polite" aria-atomic="true">
           {isComplete ? (
-            <div className="space-y-2">
-              <div className="font-medium text-zinc-200">{feedback.primary}</div>
+            <div className="space-y-2 animate-fade-in">
+              <div className={`flex items-center gap-1.5 font-medium ${feedback.isNewPb ? 'text-zinc-50' : 'text-zinc-200'}`}>
+                <Icon name={feedback.isNewPb ? 'personal-best' : 'checkmark-circle'} size={14} className={`shrink-0 ${feedback.isNewPb ? 'text-zinc-300' : 'text-zinc-400'}`} />
+                {feedback.primary}
+              </div>
               {feedback.secondary ? <div className="text-zinc-300">{feedback.secondary}</div> : null}
               {props.mode === 'competitive' && pb ? (
-                <div>
+                <div className="flex items-center gap-1.5">
+                  <Icon name="trophy" size={14} className="shrink-0 text-zinc-500" />
                   PB: <span className="text-zinc-200">{Math.round(pb.wpm)} WPM</span> at{' '}
                   <span className="text-zinc-200">{Math.round(pb.accuracy * 1000) / 10}%</span>
                   {live.accuracy >= 0.95 ? (
@@ -484,22 +491,26 @@ export function TypingSession(props: {
                   ) : null}
                 </div>
               ) : null}
-              <div className="grid gap-2 sm:grid-cols-4">
-                <div>WPM: {Math.round(live.wpm)}</div>
-                <div>Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
-                <div>Errors: {live.errors}</div>
-                <div>Backspaces: {backspaces}</div>
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                <div className="flex items-center gap-1"><Icon name="stat-speed" size={12} className="text-zinc-500" /> WPM: {Math.round(live.wpm)}</div>
+                <div className="flex items-center gap-1"><Icon name="stat-accuracy" size={12} className="text-zinc-500" /> Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
+                <div className="flex items-center gap-1"><Icon name="zap" size={12} className="text-zinc-500" /> Errors: {live.errors}</div>
+                <div className="flex items-center gap-1"><Icon name="backspace" size={12} className="text-zinc-500" /> Backspaces: {backspaces}</div>
               </div>
             </div>
           ) : (
-            <div>Punctuation and newlines are supported. Backspace is allowed (counted).</div>
+            <div className="flex items-center gap-1.5">
+              <Icon name="keyboard" size={14} className="shrink-0 text-zinc-500" />
+              All characters supported. Backspace allowed (counted). Esc to exit.
+            </div>
           )}
         </div>
       </div>
 
       {props.mode === 'competitive' ? (
-        <div className="rounded-xl border border-zinc-800 bg-zinc-950 p-4 text-xs text-zinc-400">
-          PB updates require accuracy ≥ 95%.
+        <div className="flex items-center gap-2 rounded-2xl bg-zinc-900/30 p-5 text-xs text-zinc-400">
+          <Icon name="info" size={14} className="shrink-0 text-zinc-500" />
+          Personal bests require ≥ 95% accuracy.
         </div>
       ) : null}
     </div>

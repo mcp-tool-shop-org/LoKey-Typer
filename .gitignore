@@ -10,9 +10,11 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+.vite
 *.local
 
 # Editor directories and files
+.vs/
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -29,3 +31,6 @@ desktop/LoKeyTyper/obj/
 # Keep the sln and WebContent in the desktop project
 !desktop/LoKeyTyper.sln
 !desktop/LoKeyTyper/WebContent/
+
+# Local asset bundles
+lokey_ambient_library_v1.zip

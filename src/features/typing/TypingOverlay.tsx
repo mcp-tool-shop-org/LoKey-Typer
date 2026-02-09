@@ -61,7 +61,7 @@ export function TypingOverlay({
           return (
             <span
               key={`c-${idx}`}
-              className="inline-block w-[2px] -mb-1 h-[1.2em] align-middle bg-zinc-300/70"
+              className="inline-block w-[2px] -mb-1 h-[1.2em] align-middle bg-zinc-300/70 cursor-blink"
             />
           )
         }
@@ -80,8 +80,8 @@ export function TypingOverlay({
           p.kind === 'correct'
             ? 'text-zinc-50'
             : p.kind === 'incorrect'
-              ? 'text-rose-300 underline decoration-current decoration-2 underline-offset-2'
-              : 'text-zinc-600'
+              ? 'text-rose-400 underline decoration-current decoration-2 underline-offset-2'
+              : 'text-zinc-500'
 
         return (
           <span

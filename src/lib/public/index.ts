@@ -7,18 +7,31 @@ export * from '../mode'
 export * from '../typing'
 export * from '../typingMetrics'
 
-export { ambientEngine } from '../ambient'
+export { ambientPlayer } from '../ambient'
 export { typewriterAudio } from '../audio'
 
 export { isTemplateExercise, renderTemplateExercise } from '../templateRender'
 
 export {
   generateDailySet,
+  loadDailyProgress,
+  saveDailyProgress,
+  type DailyItemResult,
+  type DailyProgress,
   type DailySessionType,
+  type DailySet,
+  type DailySetItem,
   type DailySetItemKind,
 } from '../dailySet'
 
-export { pickQuickstartExercise, preferredQuickstartMode } from '../quickstart'
+export {
+  pickNextExercise,
+  getPoolStatus,
+  type ContentEngineResult,
+  type PoolStatus,
+} from '../contentEngine'
+
+// preferredQuickstartMode is now re-exported from ../mode (via export * above)
 
 export { updateSkillModelFromRun } from '../skillModel'
 

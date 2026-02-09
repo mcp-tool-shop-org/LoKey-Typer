@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url'
 
 // https://vite.dev/config/
 export default defineConfig({
+  base: '/LoKey-Typer/',
   resolve: {
     alias: {
       '@app': fileURLToPath(new URL('./src/app', import.meta.url)),
@@ -23,16 +24,36 @@ export default defineConfig({
         name: 'LoKey Typer',
         short_name: 'LoKey',
         description: 'Practice typing speed and accuracy.',
-        start_url: '/',
-        scope: '/',
+        start_url: '/LoKey-Typer/',
+        scope: '/LoKey-Typer/',
         display: 'standalone',
         background_color: '#09090b',
         theme_color: '#09090b',
         icons: [
           {
-            src: '/vite.svg',
+            src: '/LoKey-Typer/logo.svg',
             sizes: 'any',
             type: 'image/svg+xml',
+          },
+          {
+            src: '/LoKey-Typer/logo-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: '/LoKey-Typer/logo-192.png',
+            sizes: '192x192',
+            type: 'image/png',
+          },
+          {
+            src: '/LoKey-Typer/logo-150.png',
+            sizes: '150x150',
+            type: 'image/png',
+          },
+          {
+            src: '/LoKey-Typer/logo-44.png',
+            sizes: '44x44',
+            type: 'image/png',
           },
         ],
       },

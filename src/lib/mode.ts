@@ -1,4 +1,5 @@
 import type { Mode } from '@content'
+import { loadLastMode } from './storage'
 
 export type ModePath = 'focus' | 'real-life' | 'competitive'
 
@@ -18,4 +19,8 @@ export function modeLabel(mode: Mode): string {
   if (mode === 'focus') return 'Focus'
   if (mode === 'competitive') return 'Competitive'
   return 'Real-Life'
+}
+
+export function preferredQuickstartMode(): Mode {
+  return loadLastMode() ?? 'focus'
 }

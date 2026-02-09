@@ -378,6 +378,145 @@
       "path": "/audio/ambient/focus/nature_air/room/nature_air_room_03.wav",
       "duration_sec": 50.0,
       "lufs_i": -32
+    },
+
+    {
+      "id": "ocean_coastal_breeze",
+      "title": "Coastal Breeze",
+      "category": "ocean",
+      "tags": ["ocean", "breeze", "waves"],
+      "path": "/audio/ambient/ocean/ocean_coastal_breeze.wav",
+      "duration_sec": 53.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "ocean_gentle_waves",
+      "title": "Gentle Waves",
+      "category": "ocean",
+      "tags": ["ocean", "waves", "calm"],
+      "path": "/audio/ambient/ocean/ocean_gentle_waves.wav",
+      "duration_sec": 47.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "ocean_pebble_shore",
+      "title": "Pebble Shore",
+      "category": "ocean",
+      "tags": ["ocean", "pebbles", "shore"],
+      "path": "/audio/ambient/ocean/ocean_pebble_shore.wav",
+      "duration_sec": 43.0,
+      "lufs_i": -32
+    },
+
+    {
+      "id": "rain_heavy_downpour",
+      "title": "Heavy Downpour",
+      "category": "rain",
+      "tags": ["rain", "heavy", "storm"],
+      "path": "/audio/ambient/rain/rain_heavy_downpour.wav",
+      "duration_sec": 41.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "rain_steady",
+      "title": "Steady Rain",
+      "category": "rain",
+      "tags": ["rain", "steady", "calm"],
+      "path": "/audio/ambient/rain/rain_steady.wav",
+      "duration_sec": 53.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "rain_thunderstorm",
+      "title": "Thunderstorm",
+      "category": "rain",
+      "tags": ["rain", "thunder", "storm"],
+      "path": "/audio/ambient/rain/rain_thunderstorm.wav",
+      "duration_sec": 59.0,
+      "lufs_i": -32
+    },
+
+    {
+      "id": "wind_alpine_meadow",
+      "title": "Alpine Meadow Wind",
+      "category": "wind",
+      "tags": ["wind", "meadow", "alpine"],
+      "path": "/audio/ambient/wind/wind_alpine_meadow.wav",
+      "duration_sec": 47.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "wind_pine_forest",
+      "title": "Pine Forest Wind",
+      "category": "wind",
+      "tags": ["wind", "pine", "forest"],
+      "path": "/audio/ambient/wind/wind_pine_forest.wav",
+      "duration_sec": 51.0,
+      "lufs_i": -32
+    },
+
+    {
+      "id": "zen_celestial_wash",
+      "title": "Celestial Wash",
+      "category": "other",
+      "tags": ["zen", "celestial", "wash", "pad"],
+      "path": "/audio/ambient/zen/zen_celestial_wash.wav",
+      "duration_sec": 53.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_crystal_harmonics",
+      "title": "Crystal Harmonics",
+      "category": "singing_bowls",
+      "tags": ["zen", "crystal", "harmonics"],
+      "path": "/audio/ambient/zen/zen_crystal_harmonics.wav",
+      "duration_sec": 59.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_deep_earth_drone",
+      "title": "Deep Earth Drone",
+      "category": "binaural",
+      "tags": ["zen", "drone", "deep", "earth"],
+      "path": "/audio/ambient/zen/zen_deep_earth_drone.wav",
+      "duration_sec": 53.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_ethereal_pad",
+      "title": "Ethereal Pad",
+      "category": "other",
+      "tags": ["zen", "ethereal", "pad", "ambient"],
+      "path": "/audio/ambient/zen/zen_ethereal_pad.wav",
+      "duration_sec": 59.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_om_drone",
+      "title": "Om Drone",
+      "category": "binaural",
+      "tags": ["zen", "om", "drone", "meditation"],
+      "path": "/audio/ambient/zen/zen_om_drone.wav",
+      "duration_sec": 61.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_singing_bowl",
+      "title": "Singing Bowl",
+      "category": "singing_bowls",
+      "tags": ["zen", "singing bowl", "tibetan"],
+      "path": "/audio/ambient/zen/zen_singing_bowl.wav",
+      "duration_sec": 53.0,
+      "lufs_i": -32
+    },
+    {
+      "id": "zen_warm_fifths",
+      "title": "Warm Fifths",
+      "category": "other",
+      "tags": ["zen", "warm", "fifths", "harmony"],
+      "path": "/audio/ambient/zen/zen_warm_fifths.wav",
+      "duration_sec": 61.0,
+      "lufs_i": -32
     }
   ]
 }

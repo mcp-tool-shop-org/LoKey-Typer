@@ -20,5 +20,12 @@ dist-ssr
 *.suo
 *.ntvs*
 *.njsproj
-*.sln
 *.sw?
+
+# .NET build output
+desktop/LoKeyTyper/bin/
+desktop/LoKeyTyper/obj/
+
+# Keep the sln and WebContent in the desktop project
+!desktop/LoKeyTyper.sln
+!desktop/LoKeyTyper/WebContent/

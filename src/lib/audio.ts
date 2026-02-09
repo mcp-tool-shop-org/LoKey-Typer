@@ -77,6 +77,9 @@ export class TypewriterAudio {
     if (!settings.enabled) return
     const ctx = getAudioContext()
     if (!ctx) return
+    if (ctx.state === 'suspended') {
+      ctx.resume().catch(() => {})
+    }
 
     // polyphony cap
     const now = ctx.currentTime

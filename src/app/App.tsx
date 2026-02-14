@@ -1,7 +1,15 @@
+import { Suspense, lazy } from 'react'
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@app/shell'
-import { AudioDiagnosticsPage, DailySetPage, HomePage, ModePage, RunPage, SettingsPage } from '@features'
 import { Icon } from '@app/components/Icon'
+
+// Lazy load routes for code splitting
+const HomePage = lazy(() => import('@features/home/pages/HomePage').then(m => ({ default: m.HomePage })))
+const SettingsPage = lazy(() => import('@features/home/pages/SettingsPage').then(m => ({ default: m.SettingsPage })))
+const AudioDiagnosticsPage = lazy(() => import('@features/home/pages/AudioDiagnosticsPage').then(m => ({ default: m.AudioDiagnosticsPage })))
+const DailySetPage = lazy(() => import('@features/daily/pages/DailySetPage').then(m => ({ default: m.DailySetPage })))
+const ModePage = lazy(() => import('@features/modes/pages/ModePage').then(m => ({ default: m.ModePage })))
+const RunPage = lazy(() => import('@features/run/pages/RunPage').then(m => ({ default: m.RunPage })))
 
 function NotFoundPage() {
   return (
@@ -24,30 +32,37 @@ function NotFoundPage() {
   )
 }
 
+function Loading() {
+  return <div className="p-8 text-center text-zinc-500 animate-pulse">Loading...</div>
+}
+
 export default function App() {
   return (
-    <Routes>
-      <Route element={<AppShell />}>
-        <Route index element={<HomePage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="audio-diagnostics" element={<AudioDiagnosticsPage />} />
+    <Suspense fallback={<Loading />}>
+      <Routes>
+        <Route element={<AppShell />}>
+          <Route index element={<HomePage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="audio-diagnostics" element={<AudioDiagnosticsPage />} />
 
-        <Route path="daily" element={<DailySetPage />} />
+          <Route path="daily" element={<DailySetPage />} />
 
-        <Route path="focus" element={<ModePage mode="focus" />} />
-        <Route path="focus/run/:exerciseId" element={<RunPage mode="focus" />} />
+          <Route path="focus" element={<ModePage mode="focus" />} />
+          <Route path="focus/run/:exerciseId" element={<RunPage mode="focus" />} />
 
-        <Route path="real-life" element={<ModePage mode="real_life" />} />
-        <Route path="real-life/run/:exerciseId" element={<RunPage mode="real_life" />} />
+          <Route path="real-life" element={<ModePage mode="real_life" />} />
+          <Route path="real-life/run/:exerciseId" element={<RunPage mode="real_life" />} />
 
-        <Route path="competitive" element={<ModePage mode="competitive" />} />
-        <Route path="competitive/run/:exerciseId" element={<RunPage mode="competitive" />} />
+          <Route path="competitive" element={<ModePage mode="competitive" />} />
+          <Route path="competitive/run/:exerciseId" element={<RunPage mode="competitive" />} />
 
-        <Route path="practice" element={<Navigate to="/focus" replace />} />
-        <Route path="arcade" element={<Navigate to="/competitive" replace />} />
+          <Route path="practice" element={<Navigate to="/focus" replace />} />
+          <Route path="arcade" element={<Navigate to="/competitive" replace />} />
 
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
+      </Routes>
+    </Suspense>
   )
 }
+

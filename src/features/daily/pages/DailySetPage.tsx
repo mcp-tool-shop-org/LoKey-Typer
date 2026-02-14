@@ -137,6 +137,7 @@ export function DailySetPage() {
   useEffect(() => {
     const existing = loadDailyProgress(daily.dateKey, userId)
     if (existing && existing.sessionType === sessionType) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setProgress(existing)
     } else {
       setProgress({
@@ -161,6 +162,7 @@ export function DailySetPage() {
 
   // Sync phase if progress loads as finished (e.g. page reload after completing).
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (isFinished && phase !== 'summary') setPhase('summary')
   }, [isFinished, phase])
 

@@ -8,6 +8,7 @@ import {
   pickNextExercise,
   saveLastMode,
   topCompetitiveRuns,
+  computeFocusTargetLength,
   type ContentEngineResult,
   type SprintDurationMs,
 } from '@lib'
@@ -27,6 +28,10 @@ export function ModePage({ mode }: { mode: Mode }) {
   // Tracks the autostart value we last handled (to detect re-navigation to same route).
   const handledAutostart = useRef<string | null>(null)
 
+  // Focus mode progression state (ephemeral)
+  const [focusLength, setFocusLength] = useState(30)
+  const [focusStreak, setFocusStreak] = useState(0)
+
   // Pool status (recomputed when session changes)
   const pool = useMemo(() => getPoolStatus(mode), [mode, sessionKey])
 
@@ -34,11 +39,32 @@ export function ModePage({ mode }: { mode: Mode }) {
   const sprintDurationMs = prefs.competitiveSprintDurationMs
   const ghostEnabled = prefs.competitiveGhostEnabled
 
-  const startSession = useCallback(() => {
+  const startSession = useCallback((outcome?: { wpm: number; accuracy: number; completed: boolean }) => {
     try {
       setStartError(null)
+
+      let nextLen = focusLength
+      if (mode === 'focus' && outcome) {
+          const prog = computeFocusTargetLength({
+              currentLength: focusLength,
+              isSuccess: outcome.completed,
+              accuracy: outcome.accuracy,
+              wpm: outcome.wpm,
+              streak: focusStreak
+          })
+          nextLen = prog.nextLength
+          setFocusLength(prog.nextLength)
+          setFocusStreak(prog.nextStreak)
+      }
+
       const skill = loadSkillModel()
-      const result = pickNextExercise({ mode, userId, skill, prefs })
+      const result = pickNextExercise({ 
+        mode, 
+        userId, 
+        skill, 
+        prefs,
+        targetLength: mode === 'focus' ? nextLen : undefined
+      })
       saveLastMode(mode)
       setSession(result)
       setSessionKey((k) => k + 1)
@@ -46,7 +72,7 @@ export function ModePage({ mode }: { mode: Mode }) {
       console.error('[ModePage] startSession failed:', err)
       setStartError('Couldn\u2019t load an exercise. Try refreshing the page.')
     }
-  }, [mode, userId, prefs])
+  }, [mode, userId, prefs, focusLength, focusStreak])
 
   // Handle ?autostart=<timestamp> from HomePage.
   // HomePage sends a unique timestamp each click, so we can detect re-navigation.
@@ -61,6 +87,7 @@ export function ModePage({ mode }: { mode: Mode }) {
       next.delete('autostart')
       return next
     }, { replace: true })
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     startSession()
   }, [search, setSearch, startSession])
 
@@ -70,6 +97,10 @@ export function ModePage({ mode }: { mode: Mode }) {
 
   function handleRestart() {
     startSession()
+  }
+
+  function handleComplete(stats: { wpm: number; accuracy: number }) {
+      startSession({ ...stats, completed: true })
   }
 
   // If running, show TypingSession inline
@@ -89,13 +120,14 @@ export function ModePage({ mode }: { mode: Mode }) {
           ghostEnabled={mode === 'competitive' ? ghostEnabled : false}
           onExit={handleExit}
           onRestart={handleRestart}
+          onComplete={handleComplete}
         />
 
         {/* "Next" button below the typing session */}
         <div className="flex justify-center">
           <button
             type="button"
-            onClick={handleRestart}
+            onClick={() => handleRestart()}
             className="group inline-flex items-center gap-2 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition-all duration-150 hover:bg-zinc-700 hover:border-zinc-600 hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
             <Icon name="play" size={16} className="shrink-0 text-slate-400 transition-transform duration-150 group-hover:translate-x-0.5" />
@@ -115,7 +147,7 @@ export function ModePage({ mode }: { mode: Mode }) {
       <div className="text-center">
         <button
           type="button"
-          onClick={startSession}
+          onClick={() => startSession()}
           className="group inline-flex items-center gap-2.5 rounded-2xl border border-zinc-700/50 bg-zinc-800/80 px-12 py-4 text-base font-semibold text-zinc-300 transition-all duration-150 hover:bg-zinc-700 hover:border-zinc-600 hover:scale-[1.01] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
         >
           <Icon name="play" size={20} className="text-slate-400 transition-transform duration-150 group-hover:translate-x-0.5" />

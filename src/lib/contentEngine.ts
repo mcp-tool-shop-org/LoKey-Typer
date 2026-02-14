@@ -127,8 +127,9 @@ export function pickNextExercise(params: {
   userId: string
   skill: UserSkillModel | null
   prefs: Preferences
+  targetLength?: number
 }): ContentEngineResult {
-  const { mode, userId, skill, prefs } = params
+  const { mode, userId, skill, prefs, targetLength } = params
   const allExercises = loadExercisesByMode(mode)
 
   if (allExercises.length === 0) {
@@ -139,8 +140,30 @@ export function pickNextExercise(params: {
   const recentSet = new Set(recents)
 
   // Partition into unseen and seen
-  const unseen = allExercises.filter((ex) => !recentSet.has(ex.id))
-  const pool = unseen.length > 0 ? unseen : allExercises
+  let candidates = allExercises
+
+  // Focus Mode Length Ramp: Filter significantly misaligned content if targetLength is provided
+  // We allow a wide variance (±50%) to ensure we don't starve the pool, but we remove "toy" exercises
+  // if the user is advanced, or "novel" exercises if the user is beginner.
+  if (targetLength && mode === 'focus') {
+    candidates = allExercises.filter((ex) => {
+        // Estimate length: text_short is ~30-60, text is ~100+, text_long is ~300+
+        // If it's a template, we assume it's flexible enough or has a default.
+        if (isTemplateExercise(ex)) return true
+
+        const len = (ex.text ?? ex.text_short ?? ex.text_long ?? '').length
+        const diff = Math.abs(len - targetLength)
+        // Allow anything within 50 chars or 50% variance, whichever is larger
+        // This is a loose filter to guide the RNG, not a hard constraint.
+        const tolerance = Math.max(50, targetLength * 0.5)
+        return diff <= tolerance
+    })
+    // Fallback if we filtered everything away
+    if (candidates.length === 0) candidates = allExercises
+  }
+
+  const unseen = candidates.filter((ex) => !recentSet.has(ex.id))
+  const pool = unseen.length > 0 ? unseen : candidates
 
   // Build the rand function
   const seedStr = `${userId}|${mode}|${Date.now()}`
@@ -153,12 +176,12 @@ export function pickNextExercise(params: {
 
   // Screen reader safety filter
   const srSafe = prefs.screenReaderMode
-  const candidates = srSafe
+  const filteredPool = srSafe
     ? pool.filter((ex) => !ex.tags.includes('multiline') && ex.estimated_seconds <= 60)
     : pool
 
   // If screen reader filtered everything, fall back to full pool
-  const finalPool = candidates.length > 0 ? candidates : pool
+  const finalPool = filteredPool.length > 0 ? filteredPool : pool
 
   function weight(ex: Exercise): number {
     let w = 1

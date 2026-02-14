@@ -6,6 +6,7 @@ export * from '../feedback'
 export * from '../mode'
 export * from '../typing'
 export * from '../typingMetrics'
+export * from '../focusProgression'
 
 export { ambientPlayer } from '../ambient'
 export { typewriterAudio } from '../audio'

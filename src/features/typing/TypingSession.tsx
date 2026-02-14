@@ -221,12 +221,32 @@ export function TypingSession(props: {
     props.prefs.bellOnCompletion,
     props.prefs.soundEnabled,
     props.prefs.volume,
-    props.onComplete,
-    startedAtMs,
-    typed,
     targetText,
     timeLimitMs,
-  ])
+    startedAtMs,
+    typed,
+  ]) // Updated dependencies to satisfy hooks rule
+
+
+  // Global Keydown for "Next" logic
+  useEffect(() => {
+    if (endedAtMs == null) return
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === 'Enter') {
+        e.preventDefault()
+        props.onRestart()
+      }
+      // We'll allow Space too, but prioritize Enter for explicit navigation.
+      if (e.key === ' ') {
+         e.preventDefault()
+         props.onRestart()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [endedAtMs, props])
 
   const pb = useMemo(
     () => getPersonalBest(props.exercise.id, timeLimitMs as SprintDurationMs | undefined),
@@ -353,7 +373,7 @@ export function TypingSession(props: {
         </div>
       )}
 
-      <div className="rounded-3xl bg-zinc-900/50 p-5">
+      <div className={`rounded-3xl bg-zinc-900/50 p-5 ${props.mode === 'focus' ? 'select-none' : ''}`}>
         <TypingOverlay
           target={targetText}
           typed={typed}
@@ -452,6 +472,12 @@ export function TypingSession(props: {
                 })
               }
             }
+          }}
+          onPaste={(e) => {
+            if (props.mode === 'focus') e.preventDefault()
+          }}
+          onDrop={(e) => {
+            if (props.mode === 'focus') e.preventDefault()
           }}
           onChange={(e) => {
             if (isComplete) return

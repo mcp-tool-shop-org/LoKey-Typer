@@ -15,7 +15,9 @@
     "qa:sound-design": "node scripts/qaSoundDesignManifesto.mjs",
     "qa:phase3:novelty": "node scripts/qaPhase3Novelty.mjs",
     "qa:phase3:recommendation": "node scripts/qaPhase3RecommendationSanity.mjs",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:run": "vitest run"
   },
   "dependencies": {
     "react": "^19.2.0",
@@ -40,6 +42,7 @@
     "typescript": "~5.9.3",
     "typescript-eslint": "^8.46.4",
     "vite": "^7.2.4",
-    "vite-plugin-pwa": "^1.2.0"
+    "vite-plugin-pwa": "^1.2.0",
+    "vitest": "^4.0.18"
   }
 }

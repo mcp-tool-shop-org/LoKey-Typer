@@ -100,6 +100,7 @@ export function TypingSession(props: {
   const [nowMs, setNowMs] = useState(() => Date.now())
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
   const [, setInputFocused] = useState(false)
+  const [pasteBlocked, setPasteBlocked] = useState(false)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
@@ -337,8 +338,8 @@ export function TypingSession(props: {
             onClick={props.onRestart}
             className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-700/50 bg-zinc-950 px-3 py-2 text-sm font-semibold text-zinc-100 outline-none transition duration-150 hover:bg-zinc-900 focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
-            <Icon name="refresh" size={14} className="shrink-0" />
-            Restart
+            <Icon name={isComplete ? 'play' : 'refresh'} size={14} className="shrink-0" />
+            {isComplete ? 'Next Exercise' : 'Restart'}
           </button>
           <button
             type="button"
@@ -384,7 +385,14 @@ export function TypingSession(props: {
 
       <div className="rounded-2xl bg-zinc-900/30 p-5">
         <div className="flex items-center justify-between">
-          <div className="text-sm font-medium text-zinc-200">Type here</div>
+          <div className="flex items-center gap-3">
+            <div className="text-sm font-medium text-zinc-200">Type here</div>
+            {pasteBlocked && (
+              <div role="alert" className="animate-fade-in text-xs font-medium text-amber-500">
+                Paste disabled in Focus Mode
+              </div>
+            )}
+          </div>
           <button
             type="button"
             onClick={() => inputRef.current?.focus()}
@@ -474,10 +482,18 @@ export function TypingSession(props: {
             }
           }}
           onPaste={(e) => {
-            if (props.mode === 'focus') e.preventDefault()
+            if (props.mode === 'focus' && !props.prefs.focusAllowPaste) {
+              e.preventDefault()
+              setPasteBlocked(true)
+              setTimeout(() => setPasteBlocked(false), 3000)
+            }
           }}
           onDrop={(e) => {
-            if (props.mode === 'focus') e.preventDefault()
+            if (props.mode === 'focus' && !props.prefs.focusAllowPaste) {
+              e.preventDefault()
+              setPasteBlocked(true)
+              setTimeout(() => setPasteBlocked(false), 3000)
+            }
           }}
           onChange={(e) => {
             if (isComplete) return
@@ -522,6 +538,9 @@ export function TypingSession(props: {
                 <div className="flex items-center gap-1"><Icon name="stat-accuracy" size={12} className="text-zinc-500" /> Accuracy: {Math.round(live.accuracy * 1000) / 10}%</div>
                 <div className="flex items-center gap-1"><Icon name="zap" size={12} className="text-zinc-500" /> Errors: {live.errors}</div>
                 <div className="flex items-center gap-1"><Icon name="backspace" size={12} className="text-zinc-500" /> Backspaces: {backspaces}</div>
+              </div>
+              <div className="mt-3 text-xs text-zinc-500">
+                Press <span className="font-semibold text-zinc-300">Enter</span> to continue.
               </div>
             </div>
           ) : (

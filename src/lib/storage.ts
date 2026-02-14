@@ -22,6 +22,9 @@ export type Preferences = {
     competitive: boolean
   }
   focusMinimalHud: boolean
+  focusGrowthMode: 'slow' | 'normal' | 'fast'
+  focusMaxLength: number
+  focusAllowPaste: boolean
   competitiveSprintDurationMs: SprintDurationMs
   competitiveGhostEnabled: boolean
 }
@@ -66,6 +69,7 @@ const KEY_RECENTS = 'lkt_recents_v1'
 const KEY_LAST_MODE = 'lkt_last_mode_v1'
 const KEY_USER_ID = 'lkt_user_id_v1'
 const KEY_SKILL = 'lkt_skill_v1'
+const KEY_FOCUS_PROFILE = 'lkt_focus_profile_v1'
 
 const LEGACY_KEYS: Record<string, string> = {
   [KEY_PREFS]: 'tt_prefs_v1',
@@ -76,6 +80,7 @@ const LEGACY_KEYS: Record<string, string> = {
   [KEY_LAST_MODE]: 'tt_last_mode_v1',
   [KEY_USER_ID]: 'tt_user_id_v1',
   [KEY_SKILL]: 'tt_skill_v1',
+  [KEY_FOCUS_PROFILE]: 'tt_focus_profile_v1',
 }
 
 let didMigrateStorageKeys = false
@@ -123,6 +128,9 @@ const DEFAULT_PREFS: Preferences = {
     competitive: true,
   },
   focusMinimalHud: true,
+  focusGrowthMode: 'normal',
+  focusMaxLength: 300,
+  focusAllowPaste: false,
   competitiveSprintDurationMs: 60_000,
   competitiveGhostEnabled: true,
 }
@@ -165,6 +173,13 @@ export function sanitizePreferences(input: Partial<Preferences> | null | undefin
   merged.ambientPauseOnTyping = Boolean(merged.ambientPauseOnTyping)
   merged.focusMinimalHud = Boolean(merged.focusMinimalHud)
   merged.competitiveGhostEnabled = Boolean(merged.competitiveGhostEnabled)
+
+  merged.focusAllowPaste = Boolean(merged.focusAllowPaste)
+  if (merged.focusGrowthMode !== 'slow' && merged.focusGrowthMode !== 'normal' && merged.focusGrowthMode !== 'fast') {
+    merged.focusGrowthMode = DEFAULT_PREFS.focusGrowthMode
+  }
+  merged.focusMaxLength = clamp(Number(merged.focusMaxLength), 30, 1000)
+  if (!Number.isFinite(merged.focusMaxLength)) merged.focusMaxLength = DEFAULT_PREFS.focusMaxLength
 
   merged.screenReaderMode = Boolean(merged.screenReaderMode)
   merged.reducedMotion = Boolean(merged.reducedMotion)
@@ -508,4 +523,45 @@ export function bestWpmForExercise(exerciseId: string, sprintDurationMs?: Sprint
   )
   if (runs.length === 0) return null
   return runs.reduce((best, r) => Math.max(best, r.wpm), 0)
+}
+
+export type FocusProfile = {
+  version: 1
+  focusLevel: number
+  focusStreak: number
+  cleanStreakBest: number
+  avgErrorRateEMA: number
+  avgWpmEMA: number
+  lastPlayedAt: number
+}
+
+function defaultFocusProfile(): FocusProfile {
+  return {
+    version: 1,
+    focusLevel: 30,
+    focusStreak: 0,
+    cleanStreakBest: 0,
+    avgErrorRateEMA: 0,
+    avgWpmEMA: 0,
+    lastPlayedAt: Date.now(),
+  }
+}
+
+export function loadFocusProfile(): FocusProfile {
+  ensureStorageKeysMigrated()
+  const raw = safeParse<FocusProfile>(localStorage.getItem(KEY_FOCUS_PROFILE))
+  if (raw && raw.version === 1) return raw
+  return defaultFocusProfile()
+}
+
+export function saveFocusProfile(p: FocusProfile) {
+  try {
+    localStorage.setItem(KEY_FOCUS_PROFILE, JSON.stringify(p))
+  } catch {
+    // ignore
+  }
+}
+
+export function resetFocusProfile() {
+  saveFocusProfile(defaultFocusProfile())
 }

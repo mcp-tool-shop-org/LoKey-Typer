@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Icon } from '@app/components/Icon'
 import { useAmbient } from '@app/providers/AmbientProvider'
@@ -26,6 +27,14 @@ const ICON_BTN =
 export function AppShell() {
   const { prefs, patchPrefs } = usePreferences()
   const { skipTrack } = useAmbient()
+
+  useEffect(() => {
+    if (prefs.reducedMotion) {
+      document.body.classList.add('reduce-motion')
+    } else {
+      document.body.classList.remove('reduce-motion')
+    }
+  }, [prefs.reducedMotion])
 
   function handleMuteToggle() {
     patchPrefs({ ambientEnabled: !prefs.ambientEnabled })
@@ -78,6 +87,15 @@ export function AppShell() {
             >
               <Icon name={prefs.ambientEnabled ? 'sound-on' : 'sound-off'} size={18} />
             </button>
+
+            {/* Settings */}
+            <Link
+              to="/settings"
+              className={`${ICON_BTN} text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-200`}
+              aria-label="Settings"
+            >
+              <Icon name="settings" size={18} />
+            </Link>
 
           </nav>
         </div>

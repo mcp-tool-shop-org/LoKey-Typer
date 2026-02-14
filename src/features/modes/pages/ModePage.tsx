@@ -9,6 +9,8 @@ import {
   saveLastMode,
   topCompetitiveRuns,
   computeFocusTargetLength,
+  loadFocusProfile,
+  saveFocusProfile,
   type ContentEngineResult,
   type SprintDurationMs,
 } from '@lib'
@@ -28,9 +30,8 @@ export function ModePage({ mode }: { mode: Mode }) {
   // Tracks the autostart value we last handled (to detect re-navigation to same route).
   const handledAutostart = useRef<string | null>(null)
 
-  // Focus mode progression state (ephemeral)
-  const [focusLength, setFocusLength] = useState(30)
-  const [focusStreak, setFocusStreak] = useState(0)
+  // Focus mode progression state
+  const [focusProfile, setFocusProfile] = useState(() => loadFocusProfile())
 
   // Pool status (recomputed when session changes)
   const pool = useMemo(() => getPoolStatus(mode), [mode, sessionKey])
@@ -43,18 +44,38 @@ export function ModePage({ mode }: { mode: Mode }) {
     try {
       setStartError(null)
 
-      let nextLen = focusLength
+      let nextProfile = { ...focusProfile }
+
       if (mode === 'focus' && outcome) {
           const prog = computeFocusTargetLength({
-              currentLength: focusLength,
+              currentLength: nextProfile.focusLevel,
               isSuccess: outcome.completed,
               accuracy: outcome.accuracy,
               wpm: outcome.wpm,
-              streak: focusStreak
+              streak: nextProfile.focusStreak
           })
-          nextLen = prog.nextLength
-          setFocusLength(prog.nextLength)
-          setFocusStreak(prog.nextStreak)
+          
+          nextProfile.focusLevel = prog.nextLength
+          nextProfile.focusStreak = prog.nextStreak
+          nextProfile.lastPlayedAt = Date.now()
+          
+          if (nextProfile.focusStreak > nextProfile.cleanStreakBest) {
+            nextProfile.cleanStreakBest = nextProfile.focusStreak
+          }
+          
+          // EMA
+          const alpha = 0.1
+          const runErrorRate = 1 - outcome.accuracy
+          if (nextProfile.avgWpmEMA === 0 && nextProfile.avgErrorRateEMA === 0) {
+             nextProfile.avgWpmEMA = outcome.wpm
+             nextProfile.avgErrorRateEMA = runErrorRate
+          } else {
+             nextProfile.avgWpmEMA = (alpha * outcome.wpm) + ((1 - alpha) * nextProfile.avgWpmEMA)
+             nextProfile.avgErrorRateEMA = (alpha * runErrorRate) + ((1 - alpha) * nextProfile.avgErrorRateEMA)
+          }
+
+          saveFocusProfile(nextProfile)
+          setFocusProfile(nextProfile)
       }
 
       const skill = loadSkillModel()
@@ -63,7 +84,7 @@ export function ModePage({ mode }: { mode: Mode }) {
         userId, 
         skill, 
         prefs,
-        targetLength: mode === 'focus' ? nextLen : undefined
+        targetLength: mode === 'focus' ? nextProfile.focusLevel : undefined
       })
       saveLastMode(mode)
       setSession(result)
@@ -72,7 +93,7 @@ export function ModePage({ mode }: { mode: Mode }) {
       console.error('[ModePage] startSession failed:', err)
       setStartError('Couldn\u2019t load an exercise. Try refreshing the page.')
     }
-  }, [mode, userId, prefs, focusLength, focusStreak])
+  }, [mode, userId, prefs, focusProfile])
 
   // Handle ?autostart=<timestamp> from HomePage.
   // HomePage sends a unique timestamp each click, so we can detect re-navigation.

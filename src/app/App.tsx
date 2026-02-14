@@ -1,6 +1,6 @@
 import { Link, Navigate, Route, Routes } from 'react-router-dom'
 import { AppShell } from '@app/shell'
-import { DailySetPage, HomePage, ModePage, RunPage, SettingsPage } from '@features'
+import { AudioDiagnosticsPage, DailySetPage, HomePage, ModePage, RunPage, SettingsPage } from '@features'
 import { Icon } from '@app/components/Icon'
 
 function NotFoundPage() {
@@ -30,6 +30,7 @@ export default function App() {
       <Route element={<AppShell />}>
         <Route index element={<HomePage />} />
         <Route path="settings" element={<SettingsPage />} />
+        <Route path="audio-diagnostics" element={<AudioDiagnosticsPage />} />
 
         <Route path="daily" element={<DailySetPage />} />
 

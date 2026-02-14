@@ -6,30 +6,78 @@ export type TypewriterSound =
   | 'backspace'
   | 'return_bell'
   | 'error'
+  | 'success'
+
+export type AudioMix = {
+  master: number
+  typing: number
+  ui: number
+  ambient: number
+}
+
+export type AudioCategory = 'typing' | 'ui'
 
 export type AudioSettings = {
   enabled: boolean
-  volume: number // 0..1
-  modeGain: number // per-mode multiplier
+  mix?: AudioMix
+  volume?: number // Legacy master if mix is missing
+  modeGain: number
+  category?: AudioCategory
+}
+
+export type AudioDiagnostics = {
+  state: AudioContextState | 'unknown'
+  buffersLoaded: number
+  totalBuffers: number
+  lastEvent: string | null
 }
 
 type BufferMap = Partial<Record<string, AudioBuffer>>
 
 const base = import.meta.env.BASE_URL
 
-const SAMPLE_URLS = {
+export const SAMPLE_URLS = {
   key: [`${base}audio/key_1.wav`, `${base}audio/key_2.wav`, `${base}audio/key_3.wav`, `${base}audio/key_4.wav`],
   spacebar: [`${base}audio/spacebar.wav`],
   backspace: [`${base}audio/backspace.wav`],
   return_bell: [`${base}audio/return_bell.wav`],
   error: [`${base}audio/error.wav`],
+  success: [`${base}audio/return_bell.wav`], // Alias to bell for now
 } as const
+
+const MIN_INTERVAL_MS: Record<TypewriterSound, number> = {
+  key: 15,
+  spacebar: 30,
+  backspace: 30,
+  error: 40,
+  return_bell: 50,
+  success: 50,
+}
 
 export class TypewriterAudio {
   private buffers: BufferMap = {}
   private ready = false
   private inFlight: Promise<void> | null = null
   private active: Array<{ stopAt: number; stop: () => void }> = []
+  private lastEvent: string | null = null
+  private lastPlayedAt: Partial<Record<TypewriterSound, number>> = {}
+  private lastPlayedUrl: Partial<Record<TypewriterSound, string>> = {}
+  private totalExpectedBuffers = 0
+
+  getDiagnostics(): AudioDiagnostics {
+    const ctx = getAudioContext()
+    return {
+      state: ctx?.state ?? 'unknown',
+      buffersLoaded: Object.keys(this.buffers).length,
+      totalBuffers: this.totalExpectedBuffers || 1, // Avoid div by zero
+      lastEvent: this.lastEvent,
+    }
+  }
+
+  /** Triggers loading of all audio assets immediately (idempotent). */
+  prewarm() {
+     this.ensureReady().catch(err => console.warn('Audio prewarm failed', err))
+  }
 
   async ensureReady(): Promise<void> {
     if (this.ready) return
@@ -52,6 +100,9 @@ export class TypewriterAudio {
 
       // Try to preload samples, but tolerate missing files.
       const entries = Object.entries(SAMPLE_URLS) as Array<[keyof typeof SAMPLE_URLS, readonly string[]]>
+      const allUrls = entries.flatMap((e) => e[1])
+      this.totalExpectedBuffers = allUrls.length
+
       await Promise.all(
         entries.flatMap(([kind, urls]) =>
           urls.map(async (u) => {
@@ -83,8 +134,26 @@ export class TypewriterAudio {
       ctx.resume().catch(() => {})
     }
 
-    // polyphony cap
+    // Debounce
     const now = ctx.currentTime
+    const limitParams = MIN_INTERVAL_MS[kind] || 15
+    const last = this.lastPlayedAt[kind] ?? 0
+    if (now - last < limitParams / 1000) return
+
+    this.lastPlayedAt[kind] = now
+    this.lastEvent = kind
+
+    // Calculate effective volume
+    let vol = settings.modeGain
+    if (settings.mix) {
+      const cat = settings.category ?? 'typing'
+      const catVol = cat === 'typing' ? settings.mix.typing : settings.mix.ui
+      vol *= settings.mix.master * catVol
+    } else {
+      vol *= (settings.volume ?? 1)
+    }
+
+    // polyphony cap
     this.active = this.active.filter((a) => a.stopAt > now)
     while (this.active.length >= 6) {
       const oldest = this.active.shift()
@@ -92,12 +161,20 @@ export class TypewriterAudio {
     }
 
     const gain = ctx.createGain()
-    gain.gain.value = Math.max(0, Math.min(1, settings.volume)) * settings.modeGain
+    gain.gain.value = Math.max(0, Math.min(1, vol))
     gain.connect(ctx.destination)
 
     const tryBuffer = () => {
       const urls = SAMPLE_URLS[kind]
-      const url = urls[Math.floor(Math.random() * urls.length)]
+      let url = urls[Math.floor(Math.random() * urls.length)]
+
+      // Smart random: avoid immediate repeat if multiple samples exist (Anti-Machine Gun)
+      if (urls.length > 1 && url === this.lastPlayedUrl[kind]) {
+         const candidates = urls.filter(u => u !== url)
+         url = candidates[Math.floor(Math.random() * candidates.length)]
+      }
+      this.lastPlayedUrl[kind] = url
+
       const key = `${kind}:${url}`
       const buf = this.buffers[key]
       if (!buf) return null

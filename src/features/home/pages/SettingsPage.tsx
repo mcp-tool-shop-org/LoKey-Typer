@@ -1,5 +1,6 @@
 import { resetFocusProfile } from '@lib'
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { usePreferences } from '@app/providers/PreferencesProvider'
 
 export function SettingsPage() {
@@ -61,6 +62,121 @@ export function SettingsPage() {
                  />
                  <label htmlFor="allow-paste" className="text-sm text-zinc-300">Allow Paste in Focus Mode (Not Recommended)</label>
              </div>
+        </div>
+      </section>
+
+      <section className="space-y-4 rounded-2xl bg-zinc-900/40 p-6">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <h2 className="text-lg font-semibold text-zinc-200">Audio Mix</h2>
+            <p className="text-sm text-zinc-400">Fine-tune the balance between typing sounds, UI cues, and ambience.</p>
+          </div>
+          <div className="flex gap-2">
+            {[
+              { id: 'crisp', label: 'Crisp', mix: { master: 1, typing: 1, ui: 0.6, ambient: 0.35 } },
+              { id: 'balanced', label: 'Studio', mix: { master: 1, typing: 0.9, ui: 0.7, ambient: 0.5 } },
+              { id: 'cinematic', label: 'Relax', mix: { master: 1, typing: 0.5, ui: 0.6, ambient: 0.8 } },
+            ].map((p) => (
+              <button
+                key={p.id}
+                onClick={() => patchPrefs({ audioMix: p.mix })}
+                className="rounded-lg border border-zinc-700/50 bg-zinc-800 px-3 py-1.5 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-700 hover:text-white"
+                title={`Apply ${p.label} Preset`}
+              >
+                {p.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="space-y-6">
+          {/* Master */}
+          <div>
+            <div className="flex justify-between">
+              <label className="text-sm font-medium text-zinc-300">Master Volume</label>
+              <span className="text-xs font-mono text-zinc-500">{Math.round(prefs.audioMix.master * 100)}%</span>
+            </div>
+            <input
+              type="range"
+              min="0"
+              max="1"
+              step="0.05"
+              value={prefs.audioMix.master}
+              onChange={(e) =>
+                patchPrefs({ audioMix: { ...prefs.audioMix, master: parseFloat(e.target.value) } })
+              }
+              className="mt-2 w-full cursor-pointer accent-zinc-200"
+            />
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2">
+            {/* Typing */}
+            <div>
+              <div className="flex justify-between">
+                <label className="text-sm font-medium text-zinc-400">Typing Sounds</label>
+                <span className="text-xs font-mono text-zinc-500">{Math.round(prefs.audioMix.typing * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={prefs.audioMix.typing}
+                onChange={(e) =>
+                  patchPrefs({ audioMix: { ...prefs.audioMix, typing: parseFloat(e.target.value) } })
+                }
+                className="mt-2 w-full cursor-pointer accent-zinc-500"
+              />
+            </div>
+
+            {/* UI */}
+            <div>
+              <div className="flex justify-between">
+                <label className="text-sm font-medium text-zinc-400">UI & Cues</label>
+                <span className="text-xs font-mono text-zinc-500">{Math.round(prefs.audioMix.ui * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={prefs.audioMix.ui}
+                onChange={(e) =>
+                  patchPrefs({ audioMix: { ...prefs.audioMix, ui: parseFloat(e.target.value) } })
+                }
+                className="mt-2 w-full cursor-pointer accent-zinc-500"
+              />
+            </div>
+
+            {/* Ambient */}
+            <div>
+              <div className="flex justify-between">
+                <label className="text-sm font-medium text-zinc-400">Ambient Atmosphere</label>
+                <span className="text-xs font-mono text-zinc-500">{Math.round(prefs.audioMix.ambient * 100)}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="1"
+                step="0.05"
+                value={prefs.audioMix.ambient}
+                onChange={(e) =>
+                  patchPrefs({
+                    audioMix: { ...prefs.audioMix, ambient: parseFloat(e.target.value) },
+                    // Also update legacy ambientVolume for back-compat/ambient player if it uses it directly
+                    ambientVolume: parseFloat(e.target.value) * prefs.audioMix.master
+                  })
+                }
+                className="mt-2 w-full cursor-pointer accent-zinc-500"
+              />
+            </div>
+          </div>
+        </div>
+
+        <div className="border-t border-zinc-800 pt-3">
+          <Link to="/audio-diagnostics" className="text-xs text-zinc-500 transition-colors hover:text-zinc-300">
+            Open Audio Diagnostics Panel
+          </Link>
         </div>
       </section>
 

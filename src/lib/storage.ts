@@ -4,9 +4,17 @@ import { AMBIENT_CATEGORIES, type AmbientCategory } from './ambientManifest'
 
 export type SprintDurationMs = 30_000 | 60_000 | 120_000
 
+export type AudioMix = {
+  master: number
+  typing: number
+  ui: number
+  ambient: number
+}
+
 export type Preferences = {
   soundEnabled: boolean
-  volume: number // 0..1
+  volume: number // 0..1 (legacy master)
+  audioMix: AudioMix // New granular mix
   bellOnCompletion: boolean
   ambientEnabled: boolean
   ambientCategory: AmbientCategory | 'all'
@@ -114,6 +122,12 @@ function ensureStorageKeysMigrated() {
 const DEFAULT_PREFS: Preferences = {
   soundEnabled: true,
   volume: 0.5,
+  audioMix: {
+    master: 0.5,
+    typing: 1.0,
+    ui: 0.8,
+    ambient: 0.5
+  },
   bellOnCompletion: true,
   ambientEnabled: true,
   ambientCategory: 'all',
@@ -146,6 +160,10 @@ export function sanitizePreferences(input: Partial<Preferences> | null | undefin
     showLiveWpm: {
       ...DEFAULT_PREFS.showLiveWpm,
       ...((input as Partial<Preferences> | undefined)?.showLiveWpm ?? {}),
+    },
+    audioMix: {
+      ...DEFAULT_PREFS.audioMix,
+      ...((input as Partial<Preferences> | undefined)?.audioMix ?? {}),
     },
   }
 

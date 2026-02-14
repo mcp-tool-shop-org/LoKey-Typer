@@ -16,6 +16,7 @@ import {
   type Preferences,
   type SprintDurationMs,
   typewriterAudio,
+  ambientPlayerV3,
   updateSkillModelFromRun,
 } from '@lib'
 import { useAmbient } from '@app'
@@ -91,16 +92,25 @@ export function TypingSession(props: {
   ghostEnabled?: boolean
   onExit: () => void
   onRestart: () => void
-  onComplete?: (result: { wpm: number; accuracy: number; durationMs: number }) => void
+  onComplete?: (result: {
+    wpm: number
+    accuracy: number
+    durationMs: number
+    mistakes: number
+    backspaces: number
+    pasteUsed: boolean
+  }) => void
 }) {
   const { targetText } = props
   const [typed, setTyped] = useState('')
   const [backspaces, setBackspaces] = useState(0)
+  const [cumulativeMistakes, setCumulativeMistakes] = useState(0)
   const [startedAtMs, setStartedAtMs] = useState<number | null>(null)
   const [nowMs, setNowMs] = useState(() => Date.now())
   const [endedAtMs, setEndedAtMs] = useState<number | null>(null)
   const [, setInputFocused] = useState(false)
   const [pasteBlocked, setPasteBlocked] = useState(false)
+  const [pasteUsed, setPasteUsed] = useState(false)
 
   const inputRef = useRef<HTMLTextAreaElement | null>(null)
   const endOnceRef = useRef(false)
@@ -109,6 +119,9 @@ export function TypingSession(props: {
 
   // Auto-focus textarea when session mounts.
   useEffect(() => {
+    // Prewarm audio buffers to prevent first-key latency
+    typewriterAudio.prewarm()
+
     // Small delay lets the DOM settle after React render.
     const id = window.setTimeout(() => inputRef.current?.focus(), 50)
     return () => window.clearTimeout(id)
@@ -199,7 +212,7 @@ export function TypingSession(props: {
     if (props.prefs.bellOnCompletion) {
       typewriterAudio.play('return_bell', {
         enabled: props.prefs.soundEnabled,
-        volume: props.prefs.volume,
+        mix: props.prefs.audioMix,
         modeGain: props.mode === 'focus' ? 0.7 : props.mode === 'competitive' ? 1.0 : 0.85,
       })
     }
@@ -208,11 +221,16 @@ export function TypingSession(props: {
       wpm: run.wpm,
       accuracy: run.accuracy,
       durationMs: run.duration_ms,
+      mistakes: cumulativeMistakes,
+      backspaces,
+      pasteUsed,
     })
   }, [
     isComplete,
     endedAtMs,
     backspaces,
+    cumulativeMistakes,
+    pasteUsed,
     live.accuracy,
     live.errors,
     live.wpm,
@@ -440,7 +458,7 @@ export function TypingSession(props: {
               setBackspaces((v) => v + 1)
               typewriterAudio.play('backspace', {
                 enabled: props.prefs.soundEnabled,
-                volume: props.prefs.volume,
+                mix: props.prefs.audioMix,
                 modeGain,
               })
               return
@@ -449,7 +467,7 @@ export function TypingSession(props: {
             if (e.key === ' ') {
               typewriterAudio.play('spacebar', {
                 enabled: props.prefs.soundEnabled,
-                volume: props.prefs.volume,
+                mix: props.prefs.audioMix,
                 modeGain,
               })
               return
@@ -458,30 +476,34 @@ export function TypingSession(props: {
             if (e.key === 'Enter') {
               typewriterAudio.play('key', {
                 enabled: props.prefs.soundEnabled,
-                volume: props.prefs.volume,
+                mix: props.prefs.audioMix,
                 modeGain,
               })
+              ambientPlayerV3.duck()
               return
             }
 
             if (e.key.length === 1) {
+              ambientPlayerV3.duck()
               const expected = targetText[typed.length] ?? null
               if (expected != null && e.key !== expected) {
+                setCumulativeMistakes((c) => c + 1)
                 typewriterAudio.play('error', {
                   enabled: props.prefs.soundEnabled,
-                  volume: props.prefs.volume * 0.6,
+                  mix: props.prefs.audioMix,
                   modeGain,
                 })
               } else {
                 typewriterAudio.play('key', {
                   enabled: props.prefs.soundEnabled,
-                  volume: props.prefs.volume,
+                  mix: props.prefs.audioMix,
                   modeGain,
                 })
               }
             }
           }}
           onPaste={(e) => {
+            setPasteUsed(true)
             if (props.mode === 'focus' && !props.prefs.focusAllowPaste) {
               e.preventDefault()
               setPasteBlocked(true)
@@ -489,6 +511,7 @@ export function TypingSession(props: {
             }
           }}
           onDrop={(e) => {
+            setPasteUsed(true)
             if (props.mode === 'focus' && !props.prefs.focusAllowPaste) {
               e.preventDefault()
               setPasteBlocked(true)

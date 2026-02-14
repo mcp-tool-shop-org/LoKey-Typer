@@ -16,9 +16,21 @@ import {
   type DailySessionType,
   type DailySet,
   type DailySetItemKind,
+  loadStreak,
+  saveStreak,
+  recordDailyCompletion,
+  type DailyStreak,
+  type StreakUpdateResult,
+  loadHistory,
+  saveHistory,
+  upsertHistoryPoint,
+  type HistoryPoint,
+  isPerfectRun,
+  typewriterAudio,
 } from '@lib'
 import { usePreferences } from '@app'
 import { Icon, type IconName } from '@app/components/Icon'
+import { ResultChip } from '@app/components/ResultChip'
 import { TypingSession } from '@features/typing'
 
 // ---------------------------------------------------------------------------
@@ -116,8 +128,19 @@ export function DailySetPage() {
       sessionType,
       weakTags: skill.weak_tags,
       skill,
+      prefs: {
+        screenReaderMode: prefs.screenReaderMode,
+        focusMaxLength: prefs.focusMaxLength,
+      },
     })
-  }, [userId, sessionType, skill])
+  }, [userId, sessionType, skill, prefs.screenReaderMode, prefs.focusMaxLength])
+
+  // ---- Streak state ----
+
+  const [streak, setStreak] = useState<DailyStreak>(() => loadStreak())
+  const [streakUpdate, setStreakUpdate] = useState<StreakUpdateResult | null>(null)
+  const streakAttemptedRef = useRef(false)
+  const resetsRef = useRef<Record<string, number>>({})
 
   // ---- Progress persistence ----
 
@@ -154,6 +177,54 @@ export function DailySetPage() {
 
   const currentIndex = progress.completedItems.length
   const isFinished = currentIndex >= daily.items.length
+
+  useEffect(() => {
+    if (isFinished && !streakAttemptedRef.current) {
+      streakAttemptedRef.current = true
+      
+      // 1. Update streak
+      const current = loadStreak()
+      const res = recordDailyCompletion(current, daily.dateKey)
+      if (res.isNewDayCompletion) {
+        saveStreak(res.newState)
+        setStreak(res.newState)
+        setStreakUpdate(res)
+      } else if (res.newState.currentStreak !== current.currentStreak) {
+        setStreak(res.newState)
+      }
+      
+      // 2. Update stats history
+      // Compute aggregated stats for the day
+      if (progress.completedItems.length > 0) {
+        // ... (existing stat math)
+        // Check for "Perfect Run" (all items flawless)
+        // We lack per-item mistake counts in 'completedItems' (only wpm/acc). 
+        // But accuracy === 1 usually implies perfect, unless we pasted?
+        // Wait, TypingSession returns detailed 'RunResult'? No, handleComplete takes simplified args.
+        // We need to capture 'mistakes' etc in handleComplete first.
+        
+        // For now, let's assume if accuracy is 1.0 (100%) for ALL items, it's perfect run?
+        // But what if they used backspace? The isPerfectRun helper checks mistakes > 0.
+        // If accuracy is calculated as (len - mistakes) / len, then Acc 1.0 => Mistakes 0.
+        // So checking avgAcc === 1 is a decent proxy.
+        // Or better: update 'handleComplete' to store full metrics.
+        
+        const completed = progress.completedItems
+        const avgWpm = completed.reduce((s, c) => s + c.wpm, 0) / completed.length
+        const avgAcc = completed.reduce((s, c) => s + c.accuracy, 0) / completed.length
+        
+        const history = loadHistory()
+        const newPoint: HistoryPoint = {
+            dateKey: daily.dateKey,
+            wpm: avgWpm,
+            accuracy: avgAcc,
+            dailyCompleted: true
+        }
+        const updatedHistory = upsertHistoryPoint(history, newPoint)
+        saveHistory(updatedHistory)
+      }
+    }
+  }, [isFinished, daily.dateKey, progress.completedItems])
 
   const [phase, setPhase] = useState<PagePhase>(() => {
     if (isFinished) return 'summary'
@@ -193,12 +264,38 @@ export function DailySetPage() {
   }, [])
 
   const handleComplete = useCallback(
-    (result: { wpm: number; accuracy: number; durationMs: number }) => {
+    (result: {
+      wpm: number
+      accuracy: number
+      durationMs: number
+      mistakes: number
+      backspaces: number
+      pasteUsed: boolean
+    }) => {
+      const currentItem = daily.items[progress.completedItems.length]
+      const resets = currentItem ? resetsRef.current[currentItem.exerciseId] ?? 0 : 0
+
       const item: DailyItemResult = {
         wpm: result.wpm,
         accuracy: result.accuracy,
         durationMs: result.durationMs,
         completedAt: Date.now(),
+        metrics: {
+          mistakes: result.mistakes,
+          backspaces: result.backspaces,
+          pasteUsed: result.pasteUsed,
+          resets,
+        },
+      }
+
+      // Check perfect run conditions
+      if (item.metrics && isPerfectRun(item.metrics)) {
+        typewriterAudio.play('success', {
+          enabled: prefs.soundEnabled,
+          mix: prefs.audioMix,
+          category: 'ui',
+          modeGain: 1.0,
+        })
       }
 
       const nextCompleted = [...progress.completedItems, item]
@@ -227,8 +324,13 @@ export function DailySetPage() {
   }, [navigate])
 
   const handleRestart = useCallback(() => {
+    const item = daily.items[currentIndex]
+    if (item) {
+      const id = item.exerciseId
+      resetsRef.current[id] = (resetsRef.current[id] || 0) + 1
+    }
     setSessionKey((k) => k + 1)
-  }, [])
+  }, [daily.items, currentIndex])
 
   // ---- Transition auto-advance ----
 
@@ -259,6 +361,14 @@ export function DailySetPage() {
       {/* CTA — same position as every other tab (idle only) */}
       {phase === 'idle' ? (
         <div className="text-center">
+          <div className="mb-8 flex flex-col items-center gap-1">
+            <div className="text-sm font-medium text-zinc-400">
+              Streak: <span className="text-zinc-200">{streak.currentStreak}</span>
+              <span className="mx-2 text-zinc-600">•</span>
+              Best: <span className="text-zinc-200">{streak.bestStreak}</span>
+            </div>
+          </div>
+
           <button
             type="button"
             onClick={handleBegin}
@@ -401,7 +511,14 @@ export function DailySetPage() {
             type="button"
             onClick={() => {
               // Skip this exercise and advance
-              handleComplete({ wpm: 0, accuracy: 0, durationMs: 0 })
+              handleComplete({
+                wpm: 0,
+                accuracy: 0,
+                durationMs: 0,
+                mistakes: 0,
+                backspaces: 0,
+                pasteUsed: false,
+              })
             }}
             className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-5 py-2.5 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
           >
@@ -469,7 +586,20 @@ export function DailySetPage() {
             <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-10 text-center sm:px-8 sm:py-14">
               <Icon name="trophy" size={28} className="text-slate-400" />
               <h1 className="text-xl font-semibold text-zinc-100">Daily Set Complete!</h1>
-              <div className="mt-2 flex flex-wrap justify-center gap-6 text-sm">
+              
+              <div className="flex items-center justify-center gap-3">
+                 <div className="text-sm font-medium text-zinc-300">
+                    Day {streak.currentStreak}
+                 </div>
+                 {streakUpdate?.didIncrementStreak && (
+                    <span className="rounded bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-400">Streak +1</span>
+                 )}
+                 {streakUpdate?.isPersonalBest && (
+                     <span className="rounded bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-400">New Best!</span>
+                 )}
+              </div>
+
+              <div className="mt-4 flex flex-wrap justify-center gap-6 text-sm">
                 <div>
                   <div className="text-xs font-medium text-zinc-400">Avg WPM</div>
                   <div className="mt-1 text-2xl font-semibold leading-tight tabular-nums text-zinc-100">{avgWpm}</div>
@@ -510,9 +640,12 @@ export function DailySetPage() {
                         </div>
                         <div className="mt-0.5 truncate text-sm text-zinc-300">{ex.title}</div>
                       </div>
-                      <div className="flex gap-4 text-xs tabular-nums text-zinc-400">
-                        <span>{Math.round(result.wpm)} wpm</span>
-                        <span>{(result.accuracy * 100).toFixed(1)}%</span>
+                      <div className="flex items-center gap-4">
+                        {result.metrics && isPerfectRun(result.metrics) && <ResultChip type="perfect" />}
+                        <div className="flex gap-4 text-xs tabular-nums text-zinc-400">
+                          <span>{Math.round(result.wpm)} wpm</span>
+                          <span>{(result.accuracy * 100).toFixed(1)}%</span>
+                        </div>
                       </div>
                     </div>
                   )

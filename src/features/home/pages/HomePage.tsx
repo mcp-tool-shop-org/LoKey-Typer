@@ -2,14 +2,18 @@ import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { Mode } from '@content'
 import {
+  loadHistory,
   loadRuns,
   loadSkillModel,
+  loadStreak,
   modeLabel,
   modeToPath,
   preferredQuickstartMode,
   saveLastMode,
+  summarizeTrend,
 } from '@lib'
 import { Icon, type IconName } from '@app/components/Icon'
+import { ProgressSparkline } from '@app/components/ProgressSparkline'
 
 const MODES: Mode[] = ['focus', 'real_life', 'competitive']
 
@@ -39,8 +43,14 @@ export function HomePage() {
   const [selectedMode, setSelectedMode] = useState<Mode>(preferredQuickstartMode)
 
   const skill = useMemo(() => loadSkillModel(), [])
+  const streak = useMemo(() => loadStreak(), [])
   const daysPracticed = useMemo(() => computeDaysPracticed(loadRuns()), [])
+  const history = useMemo(() => loadHistory(), [])
   const hasHistory = skill.total_runs > 0
+
+  // Trend
+  const [metric, setMetric] = useState<'wpm' | 'accuracy'>('wpm')
+  const trend = useMemo(() => summarizeTrend(history, metric), [history, metric])
 
   function handleStart() {
     saveLastMode(selectedMode)
@@ -84,12 +94,50 @@ export function HomePage() {
 
       {/* Stats Row */}
       {hasHistory ? (
-        <section aria-label="Your typing stats" className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <StatCard value={`${Math.round(skill.ema.wpm)}`} label="Avg WPM" icon={STAT_ICONS[0]} />
-          <StatCard value={`${Math.round(skill.ema.accuracy * 100)}%`} label="Accuracy" icon={STAT_ICONS[1]} />
-          <StatCard value={`${skill.total_runs}`} label="Sessions" icon={STAT_ICONS[2]} />
-          <StatCard value={`${daysPracticed}`} label="Days practiced" icon={STAT_ICONS[3]} />
-        </section>
+        <div className="space-y-6">
+            <section aria-label="Your typing stats" className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+              <StatCard value={`${Math.round(skill.ema.wpm)}`} label="Avg WPM" icon={STAT_ICONS[0]} />
+              <StatCard value={`${Math.round(skill.ema.accuracy * 100)}%`} label="Accuracy" icon={STAT_ICONS[1]} />
+              <StatCard value={`${skill.total_runs}`} label="Sessions" icon={STAT_ICONS[2]} />
+              <StatCard value={`${streak.currentStreak}`} label={`Day streak (Best ${streak.bestStreak})`} icon={STAT_ICONS[3]} />
+            </section>
+            
+            {/* Graph + Trend */}
+            <section className="rounded-2xl bg-zinc-900/20 px-6 py-6 border border-zinc-800/50">
+                <div className="mb-4 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                         <span className="text-sm font-semibold text-zinc-300">Daily Progress</span>
+                         {trend ? (
+                             <span className={`text-xs font-medium ${trend.direction === 'up' ? 'text-emerald-400' : trend.direction === 'down' ? 'text-rose-400' : 'text-zinc-500'}`}>
+                                {trend.direction === 'up' ? '↗' : trend.direction === 'down' ? '↘' : '→'} {trend.deltaFormatted}
+                             </span>
+                         ) : null}
+                    </div>
+                    <div className="flex gap-1 rounded-lg bg-zinc-900 p-0.5">
+                        <button 
+                           onClick={() => setMetric('wpm')}
+                           className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${metric === 'wpm' ? 'bg-zinc-700 text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                           WPM
+                        </button>
+                        <button 
+                           onClick={() => setMetric('accuracy')}
+                           className={`rounded px-2.5 py-1 text-xs font-medium transition-colors ${metric === 'accuracy' ? 'bg-zinc-700 text-zinc-100' : 'text-zinc-500 hover:text-zinc-300'}`}
+                        >
+                           Acc
+                        </button>
+                    </div>
+                </div>
+                
+                <div className="h-28 w-full">
+                     <ProgressSparkline points={history} metric={metric} height={100} />
+                </div>
+                
+                <div className="mt-3 text-center text-xs text-zinc-500">
+                    {trend ? trend.text : 'Complete Daily 3 sets to track your progress.'}
+                </div>
+            </section>
+        </div>
       ) : (
         <div className="flex flex-col items-center gap-3 rounded-3xl bg-zinc-900/40 px-6 py-8 text-center sm:px-8 sm:py-12">
           <Icon name="keyboard" size={28} className="text-zinc-500" />

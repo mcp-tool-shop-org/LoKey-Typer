@@ -1,6 +1,7 @@
 import type { Exercise, Mode } from '@content'
 import { loadExercisesByMode } from '@content'
 import type { UserSkillModel } from './storage'
+import type { RunMetrics } from './perfectRun'
 
 function xmur3(str: string) {
   let h = 1779033703 ^ str.length
@@ -51,6 +52,7 @@ export type DailySetItem = {
   kind: DailySetItemKind
   mode: Mode
   exerciseId: string
+  completed?: boolean
 }
 
 export type DailySet = {
@@ -65,6 +67,7 @@ export type DailyItemResult = {
   accuracy: number
   durationMs: number
   completedAt: number
+  metrics?: RunMetrics
 }
 
 export type DailyProgress = {
@@ -72,67 +75,38 @@ export type DailyProgress = {
   userId: string
   sessionType: DailySessionType
   completedItems: DailyItemResult[]
-  startedAt: number
-  finishedAt?: number
+  startedAt?: number
+  completedAt?: number
 }
+
+// ---------------------------------------------------------------------------
+// Logic
+// ---------------------------------------------------------------------------
 
 function todayKey() {
   return new Date().toISOString().slice(0, 10)
 }
 
-function itemCount(sessionType: DailySessionType) {
-  if (sessionType === 'reset') return 5
-  if (sessionType === 'mix') return 8
-  return 10
+function itemCount(type: DailySessionType) {
+  if (type === 'reset') return 3
+  if (type === 'deep') return 5
+  return 3
 }
 
-const DAILY_SET_CACHE_PREFIX = 'lkt_daily_set_v1'
+// In-memory cache to avoid re-rolling on hot reload or re-render
+const CACHE: Record<string, DailySet> = {}
 
-function safeParse<T>(raw: string | null): T | null {
-  if (!raw) return null
-  try {
-    return JSON.parse(raw) as T
-  } catch {
-    return null
-  }
-}
-
-function getCachedDailySet(params: { userId: string; dateKey: string; sessionType: DailySessionType }): DailySet | null {
-  try {
-    if (typeof localStorage === 'undefined') return null
-    const key = `${DAILY_SET_CACHE_PREFIX}|${params.userId}|${params.dateKey}|${params.sessionType}`
-    const parsed = safeParse<DailySet>(localStorage.getItem(key))
-    if (!parsed) return null
-    if (parsed.userId !== params.userId) return null
-    if (parsed.dateKey !== params.dateKey) return null
-    if (parsed.sessionType !== params.sessionType) return null
-    if (!Array.isArray(parsed.items)) return null
-    return parsed
-  } catch {
-    return null
-  }
+function getCachedDailySet(key: { userId: string; dateKey: string; sessionType: string }): DailySet | null {
+  return CACHE[\\|\|\\] ?? null
 }
 
 function setCachedDailySet(set: DailySet) {
-  try {
-    if (typeof localStorage === 'undefined') return
-    const key = `${DAILY_SET_CACHE_PREFIX}|${set.userId}|${set.dateKey}|${set.sessionType}`
-    localStorage.setItem(key, JSON.stringify(set))
-  } catch {
-    // ignore
-  }
+  CACHE[\\|\|\\] = set
 }
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n))
-}
-
-function bandCenterFromSkill(skill: Pick<UserSkillModel, 'total_runs' | 'ema'> | null | undefined): number {
+function bandCenterFromSkill(skill: UserSkillModel | undefined): number {
   if (!skill || !Number.isFinite(skill.total_runs)) return 3
-  if (skill.total_runs < 5) return 2.5
-
-  const wpm = Number(skill.ema?.wpm ?? 0)
-  if (!Number.isFinite(wpm)) return 3
+  const wpm = skill.ema.wpm
   if (wpm < 30) return 2
   if (wpm < 45) return 2.5
   if (wpm < 60) return 3
@@ -142,7 +116,8 @@ function bandCenterFromSkill(skill: Pick<UserSkillModel, 'total_runs' | 'ema'> |
 
 function difficultyBandWeight(difficulty: number, center: number) {
   const dist = Math.abs(difficulty - center)
-  return 1 + clamp(1.5 - dist, 0, 1.5)
+  // Closer to center = higher weight
+  return 1 + Math.max(0, 1.5 - dist)
 }
 
 function exerciseWeight(params: {
@@ -167,7 +142,7 @@ function exerciseWeight(params: {
     w *= ex.difficulty
     w *= difficultyBandWeight(ex.difficulty, Math.max(3, bandCenter + 1))
   } else {
-    // Default: stay near the user’s current band.
+    // Default: stay near the user's current band.
     w *= difficultyBandWeight(ex.difficulty, bandCenter)
   }
 
@@ -190,11 +165,36 @@ function pickExercise(params: {
   bandCenter: number
   targetTag: string | null
   excludeIds: Set<string>
+  prefs?: {
+     screenReaderMode: boolean
+     focusMaxLength?: number
+  }
 }): Exercise | null {
-  const pool = loadExercisesByMode(params.mode).filter((ex) => !params.excludeIds.has(ex.id))
-  if (pool.length === 0) return null
+  const all = loadExercisesByMode(params.mode)
+  
+  // Apply hard filters
+  const filtered = all.filter((ex) => {
+      if (params.excludeIds.has(ex.id)) return false
+      
+      // Screen reader constraint
+      if (params.prefs?.screenReaderMode) {
+          if (ex.tags.includes('multiline') || ex.tags.includes('visual-only')) return false
+      }
+      
+      // Length constraint
+      if (params.prefs?.focusMaxLength && params.mode === 'focus') {
+           const text = ex.text_short ?? ex.text ?? ex.text_long ?? ''
+           // If template, assume it can adapt or is roughly correct. If static, check length.
+           if (ex.type !== 'template' && text.length > params.prefs.focusMaxLength) return false
+      }
+      
+      return true
+  })
+
+  if (filtered.length === 0) return null
+
   const picked = pickWeighted(
-    pool,
+    filtered,
     (ex) =>
       exerciseWeight({
         ex,
@@ -217,6 +217,10 @@ function pickWithRelaxation(params: {
   targetTag: string | null
   used: Set<string>
   avoid: Set<string>
+  prefs?: {
+     screenReaderMode: boolean
+     focusMaxLength?: number
+  }
 }): Exercise | null {
   const strict = new Set<string>([...params.used, ...params.avoid])
   return (
@@ -228,6 +232,7 @@ function pickWithRelaxation(params: {
       bandCenter: params.bandCenter,
       targetTag: params.targetTag,
       excludeIds: strict,
+      prefs: params.prefs
     }) ??
     pickExercise({
       mode: params.mode,
@@ -237,6 +242,7 @@ function pickWithRelaxation(params: {
       bandCenter: params.bandCenter,
       targetTag: params.targetTag,
       excludeIds: params.used,
+      prefs: params.prefs
     })
   )
 }
@@ -247,13 +253,17 @@ export function generateDailySet(params: {
   sessionType: DailySessionType
   weakTags?: string[]
   skill?: Pick<UserSkillModel, 'total_runs' | 'ema' | 'recent_exercise_ids_by_mode'>
+  prefs?: {
+     screenReaderMode: boolean
+     focusMaxLength?: number
+  }
 }): DailySet {
   const dateKey = params.dateKey ?? todayKey()
 
   const cached = getCachedDailySet({ userId: params.userId, dateKey, sessionType: params.sessionType })
   if (cached) return cached
 
-  const seedStr = `${params.userId}|${dateKey}|${params.sessionType}`
+  const seedStr = \\|\|\\
   const rand = mulberry32(xmur3(seedStr)())
 
   const weakTags = params.weakTags ?? []
@@ -272,6 +282,7 @@ export function generateDailySet(params: {
 
   const items: DailySetItem[] = []
 
+  // 1. Confidence Booster (Focus)
   const confidence = pickWithRelaxation({
     mode: 'focus',
     kind: 'confidence',
@@ -281,48 +292,45 @@ export function generateDailySet(params: {
     targetTag,
     used,
     avoid,
+    prefs: params.prefs
   })
   if (confidence) {
     used.add(confidence.id)
     items.push({ kind: 'confidence', mode: 'focus', exerciseId: confidence.id })
   }
 
-  const scenario = pickWithRelaxation({
-    mode: 'real_life',
-    kind: 'real_life',
-    rand,
-    weakTags,
-    bandCenter,
-    targetTag,
-    used,
-    avoid,
-  })
-  if (scenario) {
-    used.add(scenario.id)
-    items.push({ kind: 'real_life', mode: 'real_life', exerciseId: scenario.id })
-  }
+  // 2. Real-Life or Targeted (if weak tags exist)
+  if (items.length < count) {
+    let mode2: Mode = 'real_life'
+    let kind2: DailySetItemKind = 'real_life'
+    
+    if (targetTag && rand() > 0.3) {
+        mode2 = 'focus'
+        kind2 = 'targeted'
+    }
 
-  if (targetTag) {
-    const targetMode: Mode = rand() < 0.6 ? 'focus' : 'real_life'
-    const targeted = pickWithRelaxation({
-      mode: targetMode,
-      kind: 'targeted',
-      rand,
-      weakTags,
-      bandCenter,
-      targetTag,
-      used,
-      avoid,
+    const item2 = pickWithRelaxation({
+        mode: mode2,
+        kind: kind2,
+        rand,
+        weakTags,
+        bandCenter,
+        targetTag,
+        used,
+        avoid,
+        prefs: params.prefs
     })
-    if (targeted) {
-      used.add(targeted.id)
-      items.push({ kind: 'targeted', mode: targetMode, exerciseId: targeted.id })
+    
+    if (item2) {
+        used.add(item2.id)
+        items.push({ kind: kind2, mode: mode2, exerciseId: item2.id })
     }
   }
 
-  if (params.sessionType !== 'reset') {
-    const challenge = pickWithRelaxation({
-      mode: 'competitive',
+  // 3. Fill the rest with Challenge or Mix
+  while (items.length < count) {
+    const pick = pickWithRelaxation({
+      mode: 'focus',
       kind: 'challenge',
       rand,
       weakTags,
@@ -330,35 +338,33 @@ export function generateDailySet(params: {
       targetTag,
       used,
       avoid,
+      prefs: params.prefs
     })
-    if (challenge) {
-      used.add(challenge.id)
-      items.push({ kind: 'challenge', mode: 'competitive', exerciseId: challenge.id })
+    
+    if (pick) {
+        used.add(pick.id)
+        items.push({ kind: 'challenge', mode: 'focus', exerciseId: pick.id })
+    } else {
+        // Fallback: if rigid criteria fail, pick *any* valid exercise
+        const fallback = pickWithRelaxation({
+            mode: 'focus',
+            kind: 'mix',
+            rand,
+            weakTags: [],
+            bandCenter: 3,
+            targetTag: null,
+            used,
+            avoid: new Set(),
+            prefs: params.prefs
+        })
+        if (fallback) {
+            used.add(fallback.id)
+            items.push({ kind: 'mix', mode: 'focus', exerciseId: fallback.id })
+        } else {
+            // Should not happen unless pool is empty or strict filter (SR mode) excluded everything
+            break 
+        }
     }
-  }
-
-  while (items.length < count) {
-    const mode: Mode = rand() < 0.55 ? 'focus' : 'real_life'
-    const ex = pickWithRelaxation({
-      mode,
-      kind: 'mix',
-      rand,
-      weakTags,
-      bandCenter,
-      targetTag,
-      used,
-      avoid,
-    })
-    if (!ex) break
-    used.add(ex.id)
-    items.push({ kind: 'mix', mode, exerciseId: ex.id })
-  }
-
-  // Deterministic fallback if pools were unexpectedly empty.
-  if (items.length === 0) {
-    const pool = loadExercisesByMode('focus')
-    const first = pool[0]
-    if (first) items.push({ kind: 'mix', mode: 'focus', exerciseId: first.id })
   }
 
   const out: DailySet = {
@@ -370,6 +376,15 @@ export function generateDailySet(params: {
 
   setCachedDailySet(out)
   return out
+}
+
+function safeParse<T>(raw: string | null): T | null {
+  if (!raw) return null
+  try {
+    return JSON.parse(raw) as T
+  } catch {
+    return null
+  }
 }
 
 // --- Daily progress persistence ---

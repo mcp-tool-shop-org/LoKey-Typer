@@ -77,6 +77,7 @@ export class AmbientPlayerV3 {
 
   // Playback state
   private masterGain: GainNode | null = null
+  private duckGain: GainNode | null = null
   private masterConnected = false
   private currentSlot: TrackSlot | null = null
   private preloadedTrack: AmbientTrack | null = null
@@ -232,14 +233,42 @@ export class AmbientPlayerV3 {
     if (!this.masterGain) {
       this.masterGain = ctx.createGain()
       this.masterGain.gain.value = 0
+    
+      this.duckGain = ctx.createGain()
+      this.duckGain.gain.value = 1
+      this.masterGain.connect(this.duckGain)
+      this.duckGain.connect(ctx.destination)
     }
 
     if (!this.masterConnected) {
-      this.masterGain.connect(ctx.destination)
+      // Logic handled via chain now
       this.masterConnected = true
     }
-
+  
     return { ctx, master: this.masterGain }
+  }
+
+  /** Apply ducking when typing is active. Called by TypingSession. */
+  duck(target = 0.6) {
+    if (!this.duckGain) return
+    if (!this.enabled || this.screenReaderMode) return
+    const ctx = getAudioContext()
+    if (!ctx) return
+    
+    // Immediate duck
+    this.duckGain.gain.cancelScheduledValues(ctx.currentTime)
+    this.duckGain.gain.setTargetAtTime(target, ctx.currentTime, 0.05)
+    
+    // Reschedule unduck
+    if (this.typingDuckTimer) {
+      window.clearTimeout(this.typingDuckTimer)
+    }
+    
+    this.typingDuckTimer = window.setTimeout(() => {
+      if (!this.duckGain || !ctx) return
+      this.duckGain.gain.cancelScheduledValues(ctx.currentTime)
+      this.duckGain.gain.setTargetAtTime(1.0, ctx.currentTime, 0.8) // Smooth, cinematic swelling
+    }, 450) // Wait for true pause before releasing
   }
 
   private applyMasterVolume(seconds: number): void {

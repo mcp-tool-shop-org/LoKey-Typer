@@ -66,3 +66,19 @@ export {
   type SprintDurationMs,
   type UserSkillModel,
 } from '../storage'
+export {
+  type DailyStreak,
+  type StreakUpdateResult,
+  recordDailyCompletion,
+  loadStreak,
+  saveStreak,
+} from '../streaks'
+export {
+  type HistoryPoint,
+  type TrendSummary,
+  upsertHistoryPoint,
+  summarizeTrend,
+  loadHistory,
+  saveHistory,
+} from '../history'
+export { isPerfectRun } from '../perfectRun'

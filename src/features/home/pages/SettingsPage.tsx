@@ -242,6 +242,13 @@ export function SettingsPage() {
           </div>
         )}
       </section>
+
+      <footer className="mt-12 text-center border-t border-zinc-800/50 pt-8 pb-4">
+        <p className="text-xs text-zinc-600 font-mono">
+          LoKey Typer v1.1.0 • Built {new Date().toLocaleDateString()}
+        </p>
+      </footer>
     </div>
   )
 }
+

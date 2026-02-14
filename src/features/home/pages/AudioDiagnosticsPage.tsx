@@ -2,9 +2,33 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { typewriterAudio, type AudioDiagnostics } from '@lib'
 import { Icon } from '@app/components/Icon'
+import { usePreferences } from '@app/providers/PreferencesProvider'
 
 export function AudioDiagnosticsPage() {
   const [diagnostics, setDiagnostics] = useState<AudioDiagnostics | null>(null)
+  const { prefs } = usePreferences()
+
+  function handleExport() {
+    const report = {
+      app: { name: 'LoKey Types', version: '1.1.0', build: new Date().toISOString() },
+      environment: {
+        userAgent: navigator.userAgent,
+        screen: { width: window.innerWidth, height: window.innerHeight },
+        devicePixelRatio: window.devicePixelRatio
+      },
+      audio: diagnostics,
+      preferences: prefs,
+      timestamp: Date.now()
+    }
+    
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = `lokey-diagnostics-${Date.now()}.json`
+    a.click()
+    URL.revokeObjectURL(url)
+  }
   
   // Poll diagnostics
   useEffect(() => {
@@ -106,6 +130,14 @@ export function AudioDiagnosticsPage() {
                  >
                      <Icon name="refresh" size={16} />
                      Recover Audio System
+                 </button>
+
+                 <button 
+                    onClick={handleExport}
+                    className="w-full mt-4 flex items-center justify-center gap-2 rounded-lg bg-zinc-800/50 hover:bg-zinc-800 text-zinc-400 py-2 text-sm font-medium transition-colors"
+                 >
+                     <Icon name="download" size={16} />
+                     Export Diagnostics
                  </button>
              </div>
           </div>

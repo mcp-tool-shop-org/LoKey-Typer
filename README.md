@@ -4,9 +4,19 @@ A calm typing practice app with ambient soundscapes, personalized daily sets, an
 
 ## What it is
 
-LoKey Typer is a typing practice app built for adults who want quiet, focused sessions without gamification, leaderboards, or distractions.
+LoKey Typer is a typing practice app built for adults who want quiet, focused sessions without gamification, leaderboards, or distractions. It functions more like a musical instrument than a game: responsive, consistent, and tuned for flow state.
 
 All data stays on your device. No accounts. No cloud. No tracking.
+
+## v1.1.0 Highlights (Audio Mastery)
+
+- **Daily Set**: A personalized 3-exercise routine generated fresh every day.
+- **Streaks & Progress**: Track your consistency and visualize WPM trends over weeks.
+- **Perfect Runs**: Detailed integrity checks where every keystroke matters.
+- **Studio Audio Engine**:
+  - **Limiter**: Zero-artifact typing even at 140+ WPM.
+  - **Cinematic Ducking**: Background music automatically lowers when you type and swells when you pause.
+  - **Recovery**: Self-healing audio system for robust browser support.
 
 ## Practice modes
 

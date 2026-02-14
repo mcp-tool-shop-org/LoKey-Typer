@@ -17,6 +17,10 @@
 4. Verify GitHub Action completes.
 5. Visit the text site.
 
-## Post-Flight
-- [ ] Check "Diagnostics Export" works on production.
-- [ ] Verify caching (Service Worker) works offline.
+## Post-Flight Smoke Test (2 minutes)
+1. **Cold Load**: Open root URL. Confirm render & console clean.
+2. **Deep Link**: Open `/LoKey-Typer/settings` directly. Confirm no 404.
+3. **Audio Feel**: Type 10 keys. Confirm first key hits instantly (Prewarm) and ambient dips (Ducking).
+4. **Hard Refresh**: Refresh on a sub-route. Confirm audio assets load (no WAV 404s).
+5. **Diagnostics**: Confirm "Recover Audio System" works and Export downloads JSON.
+

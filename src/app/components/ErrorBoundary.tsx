@@ -24,13 +24,21 @@ export class ErrorBoundary extends Component<Props, State> {
             <p className="text-sm text-zinc-400">
               Something unexpected happened. A refresh should fix it.
             </p>
-            <button
-              type="button"
-              onClick={() => window.location.reload()}
-              className="inline-flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-6 py-3 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
-            >
-              Refresh page
-            </button>
+            <div className="flex justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => window.location.reload()}
+                className="inline-flex items-center gap-2 rounded-xl border border-zinc-700/50 bg-zinc-800/80 px-4 py-2 text-sm font-semibold text-zinc-300 transition duration-150 hover:bg-zinc-700 hover:border-zinc-600 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              >
+                Reload
+              </button>
+              <a
+                href={`${import.meta.env.BASE_URL ?? '/'}audio-diagnostics`}
+                className="inline-flex items-center gap-2 rounded-xl border border-red-900/50 bg-red-950/30 px-4 py-2 text-sm font-semibold text-red-400 transition duration-150 hover:bg-red-900/40 hover:border-red-800 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/50 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950"
+              >
+                Diagnostics
+              </a>
+            </div>
           </div>
         </div>
       )
@@ -38,3 +46,4 @@ export class ErrorBoundary extends Component<Props, State> {
     return this.props.children
   }
 }
+

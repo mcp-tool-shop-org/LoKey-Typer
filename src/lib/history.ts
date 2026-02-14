@@ -1,3 +1,5 @@
+import { safeParse } from './storage'
+
 export type HistoryPoint = {
   dateKey: string // YYYY-MM-DD
   wpm: number
@@ -75,9 +77,8 @@ const HISTORY_KEY = 'lkt_history_v1'
 export function loadHistory(): HistoryPoint[] {
   try {
     if (typeof localStorage === 'undefined') return []
-    const raw = localStorage.getItem(HISTORY_KEY)
-    if (!raw) return []
-    const parsed = JSON.parse(raw)
+    const parsed = safeParse<unknown>(localStorage.getItem(HISTORY_KEY))
+    if (!parsed) return []
     if (!Array.isArray(parsed)) return []
     return parsed as HistoryPoint[]
   } catch {

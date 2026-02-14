@@ -1,3 +1,5 @@
+import { safeParse } from './storage'
+
 export type DailyStreak = {
   currentStreak: number
   bestStreak: number
@@ -123,9 +125,9 @@ export function loadStreak(): DailyStreak {
 
   try {
     if (typeof localStorage === 'undefined') return defaultState
-    const raw = localStorage.getItem(STREAK_KEY)
-    if (!raw) return defaultState
-    const parsed = JSON.parse(raw)
+    const parsed = safeParse<any>(localStorage.getItem(STREAK_KEY))
+    if (!parsed) return defaultState
+    
     return {
       currentStreak: typeof parsed.currentStreak === 'number' ? parsed.currentStreak : 0,
       bestStreak: typeof parsed.bestStreak === 'number' ? parsed.bestStreak : 0,

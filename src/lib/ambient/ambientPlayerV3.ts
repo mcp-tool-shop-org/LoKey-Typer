@@ -326,9 +326,16 @@ export class AmbientPlayerV3 {
     const ctx = getAudioContext()
     if (!ctx) return null
 
-    const resolvedPath = track.path.startsWith('/')
-      ? `${import.meta.env.BASE_URL}${track.path.slice(1)}`
-      : track.path
+    // Ensure all paths run through BASE_URL unless they are absolute URLs
+    let resolvedPath = track.path
+    if (track.path.startsWith('http://') || track.path.startsWith('https://')) {
+       // absolute, do nothing
+    } else {
+       // treat as app-relative
+       const cleanPath = track.path.startsWith('/') ? track.path.slice(1) : track.path
+       resolvedPath = `${import.meta.env.BASE_URL}${cleanPath}`
+    }
+
     const buf = await fetchDecode(ctx, resolvedPath)
     if (buf) this.bufferCache.set(track.path, buf)
     return buf

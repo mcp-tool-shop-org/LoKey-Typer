@@ -1,4 +1,6 @@
-# LoKey Typer
+<p align="center">
+  <img src="assets/logo.png" alt="LoKey Typer" width="280" />
+</p>
 
 A calm typing practice app with ambient soundscapes, personalized daily sets, and no accounts required.
 

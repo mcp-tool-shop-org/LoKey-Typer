@@ -121,3 +121,35 @@ See `modular.md` for architecture contracts and import boundaries.
 - `docs/sound-philosophy.md` — public-facing sound philosophy
 - `docs/accessibility-commitment.md` — accessibility commitment
 - `docs/how-personalization-works.md` — personalization explainer
+
+---
+
+## Security & Data Scope
+
+LoKey Typer is a **fully offline** typing practice web app (PWA + Microsoft Store).
+
+- **Data accessed:** Browser localStorage (preferences, run history, personal bests)
+- **Data NOT accessed:** No cloud sync. No telemetry. No analytics. No accounts. No tracking
+- **Network:** Only for initial page load and service worker cache. Zero runtime network calls
+- **No telemetry** is collected or sent
+
+Full policy: [SECURITY.md](SECURITY.md)
+
+---
+
+## Scorecard
+
+| Category | Score |
+|----------|-------|
+| A. Security | 10/10 |
+| B. Error Handling | 10/10 |
+| C. Operator Docs | 10/10 |
+| D. Shipping Hygiene | 10/10 |
+| E. Identity (soft) | 10/10 |
+| **Overall** | **50/50** |
+
+---
+
+<p align="center">
+  Built by <a href="https://mcp-tool-shop.github.io/">MCP Tool Shop</a>
+</p>

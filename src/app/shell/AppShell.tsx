@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Icon } from '@app/components/Icon'
+import { AudioSettingsPanel } from '@app/components/AudioSettingsPanel'
 import { useAmbient } from '@app/providers/AmbientProvider'
 import { usePreferences } from '@app/providers/PreferencesProvider'
 
@@ -26,6 +28,7 @@ const ICON_BTN =
 export function AppShell() {
   const { prefs, patchPrefs } = usePreferences()
   const { skipTrack } = useAmbient()
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   function handleMuteToggle() {
     patchPrefs({ ambientEnabled: !prefs.ambientEnabled })
@@ -79,9 +82,23 @@ export function AppShell() {
               <Icon name={prefs.ambientEnabled ? 'sound-on' : 'sound-off'} size={18} />
             </button>
 
+            {/* Audio settings */}
+            <button
+              type="button"
+              onClick={() => setSettingsOpen((o) => !o)}
+              className={`${ICON_BTN} text-zinc-500 hover:bg-zinc-900/50 hover:text-zinc-200`}
+              aria-label="Audio settings"
+              title="Audio settings"
+            >
+              <Icon name="settings" size={18} />
+              <span className="sr-only">Audio Settings</span>
+            </button>
+
           </nav>
         </div>
       </header>
+
+      <AudioSettingsPanel open={settingsOpen} onClose={() => setSettingsOpen(false)} />
 
       <main id="main-content" className="mx-auto max-w-5xl px-4 py-8 sm:px-6 sm:py-16">
         <Outlet />

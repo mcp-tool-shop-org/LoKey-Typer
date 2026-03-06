@@ -27,5 +27,9 @@
     "personalized-daily-exercises-based-on-recent-sessions": ["Daily"],
     "wpm-and-accuracy-metrics-with-end-of-run-feedback": ["Start typing", "Begin"],
     "personal-best-tracking-per-exercise": ["Start typing", "Begin"]
-  }
+  },
+  "goalRules": [
+    { "id": "audio_open", "label": "Open Audio Settings", "kind": "domEffect", "dom": { "textRegex": "Audio Settings" }, "score": 2 },
+    { "id": "audio_change", "label": "Change Audio Preference", "kind": "storageWrite", "storage": { "keyRegex": "^lokey\\.audio\\." }, "score": 5 }
+  ]
 }

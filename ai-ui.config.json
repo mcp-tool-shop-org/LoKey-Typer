@@ -30,6 +30,6 @@
   },
   "goalRules": [
     { "id": "audio_open", "label": "Open Audio Settings", "kind": "domEffect", "dom": { "textRegex": "Audio Settings" }, "score": 2 },
-    { "id": "audio_change", "label": "Change Audio Preference", "kind": "storageWrite", "storage": { "keyRegex": "^lokey\\.audio\\." }, "score": 5 }
+    { "id": "audio_change", "label": "Change Audio Preference", "kind": "storageWrite", "storage": { "keyRegex": "^lkt_prefs_v1$" }, "score": 5 }
   ]
 }

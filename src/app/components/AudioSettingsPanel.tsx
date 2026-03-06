@@ -78,6 +78,7 @@ export function AudioSettingsPanel({ open, onClose }: { open: boolean; onClose: 
         role="dialog"
         aria-modal="true"
         aria-label="Audio Settings"
+        data-aiui-goal="audio_settings_open"
         className="fixed right-4 top-20 z-50 w-80 rounded-2xl border border-zinc-800/50 bg-zinc-900 p-5 shadow-2xl"
       >
         {/* Keystroke Sounds */}
